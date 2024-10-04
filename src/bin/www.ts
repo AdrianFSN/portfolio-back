@@ -4,22 +4,24 @@
  * Module dependencies.
  */
 
-var app = require("../app");
-var debug = require("debug")(process.env.DEBUG || "portfolio-back:*");
-var http = require("http");
+import app from "../app";
+import debug from "debug";
+import http from "http";
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || "3000");
+const debugApp = debug(process.env.DEBUG || "portfolio-back:*");
+
+const port = normalizePort(process.env.PORT || "3000");
 app.set("port", port);
 
 /**
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+const server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -33,17 +35,17 @@ server.on("listening", onListening);
  * Normalize a port into a number, string, or false.
  */
 
-function normalizePort(val) {
-  var port = parseInt(val, 10);
+function normalizePort(val: string): number | string | false {
+  const portNumber = parseInt(val, 10);
 
-  if (isNaN(port)) {
+  if (isNaN(portNumber)) {
     // named pipe
     return val;
   }
 
-  if (port >= 0) {
+  if (portNumber >= 0) {
     // port number
-    return port;
+    return portNumber;
   }
 
   return false;
@@ -53,15 +55,15 @@ function normalizePort(val) {
  * Event listener for HTTP server "error" event.
  */
 
-function onError(error) {
-  if (error.syscall !== "listen") {
+function onError(error: Error) {
+  if ((error as any).syscall !== "listen") {
     throw error;
   }
 
-  var bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
+  const bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
 
   // handle specific listen errors with friendly messages
-  switch (error.code) {
+  switch ((error as any).code) {
     case "EACCES":
       console.error(bind + " requires elevated privileges");
       process.exit(1);
@@ -80,7 +82,13 @@ function onError(error) {
  */
 
 function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
-  debug("Hi. Portfolio-back is listening on " + bind);
+  const addr = server.address();
+
+  if (addr) {
+    const bind =
+      typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
+    debug("Hi. Portfolio-back is listening on " + bind);
+  } else {
+    debug("Server is listening, but address is not available.");
+  }
 }
