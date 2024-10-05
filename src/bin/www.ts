@@ -87,8 +87,8 @@ function onListening() {
   if (addr) {
     const bind =
       typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
-    debug("Hi. Portfolio-back is listening on " + bind);
+    debugApp("Hi! Portfolio-back is listening on " + bind);
   } else {
-    debug("Server is listening, but address is not available.");
+    debugApp("Server is listening, but address is not available.");
   }
 }
