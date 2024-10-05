@@ -10,7 +10,11 @@ router.get("/", function (req: Request, res: Response, next: NextFunction) {
     data: "This resource is not supposed to answer with any data",
     message: "Hi! You are in the index of portfolio-back!",
   };
-  res.json(response);
+  res.render("index", {
+    state: response.state,
+    data: response.data,
+    message: response.message,
+  });
 });
 
 export default router;

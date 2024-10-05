@@ -15,6 +15,10 @@ const app = express();
 require("dotenv").config();
 
 // view engine setup
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
+
+// view engine setup
 //app.set("views", path.join(__dirname, "views"));
 //app.set("view engine", "jade");
 
@@ -24,6 +28,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
+// API routes
 app.use("/api", indexRouter);
 app.use("/api/users", usersRouter);
 
