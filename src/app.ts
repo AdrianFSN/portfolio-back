@@ -8,14 +8,15 @@ import logger from "morgan";
 
 import indexRouter from "./routes/index";
 import usersRouter from "./routes/users";
+import developerJobRouter from "./routes/developerJobRoutes";
 
 const app = express();
 
-// Connect Mongoose
-require("./lib/connectMongoose");
-
 // Load env variables from .env
 require("dotenv").config();
+
+// Connect Mongoose
+require("./lib/connectMongoose");
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -30,6 +31,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // API routes
 app.use("/api", indexRouter);
 app.use("/api/users", usersRouter);
+app.use("/api/developer-jobs", developerJobRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req: Request, res: Response, next: NextFunction) {

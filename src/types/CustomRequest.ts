@@ -8,7 +8,7 @@ export interface CustomRequest extends Request {
     info: string;
   };
   files?: {
-    pictures?: Express.Multer.File[];
-    videos?: Express.Multer.File[];
+    pictures?: Express.Multer.File[]; // Aquí usas Express.Multer.File
+    videos?: Express.Multer.File[]; // Asegúrate de que esto esté bien definido
   };
 }

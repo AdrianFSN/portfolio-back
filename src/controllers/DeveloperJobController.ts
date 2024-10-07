@@ -1,14 +1,14 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import DeveloperJob from "../models/DeveloperJob";
-import upload from "../middlewares/filesManagement";
-import { CustomRequest } from "../types/CustomRequest";
-import { ValidationError } from "../types/CustomErrors";
+import { CustomRequest } from "../types/CustomRequest"; // Asegúrate de que esta ruta es correcta
+import { ValidationError } from "../types/CustomErrors"; // Asegúrate de que esta ruta es correcta
 
 class DeveloperJobController {
   async create(req: CustomRequest, res: Response): Promise<void> {
     try {
       const { title, technologies, launchPeriod, info } = req.body;
-
+      console.log("esto es req.body: ", req.body);
+      // Validar campos requeridos
       if (!title || !technologies || !launchPeriod || !info) {
         const validationError: ValidationError = new Error(
           "Validation failed"
@@ -16,7 +16,7 @@ class DeveloperJobController {
         validationError.statusCode = 400;
         validationError.state = "error";
         validationError.validationErrors = [
-          "Title, technologies, info and launch period are required",
+          "Title, technologies, launch period, and info are required",
         ];
 
         throw validationError;
@@ -24,16 +24,14 @@ class DeveloperJobController {
 
       const newJob = new DeveloperJob(req.body);
 
+      console.log("Esto es newJob: ", newJob);
+
       if (req.files) {
         if (req.files.pictures) {
-          newJob.pictures = (req.files.pictures as Express.Multer.File[]).map(
-            (file) => file.originalname
-          );
+          newJob.pictures = req.files.pictures.map((file) => file.originalname);
         }
         if (req.files.videos) {
-          newJob.videos = (req.files.videos as Express.Multer.File[]).map(
-            (file) => file.originalname
-          );
+          newJob.videos = req.files.videos.map((file) => file.originalname);
         }
       }
 
@@ -45,12 +43,21 @@ class DeveloperJobController {
         message: "Developer job created successfully!",
       });
     } catch (error) {
-      res.status(400).json({
-        state: "error",
-        message: "Error creating developer job",
-        error: (error as any).message,
-        code: 400,
-      });
+      if ((error as ValidationError).validationErrors) {
+        res.status((error as ValidationError).statusCode || 400).json({
+          state: "error",
+          message: "Validation error",
+          validationErrors: (error as ValidationError).validationErrors,
+          code: (error as ValidationError).statusCode || 400,
+        });
+      } else {
+        res.status(500).json({
+          state: "error",
+          message: "Error creating developer job",
+          error: (error as Error).message,
+          code: 500,
+        });
+      }
     }
   }
 }
