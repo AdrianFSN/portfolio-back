@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-
+import CustomError, { FileUploadError } from "./types/CustomErrors";
 import createError from "http-errors";
 import express from "express";
 import path from "path";
@@ -37,16 +37,23 @@ app.use(function (req: Request, res: Response, next: NextFunction) {
 });
 
 // error handler
-app.use(function (err: Error, req: Request, res: Response, next: NextFunction) {
+app.use(function (
+  err: CustomError,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
-  // render the error page
-  res.status((err as any).status || 500).json({
-    state: "error",
+  // send the error json
+  res.status(err.statusCode || 500).json({
+    state: err.state || "error",
     message: err.message,
-    code: (err as any).status || 500,
+    code: err.statusCode || 500,
+    fileName: (err as FileUploadError).fileName || null,
+    mimeType: (err as FileUploadError).mimeType || null,
   });
 });
 

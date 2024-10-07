@@ -1,3 +1,4 @@
+import { FileUploadError } from "../types/CustomErrors";
 import multer, { FileFilterCallback } from "multer";
 
 const storage = multer.memoryStorage();
@@ -16,12 +17,15 @@ const upload = multer({
     if (isImage || isVideo) {
       cb(null, true);
     } else {
-      cb(
-        new Error(
-          "Error: File not valid. Only use jpg, gif or png for pictures or mp4 for video."
-        ) as any,
-        false
-      );
+      const error: FileUploadError = new Error(
+        "Error: File not valid. Only use jpg, gif or png for pictures or mp4 for video."
+      ) as FileUploadError;
+
+      error.statusCode = 400;
+      error.state = "error";
+      error.fileName = file.originalname;
+      error.mimeType = file.mimetype;
+      cb(error as any, false);
     }
   },
 });

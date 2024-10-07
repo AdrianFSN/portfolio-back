@@ -1,19 +1,25 @@
 import { Request, Response } from "express";
 import DeveloperJob from "../models/DeveloperJob";
 import upload from "../middlewares/filesManagement";
-import { CustomRequest } from "../middlewares/interfaces";
+import { CustomRequest } from "../types/CustomRequest";
+import { ValidationError } from "../types/CustomErrors";
 
 class DeveloperJobController {
   async create(req: CustomRequest, res: Response): Promise<void> {
     try {
       const { title, technologies, launchPeriod, info } = req.body;
 
-      if (!title || !technologies || launchPeriod || info) {
-        res.status(400).json({
-          state: "error",
-          message: "Title, technologies, info and launch period are required",
-          code: 400,
-        });
+      if (!title || !technologies || !launchPeriod || !info) {
+        const validationError: ValidationError = new Error(
+          "Validation failed"
+        ) as ValidationError;
+        validationError.statusCode = 400;
+        validationError.state = "error";
+        validationError.validationErrors = [
+          "Title, technologies, info and launch period are required",
+        ];
+
+        throw validationError;
       }
 
       const newJob = new DeveloperJob(req.body);
