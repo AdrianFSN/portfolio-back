@@ -8,7 +8,7 @@ import logger from "morgan";
 
 import indexRouter from "./routes/index";
 import usersRouter from "./routes/users";
-import developerJobRouter from "./routes/developerJobRoutes";
+import developer from "./routes/developerJobRoutes";
 
 const app = express();
 
@@ -31,7 +31,8 @@ app.use(express.static(path.join(__dirname, "public")));
 // API routes
 app.use("/api", indexRouter);
 app.use("/api/users", usersRouter);
-app.use("/api/developer-jobs", developerJobRouter);
+app.use("/api/developer-jobs", developer);
+console.log("Esto es developerJobREouter: ", developer);
 
 // catch 404 and forward to error handler
 app.use(function (req: Request, res: Response, next: NextFunction) {

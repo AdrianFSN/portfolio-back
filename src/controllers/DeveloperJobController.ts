@@ -1,10 +1,10 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import DeveloperJob from "../models/DeveloperJob";
 import { CustomRequest } from "../types/CustomRequest"; // Asegúrate de que esta ruta es correcta
 import { ValidationError } from "../types/CustomErrors"; // Asegúrate de que esta ruta es correcta
 
 class DeveloperJobController {
-  async create(req: CustomRequest, res: Response): Promise<void> {
+  async create(req: Request, res: Response): Promise<void> {
     try {
       const { title, technologies, launchPeriod, info } = req.body;
       console.log("esto es req.body: ", req.body);
@@ -26,14 +26,14 @@ class DeveloperJobController {
 
       console.log("Esto es newJob: ", newJob);
 
-      if (req.files) {
+      /*    if (req.files) {
         if (req.files.pictures) {
           newJob.pictures = req.files.pictures.map((file) => file.originalname);
         }
         if (req.files.videos) {
           newJob.videos = req.files.videos.map((file) => file.originalname);
         }
-      }
+      } */
 
       const savedJob = await newJob.save();
 
