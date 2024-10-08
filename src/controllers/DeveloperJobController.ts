@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import DeveloperJob from "../models/DeveloperJob";
-import { CustomRequest } from "../types/CustomRequest"; // Asegúrate de que esta ruta es correcta
-import { ValidationError } from "../types/CustomErrors"; // Asegúrate de que esta ruta es correcta
+import DeveloperJob from "../models/DeveloperJob.js";
+import { CustomRequest } from "../types/CustomRequest.js"; // Asegúrate de que esta ruta es correcta
+import { ValidationError } from "../types/CustomErrors.js"; // Asegúrate de que esta ruta es correcta
 
 class DeveloperJobController {
   async create(req: Request, res: Response): Promise<void> {

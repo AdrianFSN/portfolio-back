@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 
 import express from "express";
-import DeveloperJobController from "../controllers/DeveloperJobController";
-import upload from "../middlewares/filesManagement";
+import DeveloperJobController from "../controllers/DeveloperJobController.js";
+import upload from "../middlewares/filesManagement.js";
 
 const router = express.Router();
 

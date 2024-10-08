@@ -5,18 +5,24 @@ import express from "express";
 import path from "path";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
+import dotenv from "dotenv";
+import { connectMongoose } from "./lib/connectMongoose.js";
 
-import indexRouter from "./routes/index";
-import usersRouter from "./routes/users";
-import developer from "./routes/developerJobRoutes";
+import indexRouter from "./routes/index.js";
+import usersRouter from "./routes/users.js";
+import developer from "./routes/developerJobRoutes.js";
 
 const app = express();
 
+// Get __dirname
+const __filename = new URL(import.meta.url).pathname;
+const __dirname = path.dirname(__filename);
+
 // Load env variables from .env
-require("dotenv").config();
+dotenv.config();
 
 // Connect Mongoose
-require("./lib/connectMongoose");
+connectMongoose();
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));

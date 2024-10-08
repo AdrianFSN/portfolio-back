@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "cross-env NODE_ENV=production node ./dist/bin/www",
-    "dev": "cross-env NODE_ENV=development DEBUG=portfolio-back:* ts-node --esm ./src/bin/www.ts",
+    "dev": "cross-env NODE_OPTIONS=--loader=ts-node/esm NODE_ENV=development DEBUG=portfolio-back:* ts-node ./src/bin/www.ts",
     "build": "tsc",
     "prod": "npm run build && npm start"
   },
