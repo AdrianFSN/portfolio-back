@@ -1,13 +1,12 @@
 import { Request, Response } from "express";
 import DeveloperJob from "../models/DeveloperJob.js";
-import { CustomRequest } from "../types/CustomRequest.js"; // Asegúrate de que esta ruta es correcta
 import { ValidationError } from "../types/CustomErrors.js"; // Asegúrate de que esta ruta es correcta
 
 class DeveloperJobController {
   async create(req: Request, res: Response): Promise<void> {
     try {
       const { title, technologies, launchPeriod, info } = req.body;
-      console.log("esto es req.body: ", req.body);
+
       if (!title || !technologies || !launchPeriod || !info) {
         const validationError: ValidationError = new Error(
           "Validation failed"
@@ -23,16 +22,18 @@ class DeveloperJobController {
 
       const newJob = new DeveloperJob(req.body);
 
-      console.log("Esto es newJob: ", newJob);
+      if (req.files) {
+        const files = Object.assign({}, req.files) as {
+          [key: string]: Express.Multer.File[];
+        };
 
-      /*    if (req.files) {
-        if (req.files.pictures) {
-          newJob.pictures = req.files.pictures.map((file) => file.originalname);
+        if (files.pictures) {
+          newJob.pictures = files.pictures.map((file) => file.originalname);
         }
-        if (req.files.videos) {
-          newJob.videos = req.files.videos.map((file) => file.originalname);
+        if (files.videos) {
+          newJob.videos = files.videos.map((file) => file.originalname);
         }
-      } */
+      }
 
       const savedJob = await newJob.save();
 
