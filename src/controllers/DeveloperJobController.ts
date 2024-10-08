@@ -30,6 +30,7 @@ class DeveloperJobController {
         if (files.pictures) {
           newJob.pictures = files.pictures.map((file) => file.originalname);
         }
+
         if (files.videos) {
           newJob.videos = files.videos.map((file) => file.originalname);
         }
