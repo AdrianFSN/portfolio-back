@@ -12,7 +12,7 @@ import { connectMongoose } from "./lib/connectMongoose.js";
 
 import indexRouter from "./routes/index.js";
 import usersRouter from "./routes/users.js";
-import developer from "./routes/developerJobRoutes.js";
+import developerJobsRouter from "./routes/developerJobRoutes.js";
 
 const app = express();
 
@@ -52,7 +52,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // API routes
 app.use("/api", indexRouter);
 app.use("/api/users", usersRouter);
-app.use("/api/developer-jobs", developer);
+app.use("/api/developer-jobs", developerJobsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req: Request, res: Response, next: NextFunction) {

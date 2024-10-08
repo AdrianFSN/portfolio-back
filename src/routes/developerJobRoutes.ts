@@ -10,13 +10,13 @@ router.get("/", function (req: Request, res: Response, next: NextFunction) {
   res.send("respond with a resource");
 });
 
-//router.post(
-//  "/developer-jobs",
-//  /*   upload.fields([
-//    { name: "pictures", maxCount: 5 },
-//    { name: "videos", maxCount: 2 },
-//  ]), */
-//  DeveloperJobController.create
-//);
+router.post(
+  "/",
+  /*   upload.fields([
+    { name: "pictures", maxCount: 5 },
+    { name: "videos", maxCount: 2 },
+  ]), */
+  DeveloperJobController.create
+);
 
 export default router;
