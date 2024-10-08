@@ -8,7 +8,6 @@ class DeveloperJobController {
     try {
       const { title, technologies, launchPeriod, info } = req.body;
       console.log("esto es req.body: ", req.body);
-      // Validar campos requeridos
       if (!title || !technologies || !launchPeriod || !info) {
         const validationError: ValidationError = new Error(
           "Validation failed"
