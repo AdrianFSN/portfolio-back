@@ -7,14 +7,33 @@ import { FileUploadError } from "../types/CustomErrors.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const uploadDirectory = path.join(__dirname, "../../uploads/developerJobs");
-if (!fs.existsSync(uploadDirectory)) {
-  fs.mkdirSync(uploadDirectory, { recursive: true });
-}
+const uploadDirectories = {
+  image: path.join(__dirname, "../../uploads/image"),
+  video: path.join(__dirname, "../../uploads/video"),
+  audio: path.join(__dirname, "../../uploads/audio"),
+};
+
+Object.values(uploadDirectories).forEach((dir) => {
+  try {
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+  } catch (err) {
+    console.error(`Error creating directory ${dir}:`, err);
+  }
+});
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, uploadDirectory);
+    let dir = "";
+    if (/jpeg|jpg|gif|png$/.test(file.mimetype)) {
+      dir = uploadDirectories.image;
+    } else if (/mp4$/.test(file.mimetype)) {
+      dir = uploadDirectories.video;
+    } else if (/mp3$/.test(file.mimetype)) {
+      dir = uploadDirectories.audio;
+    }
+    cb(null, dir);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
@@ -28,16 +47,18 @@ const upload = multer({
     const fileTypes = {
       image: /jpeg|jpg|gif|png$/,
       video: /mp4$/,
+      audio: /mp3$/,
     };
 
     const isImage = fileTypes.image.test(file.mimetype);
     const isVideo = fileTypes.video.test(file.mimetype);
+    const isAudio = fileTypes.audio.test(file.mimetype);
 
-    if (isImage || isVideo) {
+    if (isImage || isVideo || isAudio) {
       cb(null, true);
     } else {
       const error: FileUploadError = new Error(
-        "Error: File not valid. Only use jpg, gif or png for pictures or mp4 for video."
+        "Error: File not valid. Only use jpg, gif or png for pictures, mp4 for video, and mp3 for audio."
       );
       error.statusCode = 400;
       error.state = "error";
