@@ -11,16 +11,24 @@ class JobExampleController extends BaseController {
 
   async create(req: Request, res: Response): Promise<void> {
     try {
-      const { title, technologies, launchPeriod, info } = req.body;
+      const { title, technologies, launchPeriod, info, customer, category } =
+        req.body;
 
-      if (!title || !technologies || !launchPeriod || !info) {
+      if (
+        !title ||
+        !technologies ||
+        !launchPeriod ||
+        !info ||
+        !customer ||
+        !category
+      ) {
         const validationError: ValidationError = new Error(
           "Validation failed"
         ) as ValidationError;
         validationError.statusCode = 400;
         validationError.state = "error";
         validationError.validationErrors = [
-          "Title, technologies, launch period, and info are required",
+          "Title, technologies, launch period, customer, category, and info are required",
         ];
 
         throw validationError;

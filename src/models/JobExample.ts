@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
+import JobCategories from "../types/JobCategories.js";
 
 interface interfaceJobExample extends Document {
   title: string;
@@ -7,7 +8,10 @@ interface interfaceJobExample extends Document {
   videos?: string[];
   audios?: string[];
   info: string;
+  customer: string;
+  linkToUrl?: string;
   launchPeriod: string;
+  category: JobCategories[];
 }
 
 const jobExampleSchema: Schema<interfaceJobExample> = new Schema({
@@ -34,6 +38,25 @@ const jobExampleSchema: Schema<interfaceJobExample> = new Schema({
     type: String,
     required: true,
   },
+  customer: {
+    type: String,
+    required: true,
+  },
+  linkToUrl: {
+    type: String,
+    validate: {
+      validator: function (value: string) {
+        try {
+          new URL(value);
+          return true;
+        } catch {
+          return false;
+        }
+      },
+      message: (props: { value: string }) =>
+        `${props.value} is not a valid URL. Please provide a valid URL.`,
+    },
+  },
   launchPeriod: {
     type: String,
     required: true,
@@ -45,6 +68,13 @@ const jobExampleSchema: Schema<interfaceJobExample> = new Schema({
       message: (props: { value: string }) =>
         `${props.value} is not a valid format. Please use YYYY/MM.`,
     },
+  },
+
+  category: {
+    type: [String],
+    enum: Object.values(JobCategories),
+    required: true,
+    index: true,
   },
 });
 
