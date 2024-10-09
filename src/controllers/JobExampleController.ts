@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import DeveloperJob from "../models/JobExample.js";
+import JobExample from "../models/JobExample.js";
 import CustomError, { ValidationError } from "../types/CustomErrors.js"; // Asegúrate de que esta ruta es correcta
 import BaseController from "./BaseController.js";
 
@@ -7,6 +7,7 @@ class JobExampleController extends BaseController {
   constructor() {
     super();
     this.create = this.create.bind(this); // Enlaza el método
+    this.get = this.get.bind(this); // Enlaza el método
   }
 
   async create(req: Request, res: Response): Promise<void> {
@@ -34,7 +35,7 @@ class JobExampleController extends BaseController {
         throw validationError;
       }
 
-      const newJob = new DeveloperJob(req.body);
+      const newJob = new JobExample(req.body);
 
       if (req.files) {
         const files = Object.assign({}, req.files) as {
@@ -57,6 +58,22 @@ class JobExampleController extends BaseController {
       const savedJob = await newJob.save();
 
       this.handleSuccess(res, savedJob, "Developer job created successfully!");
+    } catch (error) {
+      this.handleError(error as CustomError, res);
+    }
+  }
+
+  async get(req: Request, res: Response): Promise<void> {
+    try {
+      const jobExamplesList = await JobExample.find();
+
+      if (jobExamplesList) {
+        this.handleSuccess(
+          res,
+          jobExamplesList,
+          "Job examples list loaded successfully!"
+        );
+      }
     } catch (error) {
       this.handleError(error as CustomError, res);
     }

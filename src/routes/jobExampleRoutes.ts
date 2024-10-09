@@ -8,9 +8,7 @@ import upload from "../middlewares/filesManagement.js";
 const router = express.Router();
 //const upload = multer();
 
-router.get("/", function (req: Request, res: Response, next: NextFunction) {
-  res.send("respond with a resource");
-});
+router.get("/", JobExampleController.get);
 
 router.post(
   "/",
