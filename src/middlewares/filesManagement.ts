@@ -30,7 +30,7 @@ const storage = multer.diskStorage({
       dir = uploadDirectories.image;
     } else if (/mp4$/.test(file.mimetype)) {
       dir = uploadDirectories.video;
-    } else if (/mp3$/.test(file.mimetype)) {
+    } else if (/mp3|mpeg$/.test(file.mimetype)) {
       dir = uploadDirectories.audio;
     }
     cb(null, dir);
@@ -47,7 +47,7 @@ const upload = multer({
     const fileTypes = {
       image: /jpeg|jpg|gif|png$/,
       video: /mp4$/,
-      audio: /mp3$/,
+      audio: /mp3|mpeg$/,
     };
 
     const isImage = fileTypes.image.test(file.mimetype);

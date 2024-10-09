@@ -40,6 +40,10 @@ class JobExampleController extends BaseController {
         if (files.videos) {
           newJob.videos = files.videos.map((file) => file.originalname);
         }
+
+        if (files.audios) {
+          newJob.audios = files.audios.map((file) => file.originalname);
+        }
       }
 
       const savedJob = await newJob.save();

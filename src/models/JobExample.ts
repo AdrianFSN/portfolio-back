@@ -5,6 +5,7 @@ interface interfaceJobExample extends Document {
   technologies: string[];
   pictures?: string[];
   videos?: string[];
+  audios?: string[];
   info: string;
   launchPeriod: string;
 }
@@ -24,6 +25,9 @@ const jobExampleSchema: Schema<interfaceJobExample> = new Schema({
     type: [String],
   },
   videos: {
+    type: [String],
+  },
+  audios: {
     type: [String],
   },
   info: {
