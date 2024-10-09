@@ -1,8 +1,14 @@
 import { Request, Response } from "express";
 import DeveloperJob from "../models/JobExample.js";
-import { ValidationError } from "../types/CustomErrors.js"; // Asegúrate de que esta ruta es correcta
+import CustomError, { ValidationError } from "../types/CustomErrors.js"; // Asegúrate de que esta ruta es correcta
+import BaseController from "./BaseController.js";
 
-class JobExampleController {
+class JobExampleController extends BaseController {
+  constructor() {
+    super();
+    this.create = this.create.bind(this); // Enlaza el método
+  }
+
   async create(req: Request, res: Response): Promise<void> {
     try {
       const { title, technologies, launchPeriod, info } = req.body;
@@ -38,27 +44,9 @@ class JobExampleController {
 
       const savedJob = await newJob.save();
 
-      res.status(201).json({
-        state: "success",
-        data: savedJob,
-        message: "Developer job created successfully!",
-      });
+      this.handleSuccess(res, savedJob, "Developer job created successfully!");
     } catch (error) {
-      if ((error as ValidationError).validationErrors) {
-        res.status((error as ValidationError).statusCode || 400).json({
-          state: "error",
-          message: "Validation error",
-          validationErrors: (error as ValidationError).validationErrors,
-          code: (error as ValidationError).statusCode || 400,
-        });
-      } else {
-        res.status(500).json({
-          state: "error",
-          message: "Error creating developer job",
-          error: (error as Error).message,
-          code: 500,
-        });
-      }
+      this.handleError(error as CustomError, res);
     }
   }
 }
