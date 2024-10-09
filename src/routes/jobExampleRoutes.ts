@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import express from "express";
-import DeveloperJobController from "../controllers/DeveloperJobController.js";
+import JobExampleController from "../controllers/JobExampleController.js";
 import upload from "../middlewares/filesManagement.js";
 //import multer from "multer";
 
@@ -18,7 +18,7 @@ router.post(
     { name: "pictures", maxCount: 5 },
     { name: "videos", maxCount: 2 },
   ]),
-  DeveloperJobController.create
+  JobExampleController.create
 );
 
 export default router;

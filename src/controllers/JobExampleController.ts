@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import DeveloperJob from "../models/DeveloperJob.js";
+import DeveloperJob from "../models/JobExample.js";
 import { ValidationError } from "../types/CustomErrors.js"; // Asegúrate de que esta ruta es correcta
 
-class DeveloperJobController {
+class JobExampleController {
   async create(req: Request, res: Response): Promise<void> {
     try {
       const { title, technologies, launchPeriod, info } = req.body;
@@ -63,4 +63,4 @@ class DeveloperJobController {
   }
 }
 
-export default new DeveloperJobController();
+export default new JobExampleController();

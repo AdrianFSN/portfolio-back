@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-interface interfaceDeveloperJob extends Document {
+interface interfaceJobExample extends Document {
   title: string;
   technologies: string[];
   pictures?: string[];
@@ -9,7 +9,7 @@ interface interfaceDeveloperJob extends Document {
   launchPeriod: string;
 }
 
-const developerJobSchema: Schema<interfaceDeveloperJob> = new Schema({
+const jobExampleSchema: Schema<interfaceJobExample> = new Schema({
   title: {
     type: String,
     required: true,
@@ -44,9 +44,9 @@ const developerJobSchema: Schema<interfaceDeveloperJob> = new Schema({
   },
 });
 
-const developerJob = mongoose.model<interfaceDeveloperJob>(
-  "DeveloperJob",
-  developerJobSchema
+const jobExample = mongoose.model<interfaceJobExample>(
+  "JobExample",
+  jobExampleSchema
 );
 
-export default developerJob;
+export default jobExample;
