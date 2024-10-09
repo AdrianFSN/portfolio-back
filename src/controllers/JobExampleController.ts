@@ -1,13 +1,20 @@
 import { Request, Response } from "express";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import JobExample from "../models/JobExample.js";
 import CustomError, { ValidationError } from "../types/CustomErrors.js"; // Asegúrate de que esta ruta es correcta
 import BaseController from "./BaseController.js";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 class JobExampleController extends BaseController {
   constructor() {
     super();
-    this.create = this.create.bind(this); // Enlaza el método
-    this.get = this.get.bind(this); // Enlaza el método
+    this.create = this.create.bind(this);
+    this.get = this.get.bind(this);
+    this.delete = this.delete.bind(this);
   }
 
   async create(req: Request, res: Response): Promise<void> {
@@ -43,15 +50,15 @@ class JobExampleController extends BaseController {
         };
 
         if (files.pictures) {
-          newJob.pictures = files.pictures.map((file) => file.originalname);
+          newJob.pictures = files.pictures.map((file) => file.filename);
         }
 
         if (files.videos) {
-          newJob.videos = files.videos.map((file) => file.originalname);
+          newJob.videos = files.videos.map((file) => file.filename);
         }
 
         if (files.audios) {
-          newJob.audios = files.audios.map((file) => file.originalname);
+          newJob.audios = files.audios.map((file) => file.filename);
         }
       }
 
@@ -72,6 +79,65 @@ class JobExampleController extends BaseController {
           res,
           jobExamplesList,
           "Job examples list loaded successfully!"
+        );
+      }
+    } catch (error) {
+      this.handleError(error as CustomError, res);
+    }
+  }
+
+  async delete(req: Request, res: Response): Promise<void> {
+    try {
+      const jobExampleId = req.params._id;
+      const obtainedJobExample = await JobExample.findById({
+        _id: jobExampleId,
+      });
+
+      if (!obtainedJobExample) {
+        const errorGettingJobExample: CustomError = new Error(
+          `JobExample with ID ${jobExampleId} not found`
+        );
+        errorGettingJobExample.statusCode = 404;
+        errorGettingJobExample.state = "error";
+
+        throw errorGettingJobExample;
+      }
+
+      if (obtainedJobExample.pictures) {
+        obtainedJobExample.pictures.forEach((picture: string) => {
+          const filePath = path.join(__dirname, "../../uploads/image", picture);
+          if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+          }
+        });
+      }
+
+      if (obtainedJobExample.videos) {
+        obtainedJobExample.videos.forEach((video: string) => {
+          const filePath = path.join(__dirname, "../../uploads/video", video);
+          if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath); // Eliminamos el archivo
+          }
+        });
+      }
+
+      if (obtainedJobExample.audios) {
+        obtainedJobExample.audios.forEach((audio: string) => {
+          const filePath = path.join(__dirname, "../../uploads/audio", audio);
+          if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath); // Eliminamos el archivo
+          }
+        });
+      }
+
+      const deletedJobExample = await JobExample.deleteOne({
+        _id: jobExampleId,
+      });
+      if (deletedJobExample && obtainedJobExample) {
+        this.handleSuccess(
+          res,
+          deletedJobExample,
+          `Job ${obtainedJobExample.title} deleted succesfully!`
         );
       }
     } catch (error) {

@@ -9,6 +9,7 @@ const router = express.Router();
 //const upload = multer();
 
 router.get("/", JobExampleController.get);
+router.delete("/:_id", JobExampleController.delete);
 
 router.post(
   "/",

@@ -3,11 +3,12 @@ import CustomError, {
   ValidationError,
   FileUploadError,
   DatabaseError,
+  DocumentNotFound,
 } from "../types/CustomErrors.js";
 
 class BaseController {
   protected handleSuccess(res: Response, data: unknown, message: string) {
-    return res.status(201).json({
+    return res.status(200).json({
       state: "success",
       data,
       message,
@@ -36,6 +37,13 @@ class BaseController {
         parameters: error.parameters,
         code: error.statusCode || 500,
       });
+    } else if (this.isDocumentNotFound(error)) {
+      return res.status(error.statusCode || 404).json({
+        state: "error",
+        message: "Document not found",
+        error: error.message,
+        code: error.statusCode || 404,
+      });
     } else {
       return res.status(500).json({
         state: "error",
@@ -46,6 +54,9 @@ class BaseController {
     }
   }
 
+  private isDocumentNotFound(error: CustomError): error is ValidationError {
+    return (error as DocumentNotFound).message !== undefined;
+  }
   private isValidationError(error: CustomError): error is ValidationError {
     return (error as ValidationError).validationErrors !== undefined;
   }

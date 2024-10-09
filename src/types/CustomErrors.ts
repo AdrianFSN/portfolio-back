@@ -3,6 +3,9 @@ export default interface CustomError extends Error {
   state?: string;
 }
 
+export interface DocumentNotFound extends CustomError {
+  parameters?: unknown;
+}
 export interface ValidationError extends CustomError {
   validationErrors: string[];
 }
