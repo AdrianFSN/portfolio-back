@@ -15,6 +15,7 @@ class JobExampleController extends BaseController {
     this.create = this.create.bind(this);
     this.get = this.get.bind(this);
     this.delete = this.delete.bind(this);
+    this.update = this.update.bind(this);
   }
 
   async create(req: Request, res: Response): Promise<void> {
@@ -142,6 +143,102 @@ class JobExampleController extends BaseController {
           `Job ${obtainedJobExample.title} deleted succesfully!`
         );
       }
+    } catch (error) {
+      this.handleError(error as CustomError, res);
+    }
+  }
+
+  async update(req: Request, res: Response): Promise<void> {
+    try {
+      const jobExampleId = req.params._id;
+      const { title, technologies, launchPeriod, info, customer, category } =
+        req.body;
+
+      if (
+        !title ||
+        !technologies ||
+        !launchPeriod ||
+        !info ||
+        !customer ||
+        !category
+      ) {
+        const validationError: ValidationError = new Error(
+          "Validation failed"
+        ) as ValidationError;
+        validationError.statusCode = 400;
+        validationError.state = "error";
+        validationError.validationErrors = [
+          "Title, technologies, launch period, customer, category, and info are required",
+        ];
+
+        throw validationError;
+      }
+
+      const obtainedJobExample = await JobExample.findById({
+        _id: jobExampleId,
+      });
+
+      if (!obtainedJobExample) {
+        const errorGettingJobExample: CustomError = new Error(
+          `JobExample with ID ${jobExampleId} not found`
+        );
+        errorGettingJobExample.statusCode = 404;
+        errorGettingJobExample.state = "error";
+        throw errorGettingJobExample;
+      }
+
+      obtainedJobExample.title = title;
+      obtainedJobExample.technologies = technologies;
+      obtainedJobExample.launchPeriod = launchPeriod;
+      obtainedJobExample.info = info;
+      obtainedJobExample.customer = customer;
+      obtainedJobExample.category = category;
+
+      if (req.files) {
+        const files = Object.assign({}, req.files) as {
+          [key: string]: Express.Multer.File[];
+        };
+
+        if (files.pictures) {
+          (obtainedJobExample as any).pictures.forEach((picture: string) => {
+            const filePath = path.join(
+              __dirname,
+              "../../uploads/image",
+              picture
+            );
+            if (fs.existsSync(filePath)) {
+              fs.unlinkSync(filePath);
+            }
+          });
+          obtainedJobExample.pictures = files.pictures.map(
+            (file) => file.filename
+          );
+        }
+
+        if (files.videos) {
+          (obtainedJobExample as any).videos.forEach((video: string) => {
+            const filePath = path.join(__dirname, "../../uploads/video", video);
+            if (fs.existsSync(filePath)) {
+              fs.unlinkSync(filePath);
+            }
+          });
+          obtainedJobExample.videos = files.videos.map((file) => file.filename);
+        }
+
+        if (files.audios) {
+          (obtainedJobExample as any).audios.forEach((audio: string) => {
+            const filePath = path.join(__dirname, "../../uploads/audio", audio);
+            if (fs.existsSync(filePath)) {
+              fs.unlinkSync(filePath);
+            }
+          });
+          obtainedJobExample.audios = files.audios.map((file) => file.filename);
+        }
+      }
+
+      const updatedJobExample = await obtainedJobExample.save();
+
+      this.handleSuccess(res, updatedJobExample, "Job updated successfully!");
     } catch (error) {
       this.handleError(error as CustomError, res);
     }
