@@ -78,7 +78,9 @@ class JobExampleController extends BaseController {
         this.handleSuccess(
           res,
           jobExamplesList,
-          "Job examples list loaded successfully!"
+          jobExamplesList.length > 0
+            ? "Job examples list loaded successfully!"
+            : "Resource loaded successfully, but your job examples list is empty!"
         );
       }
     } catch (error) {
