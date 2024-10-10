@@ -73,12 +73,70 @@ class JobExampleController extends BaseController {
 
   async get(req: Request, res: Response): Promise<void> {
     try {
-      const jobExamplesList = await JobExample.find();
+      let filters: any = {};
+
+      if (req.query.hasOwnProperty("category")) {
+        if (Array.isArray(req.query.category)) {
+          filters.category = { $in: req.query.category };
+        } else if (typeof req.query.category === "string") {
+          filters.category = req.query.category;
+        }
+      }
+
+      if (
+        req.query.hasOwnProperty("launchPeriod") &&
+        typeof req.query.launchPeriod === "string"
+      ) {
+        const year = req.query.launchPeriod;
+        filters.launchPeriod = new RegExp(`^${year}/`);
+      }
+
+      if (req.query.hasOwnProperty("technologies")) {
+        if (Array.isArray(req.query.technologies)) {
+          filters.technologies = { $in: req.query.technologies };
+        } else if (typeof req.query.technologies === "string") {
+          filters.technologies = req.query.technologies;
+        }
+      }
+
+      if (
+        req.query.hasOwnProperty("customer") &&
+        typeof req.query.customer === "string"
+      ) {
+        filters.customer = req.query.customer;
+      }
+
+      if (
+        req.query.hasOwnProperty("title") &&
+        typeof req.query.title === "string"
+      ) {
+        filters.title = req.query.title;
+      }
+
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const skip = (page - 1) * limit;
+
+      const sortField = (req.query.sort as string) || "createdAt";
+      const sortOrder = req.query.order === "desc" ? -1 : 1;
+
+      const jobExamplesList = await JobExample.find(filters)
+        .skip(skip)
+        .limit(limit)
+        .sort({ [sortField]: sortOrder });
+
+      const totalJobs = await JobExample.countDocuments(filters);
+      const totalPages = Math.ceil(totalJobs / limit);
 
       if (jobExamplesList) {
         this.handleSuccess(
           res,
-          jobExamplesList,
+          {
+            totalJobs,
+            totalPages,
+            currentPage: page,
+            jobExamples: jobExamplesList,
+          },
           jobExamplesList.length > 0
             ? "Job examples list loaded successfully!"
             : "Resource loaded successfully, but your job examples list is empty!"
