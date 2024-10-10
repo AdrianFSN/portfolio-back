@@ -6,6 +6,7 @@ import path from "path";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
 import dotenv from "dotenv";
+import helmet from "helmet";
 import fs from "fs";
 import { fileURLToPath } from "node:url";
 import { connectMongoose } from "./lib/connectMongoose.js";
@@ -40,9 +41,9 @@ fs.readdir(viewsPath, (err, files) => {
 });
 
 app.set("views", viewsPath);
-
 app.set("view engine", "ejs");
 
+app.use(helmet());
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
