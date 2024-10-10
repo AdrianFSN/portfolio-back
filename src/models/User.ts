@@ -1,13 +1,15 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 import bcrypt from "bcrypt";
-import { DatabaseError } from "types/CustomErrors";
-import { ValidationError } from "types/CustomErrors";
+import UserRoles from "../types/UserRoles.js";
+import { DatabaseError } from "../types/CustomErrors.js";
+import { ValidationError } from "../types/CustomErrors.js";
 
 interface interfaceUser extends Document {
   username: string;
   email: string;
   password: string;
+  role: UserRoles;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -26,6 +28,12 @@ const userSchema: Schema<interfaceUser> = new Schema({
   },
   password: {
     type: String,
+    required: true,
+  },
+  role: {
+    type: String,
+    enum: Object.values(UserRoles),
+    default: UserRoles.USER,
     required: true,
   },
 });
