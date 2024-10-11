@@ -12,7 +12,9 @@ router.get("/", UserController.get);
 /* PUT existing user */
 router.put("/:id", UserController.update);
 
-/* PUT existing user */
+/* DELETE existing user */
 router.delete("/:id", UserController.delete);
 
+/* Login*/
+router.post("/login", UserController.login);
 export default router;

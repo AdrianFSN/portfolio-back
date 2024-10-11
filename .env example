@@ -1,2 +1,4 @@
 PORT=3000
 DEBUG=portfolio-back:*
+DATABASE_URI=Your URI
+JWT_SECRET=your secret password

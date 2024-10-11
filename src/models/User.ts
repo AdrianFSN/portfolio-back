@@ -71,8 +71,6 @@ userSchema.pre("save", async function (next) {
   }
 });
 
-const user = mongoose.model<interfaceUser>("User", userSchema);
-
 userSchema.methods.comparePassword = async function (
   candidatePassword: string
 ): Promise<boolean> {
@@ -89,5 +87,7 @@ userSchema.methods.comparePassword = async function (
     throw validationError;
   }
 };
+
+const user = mongoose.model<interfaceUser>("User", userSchema);
 
 export default user;
