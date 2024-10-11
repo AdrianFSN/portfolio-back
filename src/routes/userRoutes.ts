@@ -9,4 +9,7 @@ router.post("/", UserController.create);
 /* GET users listing. */
 router.get("/", UserController.get);
 
+/* PUT existing user */
+router.put("/:id", UserController.update);
+
 export default router;

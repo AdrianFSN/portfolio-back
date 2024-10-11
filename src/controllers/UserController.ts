@@ -8,6 +8,7 @@ class UserController extends BaseController {
     super();
     this.create = this.create.bind(this);
     this.get = this.get.bind(this);
+    this.update = this.update.bind(this);
   }
 
   async create(req: Request, res: Response): Promise<void> {
@@ -131,6 +132,73 @@ class UserController extends BaseController {
             : "Resource loaded successfully, but the user's list is empty"
         );
       }
+    } catch (error) {
+      this.handleError(error as CustomError, res);
+    }
+  }
+
+  async update(req: Request, res: Response): Promise<void> {
+    try {
+      const { username, email } = req.body;
+      const userId = req.params.id;
+
+      const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+
+      if (email && !emailRegex.test(email)) {
+        const validationError: ValidationError = new Error(
+          "Validation failed"
+        ) as ValidationError;
+        validationError.statusCode = 400;
+        validationError.state = "error";
+        validationError.validationErrors = [
+          "Please enter a valid email address",
+        ];
+        throw validationError;
+      }
+
+      const existingUser = await User.findById(userId);
+      if (!existingUser) {
+        const validationError: ValidationError = new Error(
+          "User not found"
+        ) as ValidationError;
+        validationError.statusCode = 404;
+        validationError.state = "error";
+        validationError.validationErrors = ["User not found"];
+        throw validationError;
+      }
+
+      if (username && username !== existingUser.username) {
+        const checkUsernameExists = await User.findOne({ username });
+        if (checkUsernameExists) {
+          const validationError: ValidationError = new Error(
+            "Validation failed"
+          ) as ValidationError;
+          validationError.statusCode = 400;
+          validationError.state = "error";
+          validationError.validationErrors = [`${username} is already in use`];
+          throw validationError;
+        }
+        existingUser.username = username;
+      }
+
+      if (email && email !== existingUser.email) {
+        const checkUserEmailExists = await User.findOne({ email });
+        if (checkUserEmailExists) {
+          const validationError: ValidationError = new Error(
+            "Validation failed"
+          ) as ValidationError;
+          validationError.statusCode = 400;
+          validationError.state = "error";
+          validationError.validationErrors = [`${email} is already in use`];
+          throw validationError;
+        }
+        existingUser.email = email;
+      }
+
+      const savedUser = await existingUser.save();
+      savedUser.password = "******";
+
+      this.handleSuccess(res, savedUser, "User updated successfully!");
     } catch (error) {
       this.handleError(error as CustomError, res);
     }

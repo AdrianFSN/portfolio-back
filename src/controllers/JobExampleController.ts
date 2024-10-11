@@ -183,7 +183,7 @@ class JobExampleController extends BaseController {
 
   async delete(req: Request, res: Response): Promise<void> {
     try {
-      const jobExampleId = req.params._id;
+      const jobExampleId = req.params.id;
       const obtainedJobExample = await JobExample.findById({
         _id: jobExampleId,
       });
@@ -242,7 +242,7 @@ class JobExampleController extends BaseController {
 
   async update(req: Request, res: Response): Promise<void> {
     try {
-      const jobExampleId = req.params._id;
+      const jobExampleId = req.params.id;
       const {
         title,
         technologies,

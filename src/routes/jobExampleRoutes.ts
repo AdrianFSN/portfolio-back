@@ -9,7 +9,7 @@ const router = express.Router();
 //const upload = multer();
 
 router.get("/", JobExampleController.get);
-router.delete("/:_id", JobExampleController.delete);
+router.delete("/:id", JobExampleController.delete);
 
 router.post(
   "/",
@@ -21,7 +21,7 @@ router.post(
   JobExampleController.create
 );
 router.put(
-  "/:_id",
+  "/:id",
   upload.fields([
     { name: "pictures", maxCount: 5 },
     { name: "videos", maxCount: 2 },
