@@ -7,6 +7,7 @@ class UserController extends BaseController {
   constructor() {
     super();
     this.create = this.create.bind(this);
+    this.get = this.get.bind(this);
   }
 
   async create(req: Request, res: Response): Promise<void> {
@@ -85,9 +86,51 @@ class UserController extends BaseController {
       });
 
       const savedUser = await newUser.save();
-      savedUser.password = "******";
+      if (savedUser) {
+        savedUser.password = "******";
+        this.handleSuccess(res, savedUser, "User created successfully!");
+      }
+    } catch (error) {
+      this.handleError(error as CustomError, res);
+    }
+  }
 
-      this.handleSuccess(res, savedUser, "User created successfully!");
+  async get(req: Request, res: Response): Promise<void> {
+    try {
+      let filters: any = {};
+
+      if (
+        req.query.hasOwnProperty("role") &&
+        typeof req.query.role === "string"
+      ) {
+        filters.role = req.query.role;
+      }
+
+      if (
+        req.query.hasOwnProperty("username") &&
+        typeof req.query.username === "string"
+      ) {
+        filters.username = req.query.username;
+      }
+
+      if (
+        req.query.hasOwnProperty("email") &&
+        typeof req.query.email === "string"
+      ) {
+        filters.email = req.query.email;
+      }
+
+      const usersList = await User.find(filters);
+
+      if (usersList) {
+        this.handleSuccess(
+          res,
+          usersList,
+          usersList.length > 0
+            ? "Users list loaded successfully!"
+            : "Resource loaded successfully, but the user's list is empty"
+        );
+      }
     } catch (error) {
       this.handleError(error as CustomError, res);
     }

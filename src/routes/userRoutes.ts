@@ -7,8 +7,6 @@ const router = express.Router();
 router.post("/", UserController.create);
 
 /* GET users listing. */
-router.get("/", function (req: Request, res: Response, next: NextFunction) {
-  res.send("respond with a resource");
-});
+router.get("/", UserController.get);
 
 export default router;

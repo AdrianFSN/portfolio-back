@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import UserRoles from "../types/UserRoles.js";
 import { DatabaseError } from "../types/CustomErrors.js";
 import { ValidationError } from "../types/CustomErrors.js";
@@ -13,38 +13,42 @@ interface interfaceUser extends Document {
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
-const userSchema: Schema<interfaceUser> = new Schema({
-  username: {
-    type: String,
-    unique: true,
-    required: true,
-    index: true,
+const userSchema: Schema<interfaceUser> = new Schema(
+  {
+    username: {
+      type: String,
+      unique: true,
+      required: true,
+      index: true,
+    },
+    email: {
+      type: String,
+      unique: true,
+      required: true,
+      index: true,
+    },
+    password: {
+      type: String,
+      required: true,
+      select: false,
+    },
+    role: {
+      type: String,
+      enum: Object.values(UserRoles),
+      default: UserRoles.USER,
+      required: true,
+      index: true,
+    },
   },
-  email: {
-    type: String,
-    unique: true,
-    required: true,
-    index: true,
-  },
-  password: {
-    type: String,
-    required: true,
-    select: false,
-  },
-  role: {
-    type: String,
-    enum: Object.values(UserRoles),
-    default: UserRoles.USER,
-    required: true,
-  },
-});
-
-const user = mongoose.model<interfaceUser>("User", userSchema);
+  { timestamps: true }
+);
 
 userSchema.pre("save", async function (next) {
+  console.log("Middleware pre-save ejecutado.");
   const user = this as interfaceUser;
 
   if (!user.isModified("password")) {
+    console.log("Password not modified, skipping encryption.");
     return next();
   }
 
@@ -66,6 +70,8 @@ userSchema.pre("save", async function (next) {
     next(dbError);
   }
 });
+
+const user = mongoose.model<interfaceUser>("User", userSchema);
 
 userSchema.methods.comparePassword = async function (
   candidatePassword: string

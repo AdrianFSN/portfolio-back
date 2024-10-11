@@ -14,49 +14,52 @@ interface interfaceJobExample extends Document {
   category: JobCategories[];
 }
 
-const jobExampleSchema: Schema<interfaceJobExample> = new Schema({
-  title: {
-    type: String,
-    required: true,
-    index: true,
+const jobExampleSchema: Schema<interfaceJobExample> = new Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+      index: true,
+    },
+    technologies: {
+      type: [String],
+      required: true,
+      index: true,
+    },
+    pictures: {
+      type: [String],
+    },
+    videos: {
+      type: [String],
+    },
+    audios: {
+      type: [String],
+    },
+    info: {
+      type: String,
+      required: true,
+    },
+    customer: {
+      type: String,
+      required: true,
+    },
+    linkToUrl: {
+      type: String,
+    },
+    launchPeriod: {
+      type: String,
+      required: true,
+      index: true,
+    },
+    category: {
+      type: [String],
+      enum: Object.values(JobCategories),
+      required: true,
+      index: true,
+    },
   },
-  technologies: {
-    type: [String],
-    required: true,
-    index: true,
-  },
-  pictures: {
-    type: [String],
-  },
-  videos: {
-    type: [String],
-  },
-  audios: {
-    type: [String],
-  },
-  info: {
-    type: String,
-    required: true,
-  },
-  customer: {
-    type: String,
-    required: true,
-  },
-  linkToUrl: {
-    type: String,
-  },
-  launchPeriod: {
-    type: String,
-    required: true,
-    index: true,
-  },
-  category: {
-    type: [String],
-    enum: Object.values(JobCategories),
-    required: true,
-    index: true,
-  },
-});
+  { timestamps: true }
+);
 
 const jobExample = mongoose.model<interfaceJobExample>(
   "JobExample",
