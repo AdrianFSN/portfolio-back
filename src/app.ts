@@ -12,7 +12,7 @@ import { fileURLToPath } from "node:url";
 import { connectMongoose } from "./lib/connectMongoose.js";
 
 import indexRouter from "./routes/index.js";
-import usersRouter from "./routes/users.js";
+import usersRouter from "./routes/userRoutes.js";
 import jobExamplesRouter from "./routes/jobExampleRoutes.js";
 
 const app = express();

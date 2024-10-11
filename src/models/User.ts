@@ -29,6 +29,7 @@ const userSchema: Schema<interfaceUser> = new Schema({
   password: {
     type: String,
     required: true,
+    select: false,
   },
   role: {
     type: String,
