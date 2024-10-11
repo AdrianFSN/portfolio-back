@@ -44,32 +44,12 @@ const jobExampleSchema: Schema<interfaceJobExample> = new Schema({
   },
   linkToUrl: {
     type: String,
-    validate: {
-      validator: function (value: string) {
-        try {
-          new URL(value);
-          return true;
-        } catch {
-          return false;
-        }
-      },
-      message: (props: { value: string }) =>
-        `${props.value} is not a valid URL. Please provide a valid URL.`,
-    },
   },
   launchPeriod: {
     type: String,
     required: true,
     index: true,
-    validate: {
-      validator: function (value: string) {
-        return /^\d{4}\/(0[1-9]|1[0-2])$/.test(value);
-      },
-      message: (props: { value: string }) =>
-        `${props.value} is not a valid format. Please use YYYY/MM.`,
-    },
   },
-
   category: {
     type: [String],
     enum: Object.values(JobCategories),

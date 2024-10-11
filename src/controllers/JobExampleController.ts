@@ -3,8 +3,9 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import JobExample from "../models/JobExample.js";
-import CustomError, { ValidationError } from "../types/CustomErrors.js"; // Asegúrate de que esta ruta es correcta
+import CustomError, { ValidationError } from "../types/CustomErrors.js";
 import BaseController from "./BaseController.js";
+import isValidUrl from "../utils/validUrlChecker.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,8 +21,15 @@ class JobExampleController extends BaseController {
 
   async create(req: Request, res: Response): Promise<void> {
     try {
-      const { title, technologies, launchPeriod, info, customer, category } =
-        req.body;
+      const {
+        title,
+        technologies,
+        launchPeriod,
+        info,
+        customer,
+        category,
+        linkToUrl,
+      } = req.body;
 
       if (
         !title ||
@@ -38,6 +46,32 @@ class JobExampleController extends BaseController {
         validationError.state = "error";
         validationError.validationErrors = [
           "Title, technologies, launch period, customer, category, and info are required",
+        ];
+
+        throw validationError;
+      }
+
+      if (!/^\d{4}\/(0[1-9]|1[0-2])$/.test(launchPeriod)) {
+        const validationError: ValidationError = new Error(
+          "Validation failed"
+        ) as ValidationError;
+        validationError.statusCode = 400;
+        validationError.state = "error";
+        validationError.validationErrors = [
+          `${launchPeriod} is not a valid format. Please use YYYY/MM.`,
+        ];
+
+        throw validationError;
+      }
+
+      if (linkToUrl && !isValidUrl(linkToUrl)) {
+        const validationError: ValidationError = new Error(
+          "Validation failed"
+        ) as ValidationError;
+        validationError.statusCode = 400;
+        validationError.state = "error";
+        validationError.validationErrors = [
+          `${linkToUrl} is not a valid URL. Please provide a valid URL.`,
         ];
 
         throw validationError;
@@ -209,8 +243,15 @@ class JobExampleController extends BaseController {
   async update(req: Request, res: Response): Promise<void> {
     try {
       const jobExampleId = req.params._id;
-      const { title, technologies, launchPeriod, info, customer, category } =
-        req.body;
+      const {
+        title,
+        technologies,
+        launchPeriod,
+        info,
+        customer,
+        category,
+        linkToUrl,
+      } = req.body;
 
       if (
         !title ||
@@ -227,6 +268,32 @@ class JobExampleController extends BaseController {
         validationError.state = "error";
         validationError.validationErrors = [
           "Title, technologies, launch period, customer, category, and info are required",
+        ];
+
+        throw validationError;
+      }
+
+      if (!/^\d{4}\/(0[1-9]|1[0-2])$/.test(launchPeriod)) {
+        const validationError: ValidationError = new Error(
+          "Validation failed"
+        ) as ValidationError;
+        validationError.statusCode = 400;
+        validationError.state = "error";
+        validationError.validationErrors = [
+          `${launchPeriod} is not a valid format. Please use YYYY/MM.`,
+        ];
+
+        throw validationError;
+      }
+
+      if (linkToUrl && !isValidUrl(linkToUrl)) {
+        const validationError: ValidationError = new Error(
+          "Validation failed"
+        ) as ValidationError;
+        validationError.statusCode = 400;
+        validationError.state = "error";
+        validationError.validationErrors = [
+          `${linkToUrl} is not a valid URL. Please provide a valid URL.`,
         ];
 
         throw validationError;
@@ -251,6 +318,7 @@ class JobExampleController extends BaseController {
       obtainedJobExample.info = info;
       obtainedJobExample.customer = customer;
       obtainedJobExample.category = category;
+      obtainedJobExample.linkToUrl = linkToUrl;
 
       if (req.files) {
         const files = Object.assign({}, req.files) as {
