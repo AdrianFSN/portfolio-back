@@ -9,6 +9,7 @@ class UserController extends BaseController {
     this.create = this.create.bind(this);
     this.get = this.get.bind(this);
     this.update = this.update.bind(this);
+    this.delete = this.delete.bind(this);
   }
 
   async create(req: Request, res: Response): Promise<void> {
@@ -199,6 +200,38 @@ class UserController extends BaseController {
       savedUser.password = "******";
 
       this.handleSuccess(res, savedUser, "User updated successfully!");
+    } catch (error) {
+      this.handleError(error as CustomError, res);
+    }
+  }
+
+  async delete(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = req.params.id;
+      const obtainedUser = await User.findById({
+        _id: userId,
+      });
+
+      if (!obtainedUser) {
+        const errorGettingUser: CustomError = new Error(
+          `User with ID ${userId} not found`
+        );
+        errorGettingUser.statusCode = 404;
+        errorGettingUser.state = "error";
+
+        throw errorGettingUser;
+      }
+
+      const deletedUser = await User.deleteOne({
+        _id: userId,
+      });
+      if (deletedUser && obtainedUser) {
+        this.handleSuccess(
+          res,
+          deletedUser,
+          `User ${obtainedUser.username} deleted succesfully!`
+        );
+      }
     } catch (error) {
       this.handleError(error as CustomError, res);
     }
