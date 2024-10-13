@@ -54,7 +54,7 @@ class BaseController {
     }
   }
 
-  private isDocumentNotFound(error: CustomError): error is ValidationError {
+  private isDocumentNotFound(error: CustomError): error is DocumentNotFound {
     return (error as DocumentNotFound).message !== undefined;
   }
   private isValidationError(error: CustomError): error is ValidationError {

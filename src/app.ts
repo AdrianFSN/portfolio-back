@@ -12,6 +12,7 @@ import { fileURLToPath } from "node:url";
 import { connectMongoose } from "./lib/connectMongoose.js";
 
 import indexRouter from "./routes/index.js";
+import authRouter from "./routes/authRoutes.js";
 import usersRouter from "./routes/userRoutes.js";
 import jobExamplesRouter from "./routes/jobExampleRoutes.js";
 
@@ -52,6 +53,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // API routes
 app.use("/api", indexRouter);
+app.use("/api/session", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/job-examples", jobExamplesRouter);
 

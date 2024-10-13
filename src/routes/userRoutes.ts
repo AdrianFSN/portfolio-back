@@ -1,4 +1,3 @@
-import { NextFunction, Request, Response } from "express";
 import UserController from "../controllers/UserController.js";
 import express from "express";
 const router = express.Router();
@@ -15,6 +14,4 @@ router.put("/:id", UserController.update);
 /* DELETE existing user */
 router.delete("/:id", UserController.delete);
 
-/* Login*/
-router.post("/login", UserController.login);
 export default router;

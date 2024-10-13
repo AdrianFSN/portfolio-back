@@ -12,6 +12,7 @@ interface interfaceJobExample extends Document {
   linkToUrl?: string;
   launchPeriod: string;
   category: JobCategories[];
+  owner: string;
 }
 
 const jobExampleSchema: Schema<interfaceJobExample> = new Schema(
@@ -54,6 +55,11 @@ const jobExampleSchema: Schema<interfaceJobExample> = new Schema(
     category: {
       type: [String],
       enum: Object.values(JobCategories),
+      required: true,
+      index: true,
+    },
+    owner: {
+      type: String,
       required: true,
       index: true,
     },
