@@ -6,6 +6,11 @@ export default interface CustomError extends Error {
 export interface DocumentNotFound extends CustomError {
   parameters?: unknown;
 }
+
+export interface NotAuthorized extends CustomError {
+  parameters?: unknown;
+}
+
 export interface ValidationError extends CustomError {
   validationErrors: string[];
 }

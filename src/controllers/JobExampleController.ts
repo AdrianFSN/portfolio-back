@@ -97,6 +97,8 @@ class JobExampleController extends BaseController {
         }
       }
 
+      //const owner = req.user.id
+
       const savedJob = await newJob.save();
 
       this.handleSuccess(res, savedJob, "Developer job created successfully!");

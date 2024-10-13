@@ -4,6 +4,7 @@ import CustomError, {
   FileUploadError,
   DatabaseError,
   DocumentNotFound,
+  NotAuthorized,
 } from "../types/CustomErrors.js";
 
 class BaseController {
@@ -44,6 +45,13 @@ class BaseController {
         error: error.message,
         code: error.statusCode || 404,
       });
+    } else if (this.isNotAuthorized(error)) {
+      return res.status(error.statusCode || 404).json({
+        state: "error",
+        message: "Unauthorized",
+        error: error.message,
+        code: error.statusCode || 401,
+      });
     } else {
       return res.status(500).json({
         state: "error",
@@ -57,6 +65,11 @@ class BaseController {
   private isDocumentNotFound(error: CustomError): error is DocumentNotFound {
     return (error as DocumentNotFound).message !== undefined;
   }
+
+  private isNotAuthorized(error: CustomError): error is DocumentNotFound {
+    return (error as NotAuthorized).message !== undefined;
+  }
+
   private isValidationError(error: CustomError): error is ValidationError {
     return (error as ValidationError).validationErrors !== undefined;
   }

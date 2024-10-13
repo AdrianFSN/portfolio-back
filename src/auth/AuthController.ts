@@ -49,7 +49,7 @@ class AuthController extends BaseController {
       }
 
       const token = jwt.sign(
-        { userId: user._id, email: user.email },
+        { userId: user._id },
         process.env.JWT_SECRET as string,
         {
           expiresIn: "2h",
