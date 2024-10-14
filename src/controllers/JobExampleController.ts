@@ -183,7 +183,7 @@ class JobExampleController extends BaseController {
       if (obtainedJobExample.pictures) {
         obtainedJobExample.pictures.forEach((picture: string) => {
           const filePath = path.join(__dirname, "../../uploads/image", picture);
-          if (fs.existsSync(filePath)) {
+          if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
             fs.unlinkSync(filePath);
           }
         });
@@ -192,7 +192,7 @@ class JobExampleController extends BaseController {
       if (obtainedJobExample.videos) {
         obtainedJobExample.videos.forEach((video: string) => {
           const filePath = path.join(__dirname, "../../uploads/video", video);
-          if (fs.existsSync(filePath)) {
+          if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
             fs.unlinkSync(filePath);
           }
         });
@@ -201,7 +201,7 @@ class JobExampleController extends BaseController {
       if (obtainedJobExample.audios) {
         obtainedJobExample.audios.forEach((audio: string) => {
           const filePath = path.join(__dirname, "../../uploads/audio", audio);
-          if (fs.existsSync(filePath)) {
+          if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
             fs.unlinkSync(filePath);
           }
         });
