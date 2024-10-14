@@ -6,7 +6,7 @@ import isAuthorized from "../middlewares/isAuthorized.js";
 const router = express.Router();
 
 /* POST new user */
-router.post("/", isAuthorized, UserController.create);
+router.post("/", isAuthenticated, isAuthorized, UserController.create);
 
 /* GET users listing. */
 router.get("/", isAuthenticated, isAuthorized, UserController.get);

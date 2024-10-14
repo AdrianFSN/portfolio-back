@@ -12,6 +12,10 @@ const isAuthorized = async (
   next: NextFunction
 ): Promise<void> => {
   try {
+    if (!req.user) {
+      throw createForbiddenError("Forbidden: Insufficient permissions");
+    }
+
     const { userId } = req.user!;
 
     if (!userId) {
@@ -27,7 +31,7 @@ const isAuthorized = async (
     }
 
     if (user.role !== "admin") {
-      throw createForbiddenError("Access denied: Insufficient permissions.");
+      throw createForbiddenError("Access denied: Insufficient permissions");
     }
 
     next();
