@@ -3,9 +3,12 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import JobExample from "../models/JobExample.js";
-import CustomError, { ValidationError } from "../types/CustomErrors.js";
+import CustomError from "../types/CustomErrors.js";
 import BaseController from "./BaseController.js";
 import isValidUrl from "../utils/validUrlChecker.js";
+import { AuthenticatedRequest } from "../types/AuthenticatedRequest.js";
+import createValidationError from "../utils/createValidationError.js";
+import createCustomError from "../utils/createCustomError.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,8 +22,10 @@ class JobExampleController extends BaseController {
     this.update = this.update.bind(this);
   }
 
-  async create(req: Request, res: Response): Promise<void> {
+  async create(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
+      const { userId } = req.user!;
+
       const {
         title,
         technologies,
@@ -39,45 +44,25 @@ class JobExampleController extends BaseController {
         !customer ||
         !category
       ) {
-        const validationError: ValidationError = new Error(
-          "Validation failed"
-        ) as ValidationError;
-        validationError.statusCode = 400;
-        validationError.state = "error";
-        validationError.validationErrors = [
+        throw createValidationError("Validation error", [
           "Title, technologies, launch period, customer, category, and info are required",
-        ];
-
-        throw validationError;
+        ]);
       }
 
       if (!/^\d{4}\/(0[1-9]|1[0-2])$/.test(launchPeriod)) {
-        const validationError: ValidationError = new Error(
-          "Validation failed"
-        ) as ValidationError;
-        validationError.statusCode = 400;
-        validationError.state = "error";
-        validationError.validationErrors = [
+        throw createValidationError("Validation error", [
           `${launchPeriod} is not a valid format. Please use YYYY/MM.`,
-        ];
-
-        throw validationError;
+        ]);
       }
 
       if (linkToUrl && !isValidUrl(linkToUrl)) {
-        const validationError: ValidationError = new Error(
-          "Validation failed"
-        ) as ValidationError;
-        validationError.statusCode = 400;
-        validationError.state = "error";
-        validationError.validationErrors = [
+        throw createValidationError("Validation error", [
           `${linkToUrl} is not a valid URL. Please provide a valid URL.`,
-        ];
-
-        throw validationError;
+        ]);
       }
 
       const newJob = new JobExample(req.body);
+      newJob.owner = userId;
 
       if (req.files) {
         const files = Object.assign({}, req.files) as {
@@ -96,8 +81,6 @@ class JobExampleController extends BaseController {
           newJob.audios = files.audios.map((file) => file.filename);
         }
       }
-
-      //const owner = req.user.id
 
       const savedJob = await newJob.save();
 
@@ -191,13 +174,10 @@ class JobExampleController extends BaseController {
       });
 
       if (!obtainedJobExample) {
-        const errorGettingJobExample: CustomError = new Error(
-          `JobExample with ID ${jobExampleId} not found`
+        throw createCustomError(
+          `JobExample with ID ${jobExampleId} not found`,
+          404
         );
-        errorGettingJobExample.statusCode = 404;
-        errorGettingJobExample.state = "error";
-
-        throw errorGettingJobExample;
       }
 
       if (obtainedJobExample.pictures) {
@@ -213,7 +193,7 @@ class JobExampleController extends BaseController {
         obtainedJobExample.videos.forEach((video: string) => {
           const filePath = path.join(__dirname, "../../uploads/video", video);
           if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath); // Eliminamos el archivo
+            fs.unlinkSync(filePath);
           }
         });
       }
@@ -222,7 +202,7 @@ class JobExampleController extends BaseController {
         obtainedJobExample.audios.forEach((audio: string) => {
           const filePath = path.join(__dirname, "../../uploads/audio", audio);
           if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath); // Eliminamos el archivo
+            fs.unlinkSync(filePath);
           }
         });
       }
@@ -263,42 +243,21 @@ class JobExampleController extends BaseController {
         !customer ||
         !category
       ) {
-        const validationError: ValidationError = new Error(
-          "Validation failed"
-        ) as ValidationError;
-        validationError.statusCode = 400;
-        validationError.state = "error";
-        validationError.validationErrors = [
+        throw createValidationError("Validation error", [
           "Title, technologies, launch period, customer, category, and info are required",
-        ];
-
-        throw validationError;
+        ]);
       }
 
       if (!/^\d{4}\/(0[1-9]|1[0-2])$/.test(launchPeriod)) {
-        const validationError: ValidationError = new Error(
-          "Validation failed"
-        ) as ValidationError;
-        validationError.statusCode = 400;
-        validationError.state = "error";
-        validationError.validationErrors = [
+        throw createValidationError("Validation error", [
           `${launchPeriod} is not a valid format. Please use YYYY/MM.`,
-        ];
-
-        throw validationError;
+        ]);
       }
 
       if (linkToUrl && !isValidUrl(linkToUrl)) {
-        const validationError: ValidationError = new Error(
-          "Validation failed"
-        ) as ValidationError;
-        validationError.statusCode = 400;
-        validationError.state = "error";
-        validationError.validationErrors = [
+        throw createValidationError("Validation error", [
           `${linkToUrl} is not a valid URL. Please provide a valid URL.`,
-        ];
-
-        throw validationError;
+        ]);
       }
 
       const obtainedJobExample = await JobExample.findById({
@@ -306,12 +265,10 @@ class JobExampleController extends BaseController {
       });
 
       if (!obtainedJobExample) {
-        const errorGettingJobExample: CustomError = new Error(
-          `JobExample with ID ${jobExampleId} not found`
+        throw createCustomError(
+          `JobExample with ID ${jobExampleId} not found`,
+          404
         );
-        errorGettingJobExample.statusCode = 404;
-        errorGettingJobExample.state = "error";
-        throw errorGettingJobExample;
       }
 
       obtainedJobExample.title = title;
