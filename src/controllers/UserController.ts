@@ -1,7 +1,9 @@
 import { Request, Response } from "express";
 import User from "../models/User.js";
 import BaseController from "./BaseController.js";
-import CustomError, { ValidationError } from "../types/CustomErrors.js";
+import CustomError from "../types/CustomErrors.js";
+import createValidationError from "../utils/createValidationError.js";
+import createCustomError from "../utils/createCustomError.js";
 
 class UserController extends BaseController {
   constructor() {
@@ -17,69 +19,38 @@ class UserController extends BaseController {
       const { username, email, password, confirmPassword } = req.body;
 
       if (!username || !email || !password || !confirmPassword) {
-        const validationError: ValidationError = new Error(
-          "Validation failed"
-        ) as ValidationError;
-        validationError.statusCode = 400;
-        validationError.state = "error";
-        validationError.validationErrors = [
+        throw createValidationError("Validation error", [
           "Username, email, password and confirm password are required",
-        ];
-
-        throw validationError;
+        ]);
       }
 
       const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
       if (!emailRegex.test(email)) {
-        const validationError: ValidationError = new Error(
-          "Validation failed"
-        ) as ValidationError;
-        validationError.statusCode = 400;
-        validationError.state = "error";
-        validationError.validationErrors = [
+        throw createValidationError("Validation error", [
           "Please enter a valid email address",
-        ];
-
-        throw validationError;
+        ]);
       }
 
       const checkUsernameExists = await User.findOne({ username });
 
       if (checkUsernameExists) {
-        const validationError: ValidationError = new Error(
-          "Validation failed"
-        ) as ValidationError;
-        validationError.statusCode = 400;
-        validationError.state = "error";
-        validationError.validationErrors = [`${username} is already in use`];
-
-        throw validationError;
+        throw createValidationError("Validation error", [
+          `${username} is already in use`,
+        ]);
       }
 
       const checkUserEmailExists = await User.findOne({ email });
 
       if (checkUserEmailExists) {
-        const validationError: ValidationError = new Error(
-          "Validation failed"
-        ) as ValidationError;
-        validationError.statusCode = 400;
-        validationError.state = "error";
-        validationError.validationErrors = [`${email} is already in use`];
-
-        throw validationError;
+        throw createValidationError("Validation error", [
+          `${email} is already in use`,
+        ]);
       }
 
       if (password !== confirmPassword) {
-        const validationError: ValidationError = new Error(
-          "Validation failed"
-        ) as ValidationError;
-        validationError.statusCode = 400;
-        validationError.state = "error";
-        validationError.validationErrors = [
+        throw createValidationError("Validation error", [
           "Password and confirm password don't match",
-        ];
-
-        throw validationError;
+        ]);
       }
       const newUser = new User({
         username,
@@ -146,38 +117,22 @@ class UserController extends BaseController {
       const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
       if (email && !emailRegex.test(email)) {
-        const validationError: ValidationError = new Error(
-          "Validation failed"
-        ) as ValidationError;
-        validationError.statusCode = 400;
-        validationError.state = "error";
-        validationError.validationErrors = [
+        throw createValidationError("Validation error", [
           "Please enter a valid email address",
-        ];
-        throw validationError;
+        ]);
       }
 
       const existingUser = await User.findById(userId);
       if (!existingUser) {
-        const validationError: ValidationError = new Error(
-          "User not found"
-        ) as ValidationError;
-        validationError.statusCode = 404;
-        validationError.state = "error";
-        validationError.validationErrors = ["User not found"];
-        throw validationError;
+        throw createValidationError("Validation error", ["User not found"]);
       }
 
       if (username && username !== existingUser.username) {
         const checkUsernameExists = await User.findOne({ username });
         if (checkUsernameExists) {
-          const validationError: ValidationError = new Error(
-            "Validation failed"
-          ) as ValidationError;
-          validationError.statusCode = 400;
-          validationError.state = "error";
-          validationError.validationErrors = [`${username} is already in use`];
-          throw validationError;
+          throw createValidationError("Validation error", [
+            `${username} is already in use`,
+          ]);
         }
         existingUser.username = username;
       }
@@ -185,13 +140,9 @@ class UserController extends BaseController {
       if (email && email !== existingUser.email) {
         const checkUserEmailExists = await User.findOne({ email });
         if (checkUserEmailExists) {
-          const validationError: ValidationError = new Error(
-            "Validation failed"
-          ) as ValidationError;
-          validationError.statusCode = 400;
-          validationError.state = "error";
-          validationError.validationErrors = [`${email} is already in use`];
-          throw validationError;
+          throw createValidationError("Validation error", [
+            `${email} is already in use`,
+          ]);
         }
         existingUser.email = email;
       }
@@ -213,13 +164,7 @@ class UserController extends BaseController {
       });
 
       if (!obtainedUser) {
-        const errorGettingUser: CustomError = new Error(
-          `User with ID ${userId} not found`
-        );
-        errorGettingUser.statusCode = 404;
-        errorGettingUser.state = "error";
-
-        throw errorGettingUser;
+        throw createCustomError(`User with ID ${userId} not found`, 404);
       }
 
       const deletedUser = await User.deleteOne({

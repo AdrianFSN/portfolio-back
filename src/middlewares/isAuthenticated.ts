@@ -1,12 +1,7 @@
 import jwt from "jsonwebtoken";
-import { Request, Response, NextFunction } from "express";
-import CustomError, { NotAuthorized } from "../types/CustomErrors.js";
-
-interface AuthenticatedRequest extends Request {
-  user?: {
-    userId: string;
-  };
-}
+import { Response, NextFunction } from "express";
+import { NotAuthorized } from "../types/CustomErrors.js";
+import { AuthenticatedRequest } from "../types/AuthenticatedRequest.js";
 
 const isAuthenticated = (
   req: AuthenticatedRequest,
