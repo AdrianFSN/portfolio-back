@@ -24,3 +24,7 @@ export interface DatabaseError extends CustomError {
   query?: string;
   parameters?: unknown;
 }
+
+export interface ForbiddenError extends CustomError {
+  parameters?: unknown;
+}
