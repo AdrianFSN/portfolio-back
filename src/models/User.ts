@@ -1,5 +1,4 @@
 import mongoose, { Document, Schema } from "mongoose";
-
 import bcrypt from "bcryptjs";
 import UserRoles from "../types/UserRoles.js";
 import { DatabaseError } from "../types/CustomErrors.js";
