@@ -2,15 +2,22 @@ import express from "express";
 import JobExampleController from "../controllers/JobExampleController.js";
 import upload from "../middlewares/filesManagement.js";
 import isAuthenticated from "../middlewares/isAuthenticated.js";
+import isAuthorized from "../middlewares/isAuthorized.js";
 
 const router = express.Router();
 
 router.get("/", JobExampleController.get);
-router.delete("/:id", isAuthenticated, JobExampleController.delete);
+router.delete(
+  "/:id",
+  isAuthenticated,
+  isAuthorized,
+  JobExampleController.delete
+);
 
 router.post(
   "/",
   isAuthenticated,
+  isAuthorized,
   upload.fields([
     { name: "pictures", maxCount: 5 },
     { name: "videos", maxCount: 2 },
@@ -21,6 +28,7 @@ router.post(
 router.put(
   "/:id",
   isAuthenticated,
+  isAuthorized,
   upload.fields([
     { name: "pictures", maxCount: 5 },
     { name: "videos", maxCount: 2 },
