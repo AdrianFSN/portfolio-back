@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { Response, NextFunction } from "express";
-import { NotAuthorized } from "../types/CustomErrors.js";
 import { AuthenticatedRequest } from "../types/AuthenticatedRequest.js";
+import createAuthorizationError from "../utils/createAuthorizationError.js";
 
 const isAuthenticated = (
   req: AuthenticatedRequest,
@@ -12,14 +12,7 @@ const isAuthenticated = (
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      const noToken: NotAuthorized = new Error(
-        "No token found"
-      ) as NotAuthorized;
-      noToken.statusCode = 401;
-      noToken.state = "error";
-      noToken.message = "No token provided";
-
-      throw noToken;
+      throw createAuthorizationError("No token provided", 401);
     }
 
     const token = (authHeader as string).split(" ")[1];
@@ -49,7 +42,7 @@ const isAuthenticated = (
         code: 401,
       });
     } else {
-      const authError = error as NotAuthorized;
+      const authError = error as any;
       res.status(authError.statusCode || 401).json({
         state: authError.state || "error",
         message: authError.message || "Unauthorized",
