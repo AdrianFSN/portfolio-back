@@ -1,8 +1,9 @@
 import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
-import CustomError, { ValidationError } from "../types/CustomErrors.js";
+import CustomError from "../types/CustomErrors.js";
 import User from "../models/User.js";
 import BaseController from "../controllers/BaseController.js";
+import createValidationError from "../utils/createValidationError.js";
 
 class AuthController extends BaseController {
   constructor() {
@@ -15,37 +16,25 @@ class AuthController extends BaseController {
       const { email, password } = req.body;
 
       if (!email || !password) {
-        const validationError: ValidationError = new Error(
-          "Validation failed"
-        ) as ValidationError;
-        validationError.statusCode = 400;
-        validationError.state = "error";
-        validationError.validationErrors = ["Email and password are required"];
-        throw validationError;
+        throw createValidationError("Validation error", [
+          "Email and password are required",
+        ]);
       }
 
       const user = await User.findOne({ email }).select("+password");
 
       if (!user) {
-        const validationError: ValidationError = new Error(
-          "Validation failed"
-        ) as ValidationError;
-        validationError.statusCode = 400;
-        validationError.state = "error";
-        validationError.validationErrors = ["Invalid email or password"];
-        throw validationError;
+        throw createValidationError("Validation error", [
+          "Invalid email or password",
+        ]);
       }
 
       const isMatch = await user.comparePassword(password);
 
       if (!isMatch) {
-        const validationError: ValidationError = new Error(
-          "Validation failed"
-        ) as ValidationError;
-        validationError.statusCode = 400;
-        validationError.state = "error";
-        validationError.validationErrors = ["Invalid email or password"];
-        throw validationError;
+        throw createValidationError("Validation error", [
+          "Invalid email or password",
+        ]);
       }
 
       const token = jwt.sign(
