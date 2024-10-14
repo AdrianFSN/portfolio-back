@@ -4,6 +4,7 @@ import CustomError from "../types/CustomErrors.js";
 import User from "../models/User.js";
 import BaseController from "../controllers/BaseController.js";
 import createValidationError from "../utils/createValidationError.js";
+import createDocumentNotFoundError from "../utils/createDocumentNotFoundError.js";
 
 class AuthController extends BaseController {
   constructor() {
@@ -24,16 +25,14 @@ class AuthController extends BaseController {
       const user = await User.findOne({ email }).select("+password");
 
       if (!user) {
-        throw createValidationError("Validation error", [
-          "Invalid email or password",
-        ]);
+        throw createDocumentNotFoundError(`Invalid credentials`);
       }
 
       const isMatch = await user.comparePassword(password);
 
       if (!isMatch) {
         throw createValidationError("Validation error", [
-          "Invalid email or password",
+          "Invalid credentials",
         ]);
       }
 

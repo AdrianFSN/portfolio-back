@@ -3,7 +3,7 @@ import User from "../models/User.js";
 import BaseController from "./BaseController.js";
 import CustomError from "../types/CustomErrors.js";
 import createValidationError from "../utils/createValidationError.js";
-import createCustomError from "../utils/createCustomError.js";
+import createDocumentNotFoundError from "../utils/createDocumentNotFoundError.js";
 
 class UserController extends BaseController {
   constructor() {
@@ -124,7 +124,7 @@ class UserController extends BaseController {
 
       const existingUser = await User.findById(userId);
       if (!existingUser) {
-        throw createValidationError("Validation error", ["User not found"]);
+        throw createDocumentNotFoundError(`User with ID ${userId} not found`);
       }
 
       if (username && username !== existingUser.username) {
@@ -164,7 +164,7 @@ class UserController extends BaseController {
       });
 
       if (!obtainedUser) {
-        throw createCustomError(`User with ID ${userId} not found`, 404);
+        throw createDocumentNotFoundError(`User with ID ${userId} not found`);
       }
 
       const deletedUser = await User.deleteOne({

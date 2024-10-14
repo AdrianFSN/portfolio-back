@@ -4,6 +4,7 @@ import { AuthenticatedRequest } from "../types/AuthenticatedRequest.js";
 import createValidationError from "../utils/createValidationError.js";
 import { ForbiddenError } from "../types/CustomErrors.js";
 import createForbiddenError from "../utils/createForbiddenError.js";
+import createDocumentNotFoundError from "../utils/createDocumentNotFoundError.js";
 
 const isAuthorized = async (
   req: AuthenticatedRequest,
@@ -22,7 +23,7 @@ const isAuthorized = async (
     const user = await User.findById(userId);
 
     if (!user) {
-      throw createValidationError("Validation error", ["User not found"]);
+      throw createDocumentNotFoundError(`User with ID ${userId} not found`);
     }
 
     if (user.role !== "admin") {
