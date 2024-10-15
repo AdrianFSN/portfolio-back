@@ -1,0 +1,15 @@
+[
+  {
+    "title": "E-commerce Website Development",
+    "technologies": ["React", "Node.js", "MongoDB", "Express"],
+    "pictures": ["pic1.jpg", "pic2.jpg"],
+    "videos": ["video1.mp4"],
+    "audios": [],
+    "info": "Developed a full-stack e-commerce web application with features like user authentication, product catalog, and payment gateway integration.",
+    "customer": "TechShop Inc.",
+    "linkToUrl": "https://techshop.com",
+    "launchPeriod": "2024/02",
+    "category": ["development"],
+    "owner": "${FIRST_USER_EMAIL}"
+  }
+]

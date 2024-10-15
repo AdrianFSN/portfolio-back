@@ -62,6 +62,35 @@ async function initJobExamples() {
   console.log(
     `${deleteJobExamples.deletedCount} job examples have been deleted`
   );
+
+  const jobExamplesJson = fs.readFileSync(
+    "./src/initDB/initJobExamples.json",
+    "utf-8"
+  );
+  const jobExamplesData = JSON.parse(replaceEnvVariables(jobExamplesJson));
+  //const jobExamplesData = JSON.parse(jobExamplesJson);
+
+  for (const jobData of jobExamplesData) {
+    const ownerEmail = jobData.owner;
+    const jobOwner = await User.findOne({ email: ownerEmail });
+    if (jobOwner) {
+      const newJobExample = {
+        ...jobData,
+        owner: jobOwner._id,
+      };
+      await JobExample.create(newJobExample);
+      console.log(
+        `Job example created successfully for owner: ${jobOwner._id}`
+      );
+    } else {
+      console.log(
+        `No user found for email: ${ownerEmail}. Job example not created.`
+      );
+    }
+  }
+
+  const insertedJobExamples = await JobExample.find();
+  console.log(`${insertedJobExamples.length} job examples created`);
 }
 
 async function main() {
