@@ -21,7 +21,6 @@ const app = express();
 // Get __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-console.log("Esto es __dirname: ", __dirname);
 
 // Load env variables from .env
 dotenv.config();
@@ -44,11 +43,14 @@ fs.readdir(viewsPath, (err, files) => {
 app.set("views", viewsPath);
 app.set("view engine", "ejs");
 
+// Middlewares
 app.use(helmet());
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+// Static paths
 app.use(express.static(path.join(__dirname, "public")));
 
 // API routes

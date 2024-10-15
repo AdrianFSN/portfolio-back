@@ -6,7 +6,6 @@ import readline from "readline";
 import fs from "fs";
 import User from "../models/User.js";
 import JobExample from "../models/JobExample.js";
-import UserRoles from "../types/UserRoles.js";
 
 dotenv.config();
 
@@ -68,7 +67,6 @@ async function initJobExamples() {
     "utf-8"
   );
   const jobExamplesData = JSON.parse(replaceEnvVariables(jobExamplesJson));
-  //const jobExamplesData = JSON.parse(jobExamplesJson);
 
   for (const jobData of jobExamplesData) {
     const ownerEmail = jobData.owner;
