@@ -3,11 +3,16 @@ import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 import { connectMongoose } from "../lib/connectMongoose.js";
 import readline from "readline";
+import fs from "fs";
 import User from "../models/User.js";
 import JobExample from "../models/JobExample.js";
 import UserRoles from "../types/UserRoles.js";
 
 dotenv.config();
+
+function replaceEnvVariables(data: string): string {
+  return data.replace(/\$\{(.*?)\}/g, (_, key) => process.env[key] || "");
+}
 
 function secureQuestion(text: string) {
   return new Promise((resolve) => {
@@ -26,21 +31,29 @@ async function initUsers() {
   const delUsers = await User.deleteMany();
   console.log(`${delUsers.deletedCount} users have been deleted`);
 
-  const candidatePassword = process.env.FIRST_USER_PASSWORD as string;
-  const hashedPassword = await bcrypt.hash(candidatePassword, 10);
+  const usersJson = fs.readFileSync("./src/initDB/initUsers.json", "utf-8");
+  const usersData = JSON.parse(replaceEnvVariables(usersJson));
 
-  const firstUser = {
-    username: process.env.FIRST_USER_USERNAME as string,
-    email: process.env.FIRST_USER_EMAIL as string,
-    password: hashedPassword,
-    role: UserRoles.ADMIN,
-  };
+  for (const userData of usersData) {
+    if (!userData.username || !userData.email || !userData.password) {
+      console.log(`Skipping user creation due to missing data:`, userData);
+      continue;
+    }
 
-  await User.create(firstUser);
-  console.log("First user created successfully!");
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
+
+    const newUser = {
+      username: userData.username,
+      email: userData.email,
+      password: hashedPassword,
+      role: userData.role,
+    };
+
+    await User.create(newUser);
+    console.log("User created successfully!");
+  }
 
   const insertedUsers = await User.find();
-
   console.log(`${insertedUsers.length} users created`);
 }
 

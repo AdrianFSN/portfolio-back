@@ -1,0 +1,8 @@
+[
+  {
+    "username": "${FIRST_USER_USERNAME}",
+    "email": "${FIRST_USER_EMAIL}",
+    "password": "${FIRST_USER_PASSWORD}",
+    "role": "admin"
+  }
+]
