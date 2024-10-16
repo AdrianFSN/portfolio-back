@@ -1,13 +1,18 @@
 import dotenv from "dotenv";
-import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 import { connectMongoose } from "../lib/connectMongoose.js";
 import readline from "readline";
+import { fileURLToPath } from "url";
+import path, { dirname } from "path";
+//import path from "path";
 import fs from "fs";
 import User from "../models/User.js";
 import JobExample from "../models/JobExample.js";
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 function replaceEnvVariables(data: string): string {
   return data.replace(/\$\{(.*?)\}/g, (_, key) => process.env[key] || "");
@@ -57,6 +62,48 @@ async function initUsers() {
 }
 
 async function initJobExamples() {
+  const existingJobExamples = await JobExample.find();
+
+  for (const jobExample of existingJobExamples) {
+    if (jobExample.pictures) {
+      jobExample.pictures.forEach((picture: string) => {
+        const filePath = path.join(__dirname, "../../uploads/image", picture);
+        if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
+          fs.unlinkSync(filePath);
+        }
+        const thumbnailFilePath = path.join(
+          __dirname,
+          "../../uploads/image/thumbnails",
+          "thumbnail_" + picture
+        );
+        if (
+          fs.existsSync(thumbnailFilePath) &&
+          fs.lstatSync(thumbnailFilePath).isFile()
+        ) {
+          fs.unlinkSync(thumbnailFilePath);
+        }
+      });
+    }
+
+    if (jobExample.videos) {
+      jobExample.videos.forEach((video: string) => {
+        const filePath = path.join(__dirname, "../../uploads/video", video);
+        if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
+          fs.unlinkSync(filePath);
+        }
+      });
+    }
+
+    if (jobExample.audios) {
+      jobExample.audios.forEach((audio: string) => {
+        const filePath = path.join(__dirname, "../../uploads/audio", audio);
+        if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
+          fs.unlinkSync(filePath);
+        }
+      });
+    }
+  }
+
   const deleteJobExamples = await JobExample.deleteMany();
   console.log(
     `${deleteJobExamples.deletedCount} job examples have been deleted`
@@ -94,7 +141,7 @@ async function initJobExamples() {
 async function main() {
   await connectMongoose();
   const deleteAll = await secureQuestion(
-    "Are you sure you want to delete the whole data base? This action can't get undone (yes, NO)"
+    "Are you sure you want to delete the whole data base? This action can not be undone (yes, NO)"
   );
   if (!deleteAll) {
     console.log("Database initialization aborted.");

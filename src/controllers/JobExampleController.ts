@@ -87,13 +87,7 @@ class JobExampleController extends BaseController {
 
       if (savedJob && savedJob.pictures && savedJob.pictures.length > 0) {
         for (const item of savedJob.pictures) {
-          const filePath = path.join(
-            __dirname,
-            "../",
-            "../",
-            "uploads/image",
-            item
-          );
+          const filePath = path.join(__dirname, "../../uploads/image", item);
 
           sendOrderToResizeEvent(filePath, (error, result) => {
             if (error) {
