@@ -33,12 +33,20 @@ responder.on<ResizeRequest>("resize-to-thumbnail", async (req, done) => {
       "thumbnail_" + path.basename(filePath)
     );
 
-    await sharp(filePath)
-      .resize(120, 120, {
-        fit: sharp.fit.cover,
-        position: "center",
-      })
-      .toFile(outputFilePath);
+    const image = sharp(filePath);
+    const metadata = await image.metadata();
+
+    if (metadata && metadata.width && metadata.height) {
+      const aspectRatio = metadata.width / metadata.height;
+      let newWidth = 120;
+      let newHeight = Math.round(newWidth / aspectRatio);
+      if (newHeight > 120) {
+        newHeight = 120;
+        newWidth = Math.round(newHeight * aspectRatio);
+      }
+
+      await image.resize(newWidth, newHeight).toFile(outputFilePath);
+    }
 
     done(null, {
       message: "Resize successful! ",
