@@ -9,7 +9,6 @@ register({
   },
 });
 
-// Esto permite que puedas usar ts-node con módulos ES
 const mainModule = pathToFileURL(
   "./src/services/responders/resizeThumbnailResponse.ts"
 ).toString();

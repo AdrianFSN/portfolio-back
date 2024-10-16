@@ -66,7 +66,7 @@ class BaseController {
     return (error as DocumentNotFound).message !== undefined;
   }
 
-  private isNotAuthorized(error: CustomError): error is DocumentNotFound {
+  private isNotAuthorized(error: CustomError): error is NotAuthorized {
     return (error as NotAuthorized).message !== undefined;
   }
 

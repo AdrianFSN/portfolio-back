@@ -49,7 +49,9 @@ async function initUsers() {
     };
 
     await User.create(newUser);
-    console.log("User created successfully!");
+    console.log(
+      `User created successfully! with pass: ${newUser.password} and ${userData.password}`
+    );
   }
 
   const insertedUsers = await User.find();

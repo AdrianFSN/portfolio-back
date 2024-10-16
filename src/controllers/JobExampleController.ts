@@ -10,6 +10,7 @@ import { AuthenticatedRequest } from "../types/AuthenticatedRequest.js";
 import createValidationError from "../utils/createValidationError.js";
 import createCustomError from "../utils/createCustomError.js";
 import createDocumentNotFoundError from "../utils/createDocumentNotFoundError.js";
+import sendOrderToResizeEvent from "../services/requesters/resizeThumbnailRequest.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -84,6 +85,19 @@ class JobExampleController extends BaseController {
       }
 
       const savedJob = await newJob.save();
+
+      if (savedJob && savedJob.pictures && savedJob.pictures.length > 0) {
+        for (const picture in savedJob.pictures) {
+          const filePath = path.join(__dirname, picture);
+          sendOrderToResizeEvent(filePath, (error, result) => {
+            if (error) {
+              console.error("Error resizing image: ", error);
+            } else {
+              console.log("Saved job example gets: ", result);
+            }
+          });
+        }
+      }
 
       this.handleSuccess(res, savedJob, "Developer job created successfully!");
     } catch (error) {
