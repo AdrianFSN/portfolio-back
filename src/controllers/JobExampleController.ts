@@ -86,7 +86,6 @@ class JobExampleController extends BaseController {
       const savedJob = await newJob.save();
 
       if (savedJob && savedJob.pictures && savedJob.pictures.length > 0) {
-        console.log("Esto es savedJob.pictures: ", savedJob.pictures);
         for (const item of savedJob.pictures) {
           const filePath = path.join(
             __dirname,
@@ -95,10 +94,7 @@ class JobExampleController extends BaseController {
             "uploads/image",
             item
           );
-          console.log(
-            "Esto es el filePath de la picture que quiero redimensionar: ",
-            filePath
-          );
+
           sendOrderToResizeEvent(filePath, (error, result) => {
             if (error) {
               console.error("Error resizing image: ", error);

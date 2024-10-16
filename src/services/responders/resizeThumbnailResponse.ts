@@ -12,7 +12,7 @@ interface ResizeRequest {
 
 responder.on<ResizeRequest>("resize-to-thumbnail", async (req, done) => {
   const { filePath } = req;
-  console.log("Esto es filePath: ", filePath);
+
   if (!filePath) {
     const error = new Error("filePath is required");
     console.error(error.message);
