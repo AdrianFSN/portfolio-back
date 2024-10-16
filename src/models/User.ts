@@ -43,7 +43,6 @@ const userSchema: Schema<interfaceUser> = new Schema(
 );
 
 userSchema.pre("save", async function (next) {
-  console.log("Middleware pre-save ejecutado.");
   const user = this as interfaceUser;
 
   if (!user.isModified("password")) {

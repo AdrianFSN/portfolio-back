@@ -39,19 +39,17 @@ async function initUsers() {
       continue;
     }
 
-    const hashedPassword = await bcrypt.hash(userData.password, 10);
-
     const newUser = {
       username: userData.username,
       email: userData.email,
-      password: hashedPassword,
+      password: userData.password,
       role: userData.role,
     };
 
-    await User.create(newUser);
-    console.log(
-      `User created successfully! with pass: ${newUser.password} and ${userData.password}`
-    );
+    const createdUser = await User.create(newUser);
+
+    // Verifying the saved user
+    console.log(`User created successfully with id: ${createdUser._id}`);
   }
 
   const insertedUsers = await User.find();
