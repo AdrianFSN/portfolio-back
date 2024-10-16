@@ -9,8 +9,8 @@
     "build": "tsc && cp -r src/views dist/views",
     "prod": "npm run build && npm start",
     "initDB": "node --loader ts-node/esm src/initDB/initDB.ts",
-    "thumb-req": "node --loader ts-node/esm src/services/requesters/resizeThumbnailRequest.ts",
-    "thumb-res": "node --loader ts-node/esm src/register.ts"
+    "thumb-req": "nodemon --config nodemon-requesters-responders.json src/services/requesters/resizeThumbnailRequest.ts",
+    "thumb-res": "nodemon --config nodemon-requesters-responders.json src/services/responders/resizeThumbnailResponse.ts"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
