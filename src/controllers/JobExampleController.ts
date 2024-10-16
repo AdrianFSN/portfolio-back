@@ -8,7 +8,6 @@ import BaseController from "./BaseController.js";
 import isValidUrl from "../utils/validUrlChecker.js";
 import { AuthenticatedRequest } from "../types/AuthenticatedRequest.js";
 import createValidationError from "../utils/createValidationError.js";
-import createCustomError from "../utils/createCustomError.js";
 import createDocumentNotFoundError from "../utils/createDocumentNotFoundError.js";
 import sendOrderToResizeEvent from "../services/requesters/resizeThumbnailRequest.js";
 
@@ -87,8 +86,19 @@ class JobExampleController extends BaseController {
       const savedJob = await newJob.save();
 
       if (savedJob && savedJob.pictures && savedJob.pictures.length > 0) {
-        for (const picture in savedJob.pictures) {
-          const filePath = path.join(__dirname, picture);
+        console.log("Esto es savedJob.pictures: ", savedJob.pictures);
+        for (const item of savedJob.pictures) {
+          const filePath = path.join(
+            __dirname,
+            "../",
+            "../",
+            "uploads/image",
+            item
+          );
+          console.log(
+            "Esto es el filePath de la picture que quiero redimensionar: ",
+            filePath
+          );
           sendOrderToResizeEvent(filePath, (error, result) => {
             if (error) {
               console.error("Error resizing image: ", error);
