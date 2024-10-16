@@ -10,7 +10,7 @@
     "prod": "npm run build && npm start",
     "initDB": "node --loader ts-node/esm src/initDB/initDB.ts",
     "thumb-req": "node --loader ts-node/esm src/services/requesters/resizeThumbnailRequest.ts",
-    "thumb-res": "node --loader ts-node/esm src/services/responders/resizeThumbnailResponse.ts"
+    "thumb-res": "node --loader ts-node/esm src/register.ts"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -27,7 +27,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.7.0",
     "morgan": "~1.9.1",
-    "multer": "^1.4.5-lts.1"
+    "multer": "^1.4.5-lts.1",
+    "sharp": "^0.33.5"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
@@ -37,7 +38,7 @@
     "@types/debug": "^4.1.12",
     "@types/dotenv": "^8.2.0",
     "@types/express": "^5.0.0",
-    "@types/jimp": "^0.2.1",
+    "@types/jimp": "^0.2.28",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/morgan": "^1.9.9",
     "@types/multer": "^1.4.12",

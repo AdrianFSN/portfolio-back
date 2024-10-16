@@ -10,5 +10,5 @@ declare module "jimp" {
   }
 
   export const AUTO: number;
-  export function read(path: string): Promise<Jimp>;
+  export function read(path: string | Buffer): Promise<Jimp>;
 }
