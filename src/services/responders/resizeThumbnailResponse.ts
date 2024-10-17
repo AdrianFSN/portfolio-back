@@ -46,6 +46,9 @@ responder.on<ResizeRequest>("resize-to-thumbnail", async (req, done) => {
       }
 
       await image.resize(newWidth, newHeight).toFile(outputFilePath);
+
+      // Asegurarse de cerrar cualquier stream abierto
+      image.destroy();
     }
 
     done(null, {
@@ -57,6 +60,7 @@ responder.on<ResizeRequest>("resize-to-thumbnail", async (req, done) => {
     done(error, null);
   }
 });
+
 console.log("Responder is running...");
 
 export default responder;

@@ -89,7 +89,7 @@ class JobExampleController extends BaseController {
         for (const item of savedJob.pictures) {
           const filePath = path.join(__dirname, "../../uploads/image", item);
 
-          sendOrderToResizeEvent(filePath, (error, result) => {
+          await sendOrderToResizeEvent(filePath, (error, result) => {
             if (error) {
               console.error("Error resizing image: ", error);
             } else {
@@ -195,10 +195,38 @@ class JobExampleController extends BaseController {
       }
 
       if (obtainedJobExample.pictures) {
+        const imagesFilePath = path.join(__dirname, "../../uploads/image");
+        const thumbnailFilepath = path.join(imagesFilePath, "thumbnails");
+
         obtainedJobExample.pictures.forEach((picture: string) => {
-          const filePath = path.join(__dirname, "../../uploads/image", picture);
-          if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
-            fs.unlinkSync(filePath);
+          const imgFilePath = path.join(imagesFilePath, picture);
+          if (
+            fs.existsSync(imgFilePath) &&
+            fs.lstatSync(imgFilePath).isFile()
+          ) {
+            fs.unlink(imgFilePath, (err) => {
+              if (err) {
+                console.error("Error deleting image: ", err);
+              } else {
+                console.log("Image deleted successfully");
+              }
+            });
+          }
+          const thumbFilepath = path.join(
+            thumbnailFilepath,
+            "thumbnail_" + picture
+          );
+          if (
+            fs.existsSync(thumbFilepath) &&
+            fs.lstatSync(thumbFilepath).isFile()
+          ) {
+            fs.unlink(thumbFilepath, (err) => {
+              if (err) {
+                console.error("Error deleting thumbnail: ", err);
+              } else {
+                console.log("Thumbnail deleted successfully");
+              }
+            });
           }
         });
       }
@@ -207,7 +235,13 @@ class JobExampleController extends BaseController {
         obtainedJobExample.videos.forEach((video: string) => {
           const filePath = path.join(__dirname, "../../uploads/video", video);
           if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
-            fs.unlinkSync(filePath);
+            fs.unlink(filePath, (err) => {
+              if (err) {
+                console.error("Error deleting video: ", err);
+              } else {
+                console.log("Video deleted successfully");
+              }
+            });
           }
         });
       }
@@ -216,7 +250,13 @@ class JobExampleController extends BaseController {
         obtainedJobExample.audios.forEach((audio: string) => {
           const filePath = path.join(__dirname, "../../uploads/audio", audio);
           if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
-            fs.unlinkSync(filePath);
+            fs.unlink(filePath, (err) => {
+              if (err) {
+                console.error("Error deleting audio: ", err);
+              } else {
+                console.log("Audio deleted successfully");
+              }
+            });
           }
         });
       }
@@ -297,27 +337,67 @@ class JobExampleController extends BaseController {
           [key: string]: Express.Multer.File[];
         };
 
-        if (files.pictures) {
-          (obtainedJobExample as any).pictures.forEach((picture: string) => {
-            const filePath = path.join(
-              __dirname,
-              "../../uploads/image",
-              picture
+        if (files.pictures && obtainedJobExample.pictures) {
+          const imagesFilePath = path.join(__dirname, "../../uploads/image");
+          const thumbnailsFilePath = path.join(imagesFilePath, "thumbnails");
+          obtainedJobExample.pictures.forEach((picture: string) => {
+            const imgFilePath = path.join(imagesFilePath, picture);
+            const thumbFilePath = path.join(
+              thumbnailsFilePath,
+              "thumbnail_" + picture
             );
-            if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
-              fs.unlinkSync(filePath);
+            if (
+              fs.existsSync(imgFilePath) &&
+              fs.lstatSync(imgFilePath).isFile()
+            ) {
+              fs.unlink(imgFilePath, (err) => {
+                if (err) {
+                  console.error("Error deleting image: ", err);
+                } else {
+                  console.log("Image deleted successfully");
+                }
+              });
+            }
+            if (
+              fs.existsSync(thumbFilePath) &&
+              fs.lstatSync(thumbFilePath).isFile()
+            ) {
+              fs.unlink(thumbFilePath, (err) => {
+                if (err) {
+                  console.error("Error deleting thumbnail: ", err);
+                } else {
+                  console.log("Thumbnail deleted successfully");
+                }
+              });
             }
           });
           obtainedJobExample.pictures = files.pictures.map(
             (file) => file.filename
           );
+          obtainedJobExample.pictures.forEach(async (picture: string) => {
+            const filePath = path.join(imagesFilePath, picture);
+
+            await sendOrderToResizeEvent(filePath, (error, result) => {
+              if (error) {
+                console.error("Error resizing image: ", error);
+              } else {
+                console.log("Saved job example gets: ", result);
+              }
+            });
+          });
         }
 
         if (files.videos) {
           (obtainedJobExample as any).videos.forEach((video: string) => {
             const filePath = path.join(__dirname, "../../uploads/video", video);
             if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
-              fs.unlinkSync(filePath);
+              fs.unlink(filePath, (err) => {
+                if (err) {
+                  console.error("Error deleting video: ", err);
+                } else {
+                  console.log("Video deleted successfully");
+                }
+              });
             }
           });
           obtainedJobExample.videos = files.videos.map((file) => file.filename);
@@ -327,7 +407,13 @@ class JobExampleController extends BaseController {
           (obtainedJobExample as any).audios.forEach((audio: string) => {
             const filePath = path.join(__dirname, "../../uploads/audio", audio);
             if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
-              fs.unlinkSync(filePath);
+              fs.unlink(filePath, (err) => {
+                if (err) {
+                  console.error("Error deleting audio: ", err);
+                } else {
+                  console.log("Audio deleted successfully");
+                }
+              });
             }
           });
           obtainedJobExample.audios = files.audios.map((file) => file.filename);

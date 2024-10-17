@@ -69,7 +69,13 @@ async function initJobExamples() {
       jobExample.pictures.forEach((picture: string) => {
         const filePath = path.join(__dirname, "../../uploads/image", picture);
         if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
-          fs.unlinkSync(filePath);
+          fs.unlink(filePath, (err) => {
+            if (err) {
+              console.error("Error deleting file: ", err);
+            } else {
+              console.log("File deleted successfully");
+            }
+          });
         }
         const thumbnailFilePath = path.join(
           __dirname,
@@ -80,7 +86,13 @@ async function initJobExamples() {
           fs.existsSync(thumbnailFilePath) &&
           fs.lstatSync(thumbnailFilePath).isFile()
         ) {
-          fs.unlinkSync(thumbnailFilePath);
+          fs.unlink(thumbnailFilePath, (err) => {
+            if (err) {
+              console.error("Error deleting file: ", err);
+            } else {
+              console.log("File deleted successfully");
+            }
+          });
         }
       });
     }
@@ -89,7 +101,13 @@ async function initJobExamples() {
       jobExample.videos.forEach((video: string) => {
         const filePath = path.join(__dirname, "../../uploads/video", video);
         if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
-          fs.unlinkSync(filePath);
+          fs.unlink(filePath, (err) => {
+            if (err) {
+              console.error("Error deleting file: ", err);
+            } else {
+              console.log("File deleted successfully");
+            }
+          });
         }
       });
     }
@@ -98,7 +116,13 @@ async function initJobExamples() {
       jobExample.audios.forEach((audio: string) => {
         const filePath = path.join(__dirname, "../../uploads/audio", audio);
         if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
-          fs.unlinkSync(filePath);
+          fs.unlink(filePath, (err) => {
+            if (err) {
+              console.error("Error deleting file: ", err);
+            } else {
+              console.log("File deleted successfully");
+            }
+          });
         }
       });
     }
