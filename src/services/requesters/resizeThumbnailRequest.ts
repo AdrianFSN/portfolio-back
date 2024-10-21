@@ -43,6 +43,7 @@ const sendOrderToResizeEvent = async (
       console.error("Error in resize event: ", error);
       return callback(error, null);
     }
+    filePath = "";
     callback(null, result);
   });
 };

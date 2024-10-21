@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from "express";
+import express, { Request, Response, NextFunction } from "express";
 import CustomError, { FileUploadError } from "./types/CustomErrors";
 import createError from "http-errors";
-import express from "express";
+//import express from "express";
 import path from "path";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
@@ -10,6 +10,7 @@ import helmet from "helmet";
 import fs from "fs";
 import { fileURLToPath } from "node:url";
 import { connectMongoose } from "./lib/connectMongoose.js";
+import i18n from "./lib/I18nConfigure.js";
 
 import indexRouter from "./routes/index.js";
 import authRouter from "./routes/authRoutes.js";
@@ -26,14 +27,14 @@ console.log(
   typeof process.env.DATABASE_URI
 );
 
+// Connect Mongoose
+connectMongoose();
+
 const app = express();
 
 // Get __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-// Connect Mongoose
-connectMongoose();
 
 // view engine setup
 const viewsPath = path.join(__dirname, "views");
@@ -61,6 +62,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 // API routes
+app.use(i18n.init);
 app.use("/api", indexRouter);
 app.use("/api/session", authRouter);
 app.use("/api/users", usersRouter);
