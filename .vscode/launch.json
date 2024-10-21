@@ -11,7 +11,14 @@
       "skipFiles": ["<node_internals>/**"],
       "cwd": "${workspaceFolder}\\src\\bin",
       "program": "${workspaceFolder}\\src\\bin\\www.ts",
-      "outFiles": ["${workspaceFolder}/**/*.js"]
+      "outFiles": ["${workspaceFolder}/**/*.js"],
+      "runtimeArgs": [
+        "--experimental-specifier-resolution=node" // Si usas ESM
+      ],
+      "env": {
+        "DATABASE_URI": "mongodb://127.0.0.1:27017/portfolio-back",
+        "NODE_ENV": "development" // o "production", según sea necesario
+      }
     }
   ]
 }

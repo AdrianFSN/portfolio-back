@@ -16,14 +16,21 @@ import authRouter from "./routes/authRoutes.js";
 import usersRouter from "./routes/userRoutes.js";
 import jobExamplesRouter from "./routes/jobExampleRoutes.js";
 
+// Load env variables from .env
+dotenv.config();
+
+console.log(
+  "DATABASE_URI:",
+  process.env.DATABASE_URI,
+  "type: ",
+  typeof process.env.DATABASE_URI
+);
+
 const app = express();
 
 // Get __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-// Load env variables from .env
-dotenv.config();
 
 // Connect Mongoose
 connectMongoose();

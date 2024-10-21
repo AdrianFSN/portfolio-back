@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import fs from "fs";
+import fs from "fs-extra";
 import path from "path";
 import { fileURLToPath } from "url";
 import JobExample from "../models/JobExample.js";
@@ -9,7 +9,7 @@ import isValidUrl from "../utils/validUrlChecker.js";
 import { AuthenticatedRequest } from "../types/AuthenticatedRequest.js";
 import createValidationError from "../utils/createValidationError.js";
 import createDocumentNotFoundError from "../utils/createDocumentNotFoundError.js";
-import sendOrderToResizeEvent from "../services/requesters/resizeThumbnailRequest.js";
+import resizeImage from "../services/requesters/resizeThumbnailRequest.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -86,17 +86,15 @@ class JobExampleController extends BaseController {
       const savedJob = await newJob.save();
 
       if (savedJob && savedJob.pictures && savedJob.pictures.length > 0) {
-        for (const item of savedJob.pictures) {
+        savedJob.pictures.forEach(async (item: string) => {
           const filePath = path.join(__dirname, "../../uploads/image", item);
-
-          await sendOrderToResizeEvent(filePath, (error, result) => {
-            if (error) {
-              console.error("Error resizing image: ", error);
-            } else {
-              console.log("Saved job example gets: ", result);
-            }
-          });
-        }
+          try {
+            const result = await resizeImage(filePath);
+            console.log("Saved job example gets: ", result);
+          } catch (error) {
+            console.log("Error resizing image: ", error);
+          }
+        });
       }
 
       this.handleSuccess(res, savedJob, "Developer job created successfully!");
@@ -194,71 +192,63 @@ class JobExampleController extends BaseController {
         );
       }
 
-      if (obtainedJobExample.pictures) {
-        const imagesFilePath = path.join(__dirname, "../../uploads/image");
-        const thumbnailFilepath = path.join(imagesFilePath, "thumbnails");
+      const imagesFilePath = path.join(__dirname, "../../uploads/image");
+      const thumbnailFilepath = path.join(imagesFilePath, "thumbnails");
 
-        obtainedJobExample.pictures.forEach((picture: string) => {
-          const imgFilePath = path.join(imagesFilePath, picture);
-          if (
-            fs.existsSync(imgFilePath) &&
-            fs.lstatSync(imgFilePath).isFile()
-          ) {
-            fs.unlink(imgFilePath, (err) => {
-              if (err) {
-                console.error("Error deleting image: ", err);
-              } else {
-                console.log("Image deleted successfully");
-              }
-            });
-          }
-          const thumbFilepath = path.join(
-            thumbnailFilepath,
-            "thumbnail_" + picture
-          );
-          if (
-            fs.existsSync(thumbFilepath) &&
-            fs.lstatSync(thumbFilepath).isFile()
-          ) {
-            fs.unlink(thumbFilepath, (err) => {
-              if (err) {
-                console.error("Error deleting thumbnail: ", err);
-              } else {
-                console.log("Thumbnail deleted successfully");
-              }
-            });
-          }
-        });
+      if (obtainedJobExample.pictures) {
+        await Promise.all(
+          obtainedJobExample.pictures.map(async (picture: string) => {
+            const imgFilePath = path.join(imagesFilePath, picture);
+            const thumbFilepath = path.join(
+              thumbnailFilepath,
+              "thumbnail_" + picture
+            );
+
+            // Eliminar la imagen
+            try {
+              await fs.remove(imgFilePath);
+              console.log("Image deleted successfully:", imgFilePath);
+            } catch (err) {
+              console.error("Error deleting image:", err);
+            }
+
+            // Eliminar la miniatura
+            try {
+              await fs.remove(thumbFilepath);
+              console.log("Thumbnail deleted successfully:", thumbFilepath);
+            } catch (err) {
+              console.error("Error deleting thumbnail:", err);
+            }
+          })
+        );
       }
 
       if (obtainedJobExample.videos) {
-        obtainedJobExample.videos.forEach((video: string) => {
-          const filePath = path.join(__dirname, "../../uploads/video", video);
-          if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
-            fs.unlink(filePath, (err) => {
-              if (err) {
-                console.error("Error deleting video: ", err);
-              } else {
-                console.log("Video deleted successfully");
-              }
-            });
-          }
-        });
+        await Promise.all(
+          obtainedJobExample.videos.map(async (video: string) => {
+            const filePath = path.join(__dirname, "../../uploads/video", video);
+            try {
+              await fs.remove(filePath);
+              console.log("Video deleted successfully:", filePath);
+            } catch (err) {
+              console.error("Error deleting video:", err);
+            }
+          })
+        );
       }
 
       if (obtainedJobExample.audios) {
-        obtainedJobExample.audios.forEach((audio: string) => {
-          const filePath = path.join(__dirname, "../../uploads/audio", audio);
-          if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
-            fs.unlink(filePath, (err) => {
-              if (err) {
-                console.error("Error deleting audio: ", err);
-              } else {
-                console.log("Audio deleted successfully");
-              }
-            });
-          }
-        });
+        await Promise.all(
+          obtainedJobExample.audios.map(async (audio: string) => {
+            const filePath = path.join(__dirname, "../../uploads/audio", audio);
+            try {
+              await fs.remove(filePath);
+              console.log("Audio deleted successfully:", filePath);
+            } catch (err) {
+              console.error("Error deleting audio:", err);
+            }
+          })
+        );
       }
 
       const deletedJobExample = await JobExample.deleteOne({
@@ -268,7 +258,7 @@ class JobExampleController extends BaseController {
         this.handleSuccess(
           res,
           deletedJobExample,
-          `Job ${obtainedJobExample.title} deleted succesfully!`
+          `Job ${obtainedJobExample.title} deleted successfully!`
         );
       }
     } catch (error) {
@@ -340,88 +330,90 @@ class JobExampleController extends BaseController {
         if (files.pictures && obtainedJobExample.pictures) {
           const imagesFilePath = path.join(__dirname, "../../uploads/image");
           const thumbnailsFilePath = path.join(imagesFilePath, "thumbnails");
-          obtainedJobExample.pictures.forEach((picture: string) => {
-            const imgFilePath = path.join(imagesFilePath, picture);
-            const thumbFilePath = path.join(
-              thumbnailsFilePath,
-              "thumbnail_" + picture
-            );
-            if (
-              fs.existsSync(imgFilePath) &&
-              fs.lstatSync(imgFilePath).isFile()
-            ) {
-              fs.unlink(imgFilePath, (err) => {
-                if (err) {
-                  console.error("Error deleting image: ", err);
-                } else {
-                  console.log("Image deleted successfully");
-                }
-              });
-            }
-            if (
-              fs.existsSync(thumbFilePath) &&
-              fs.lstatSync(thumbFilePath).isFile()
-            ) {
-              fs.unlink(thumbFilePath, (err) => {
-                if (err) {
-                  console.error("Error deleting thumbnail: ", err);
-                } else {
-                  console.log("Thumbnail deleted successfully");
-                }
-              });
-            }
-          });
+
+          // Eliminar las imágenes anteriores
+          await Promise.all(
+            obtainedJobExample.pictures.map(async (picture: string) => {
+              const imgFilePath = path.join(imagesFilePath, picture);
+              const thumbFilePath = path.join(
+                thumbnailsFilePath,
+                "thumbnail_" + picture
+              );
+
+              try {
+                await fs.remove(imgFilePath);
+                console.log("Image deleted successfully:", imgFilePath);
+              } catch (err) {
+                console.error("Error deleting image:", err);
+              }
+
+              try {
+                await fs.remove(thumbFilePath);
+                console.log("Thumbnail deleted successfully:", thumbFilePath);
+              } catch (err) {
+                console.error("Error deleting thumbnail:", err);
+              }
+            })
+          );
+
           obtainedJobExample.pictures = files.pictures.map(
             (file) => file.filename
           );
+
+          // Aquí puedes implementar el envío para redimensionar imágenes
           obtainedJobExample.pictures.forEach(async (picture: string) => {
             const filePath = path.join(imagesFilePath, picture);
-
-            await sendOrderToResizeEvent(filePath, (error, result) => {
-              if (error) {
-                console.error("Error resizing image: ", error);
-              } else {
-                console.log("Saved job example gets: ", result);
-              }
-            });
+            try {
+              const result = await resizeImage(filePath);
+              console.log("Job example gets: ", result);
+            } catch (error) {
+              console.log("Error resizing images: ", error);
+            }
           });
         }
 
+        // Eliminar videos
         if (files.videos) {
-          (obtainedJobExample as any).videos.forEach((video: string) => {
-            const filePath = path.join(__dirname, "../../uploads/video", video);
-            if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
-              fs.unlink(filePath, (err) => {
-                if (err) {
-                  console.error("Error deleting video: ", err);
-                } else {
-                  console.log("Video deleted successfully");
-                }
-              });
-            }
-          });
+          await Promise.all(
+            (obtainedJobExample as any).videos.map(async (video: string) => {
+              const filePath = path.join(
+                __dirname,
+                "../../uploads/video",
+                video
+              );
+              try {
+                await fs.remove(filePath);
+                console.log("Video deleted successfully:", filePath);
+              } catch (err) {
+                console.error("Error deleting video:", err);
+              }
+            })
+          );
           obtainedJobExample.videos = files.videos.map((file) => file.filename);
         }
 
+        // Eliminar audios
         if (files.audios) {
-          (obtainedJobExample as any).audios.forEach((audio: string) => {
-            const filePath = path.join(__dirname, "../../uploads/audio", audio);
-            if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
-              fs.unlink(filePath, (err) => {
-                if (err) {
-                  console.error("Error deleting audio: ", err);
-                } else {
-                  console.log("Audio deleted successfully");
-                }
-              });
-            }
-          });
+          await Promise.all(
+            (obtainedJobExample as any).audios.map(async (audio: string) => {
+              const filePath = path.join(
+                __dirname,
+                "../../uploads/audio",
+                audio
+              );
+              try {
+                await fs.remove(filePath);
+                console.log("Audio deleted successfully:", filePath);
+              } catch (err) {
+                console.error("Error deleting audio:", err);
+              }
+            })
+          );
           obtainedJobExample.audios = files.audios.map((file) => file.filename);
         }
       }
 
       const updatedJobExample = await obtainedJobExample.save();
-
       this.handleSuccess(res, updatedJobExample, "Job updated successfully!");
     } catch (error) {
       this.handleError(error as CustomError, res);

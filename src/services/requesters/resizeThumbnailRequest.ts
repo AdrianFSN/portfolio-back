@@ -1,5 +1,5 @@
 import cote from "cote";
-import fs from "fs/promises";
+import fs from "fs-extra";
 
 const requester = new cote.Requester({ name: "imageResizerRequester" });
 
@@ -7,6 +7,18 @@ interface ResizeEvent {
   type: string;
   filePath: string;
 }
+
+const resizeImage = async (filePath: string) => {
+  return new Promise((resolve, reject) => {
+    sendOrderToResizeEvent(filePath, (error, result) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
 
 const sendOrderToResizeEvent = async (
   filePath: string,
@@ -37,4 +49,4 @@ const sendOrderToResizeEvent = async (
 
 console.log("Requester is running...");
 
-export default sendOrderToResizeEvent;
+export default resizeImage;

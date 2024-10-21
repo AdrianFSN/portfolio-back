@@ -1,7 +1,7 @@
 import cote from "cote";
 import path from "node:path";
 import sharp from "sharp";
-import fs from "fs/promises";
+import fs from "fs-extra";
 
 const responder = new cote.Responder({ name: "thumbnailResizerResponder" });
 
@@ -11,7 +11,7 @@ interface ResizeRequest {
 }
 
 responder.on<ResizeRequest>("resize-to-thumbnail", async (req, done) => {
-  const { filePath } = req;
+  let { filePath } = req;
 
   if (!filePath) {
     const error = new Error("filePath is required");
@@ -47,8 +47,8 @@ responder.on<ResizeRequest>("resize-to-thumbnail", async (req, done) => {
 
       await image.resize(newWidth, newHeight).toFile(outputFilePath);
 
-      // Asegurarse de cerrar cualquier stream abierto
       image.destroy();
+      filePath = "";
     }
 
     done(null, {
