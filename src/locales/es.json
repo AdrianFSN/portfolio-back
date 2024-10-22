@@ -1,1 +1,9 @@
-{}
+{
+	"job_list_empty": "job_list_empty",
+	"job_example_loaded_successfully": "job_example_loaded_successfully",
+	"validation_error": "validation_error",
+	"required_fields_for_job": "required_fields_for_job",
+	"job_example_created_successfully": "job_example_created_successfully",
+	"job_example_deleted_successfully": "job_example_deleted_successfully",
+	"job_example_list_loaded": "job_example_list_loaded"
+}

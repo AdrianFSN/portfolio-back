@@ -46,20 +46,20 @@ class JobExampleController extends BaseController {
         !customer ||
         !category
       ) {
-        throw createValidationError("Validation error", [
-          "Title, technologies, launch period, customer, category, and info are required",
+        throw createValidationError(res.__("validation_error"), [
+          res.__("required_fields_for_job"),
         ]);
       }
 
       if (!/^\d{4}\/(0[1-9]|1[0-2])$/.test(launchPeriod)) {
-        throw createValidationError("Validation error", [
-          `${launchPeriod} is not a valid format. Please use YYYY/MM.`,
+        throw createValidationError(res.__("validation_error"), [
+          res.__("invalid_format_launch_period", { launchPeriod }),
         ]);
       }
 
       if (linkToUrl && !isValidUrl(linkToUrl)) {
-        throw createValidationError("Validation error", [
-          `${linkToUrl} is not a valid URL. Please provide a valid URL.`,
+        throw createValidationError(res.__("validation_error"), [
+          res.__("invalid_url_format", { linkToUrl }),
         ]);
       }
 
@@ -98,7 +98,11 @@ class JobExampleController extends BaseController {
         });
       }
 
-      this.handleSuccess(res, savedJob, "Developer job created successfully!");
+      this.handleSuccess(
+        res,
+        savedJob,
+        res.__("job_example_created_successfully")
+      );
     } catch (error) {
       this.handleError(error as CustomError, res);
     }
@@ -171,8 +175,8 @@ class JobExampleController extends BaseController {
             jobExamples: jobExamplesList,
           },
           jobExamplesList.length > 0
-            ? "Job examples list loaded successfully!"
-            : "Resource loaded successfully, but your job examples list is empty!"
+            ? res.__("job_example_list_loaded")
+            : res.__("job_list_empty")
         );
       }
     } catch (error) {
@@ -187,10 +191,11 @@ class JobExampleController extends BaseController {
       const obtainedJobExample = await JobExample.findById(jobExampleId);
 
       if (obtainedJobExample) {
+        const jobTitle = obtainedJobExample.title;
         this.handleSuccess(
           res,
           obtainedJobExample,
-          `Job example with id ${jobExampleId} loaded successfully!`
+          res.__("job_example_loaded_successfully", { jobTitle })
         );
       }
     } catch (error) {
@@ -207,9 +212,11 @@ class JobExampleController extends BaseController {
 
       if (!obtainedJobExample) {
         throw createDocumentNotFoundError(
-          `Job example with ID ${jobExampleId} not found`
+          res.__("job_example_not_found", { jobExampleId })
         );
       }
+
+      const jobTitle = obtainedJobExample.title;
 
       const imagesFilePath = path.join(__dirname, "../../uploads/image");
       const thumbnailFilepath = path.join(imagesFilePath, "thumbnails");
@@ -275,7 +282,7 @@ class JobExampleController extends BaseController {
         this.handleSuccess(
           res,
           deletedJobExample,
-          `Job ${obtainedJobExample.title} deleted successfully!`
+          res.__("job_example_deleted_successfully", { jobTitle })
         );
       }
     } catch (error) {
@@ -304,20 +311,20 @@ class JobExampleController extends BaseController {
         !customer ||
         !category
       ) {
-        throw createValidationError("Validation error", [
-          "Title, technologies, launch period, customer, category, and info are required",
+        throw createValidationError(res.__("validation_error"), [
+          res.__("required_fields_for_job"),
         ]);
       }
 
       if (!/^\d{4}\/(0[1-9]|1[0-2])$/.test(launchPeriod)) {
-        throw createValidationError("Validation error", [
-          `${launchPeriod} is not a valid format. Please use YYYY/MM.`,
+        throw createValidationError(res.__("validation_error"), [
+          res.__("invalid_format_launch_period", { launchPeriod }),
         ]);
       }
 
       if (linkToUrl && !isValidUrl(linkToUrl)) {
-        throw createValidationError("Validation error", [
-          `${linkToUrl} is not a valid URL. Please provide a valid URL.`,
+        throw createValidationError(res.__("validation_error"), [
+          res.__("invalid_url_format", { linkToUrl }),
         ]);
       }
 
@@ -327,7 +334,7 @@ class JobExampleController extends BaseController {
 
       if (!obtainedJobExample) {
         throw createDocumentNotFoundError(
-          `JobExample with ID ${jobExampleId} not found`
+          res.__("job_example_not_found", { jobExampleId })
         );
       }
 
@@ -348,7 +355,6 @@ class JobExampleController extends BaseController {
           const imagesFilePath = path.join(__dirname, "../../uploads/image");
           const thumbnailsFilePath = path.join(imagesFilePath, "thumbnails");
 
-          // Eliminar las imágenes anteriores
           await Promise.all(
             obtainedJobExample.pictures.map(async (picture: string) => {
               const imgFilePath = path.join(imagesFilePath, picture);
@@ -377,7 +383,6 @@ class JobExampleController extends BaseController {
             (file) => file.filename
           );
 
-          // Aquí puedes implementar el envío para redimensionar imágenes
           obtainedJobExample.pictures.forEach(async (picture: string) => {
             const filePath = path.join(imagesFilePath, picture);
             try {
@@ -389,7 +394,6 @@ class JobExampleController extends BaseController {
           });
         }
 
-        // Eliminar videos
         if (files.videos) {
           await Promise.all(
             (obtainedJobExample as any).videos.map(async (video: string) => {
@@ -409,7 +413,6 @@ class JobExampleController extends BaseController {
           obtainedJobExample.videos = files.videos.map((file) => file.filename);
         }
 
-        // Eliminar audios
         if (files.audios) {
           await Promise.all(
             (obtainedJobExample as any).audios.map(async (audio: string) => {
@@ -431,7 +434,11 @@ class JobExampleController extends BaseController {
       }
 
       const updatedJobExample = await obtainedJobExample.save();
-      this.handleSuccess(res, updatedJobExample, "Job updated successfully!");
+      this.handleSuccess(
+        res,
+        updatedJobExample,
+        res.__("job_updated_successfully")
+      );
     } catch (error) {
       this.handleError(error as CustomError, res);
     }

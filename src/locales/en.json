@@ -1,1 +1,13 @@
-{}
+{
+  "job_example_list_loaded": "Job examples list loaded successfully!",
+  "job_list_empty": "Resource loaded successfully, but your job examples list is empty!",
+  "job_example_loaded_successfully": "Job example {{jobTitle}} loaded successfully!",
+  "validation_error": "Validation error",
+  "required_fields_for_job": "Title, technologies, launch period, customer, category, and info are required",
+  "invalid_format_launch_period": "{{launchPeriod}} is not a valid format. Please use YYYY/MM.",
+  "invalid_url_format": "{{linkToUrl}} is not a valid URL. Please provide a valid URL.",
+  "job_example_created_successfully": "Job example created successfully!",
+  "job_example_not_found": "Job example with ID {{jobExampleId}} not found",
+  "job_example_deleted_successfully": "Job {{jobTitle}} deleted successfully!",
+  "job_updated_successfully": "Job updated successfully!"
+}
