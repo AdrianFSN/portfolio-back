@@ -3,7 +3,7 @@ import fs from "fs-extra";
 import path from "path";
 import { fileURLToPath } from "url";
 import JobExample from "../models/JobExample.js";
-import CustomError from "../types/CustomErrors.js";
+import CustomError, { DocumentNotFound } from "../types/CustomErrors.js";
 import BaseController from "./BaseController.js";
 import isValidUrl from "../utils/validUrlChecker.js";
 import { AuthenticatedRequest } from "../types/AuthenticatedRequest.js";
@@ -19,6 +19,7 @@ class JobExampleController extends BaseController {
     super();
     this.create = this.create.bind(this);
     this.get = this.get.bind(this);
+    this.getOneJobExample = this.getOneJobExample.bind(this);
     this.delete = this.delete.bind(this);
     this.update = this.update.bind(this);
   }
@@ -179,6 +180,24 @@ class JobExampleController extends BaseController {
     }
   }
 
+  async getOneJobExample(req: Request, res: Response): Promise<void> {
+    const jobExampleId = req.params.id;
+
+    try {
+      const obtainedJobExample = await JobExample.findById(jobExampleId);
+
+      if (obtainedJobExample) {
+        this.handleSuccess(
+          res,
+          obtainedJobExample,
+          `Job example with id ${jobExampleId} loaded successfully!`
+        );
+      }
+    } catch (error) {
+      this.handleError(error as DocumentNotFound, res);
+    }
+  }
+
   async delete(req: Request, res: Response): Promise<void> {
     try {
       const jobExampleId = req.params.id;
@@ -188,7 +207,7 @@ class JobExampleController extends BaseController {
 
       if (!obtainedJobExample) {
         throw createDocumentNotFoundError(
-          `JobExample with ID ${jobExampleId} not found`
+          `Job example with ID ${jobExampleId} not found`
         );
       }
 
@@ -204,7 +223,6 @@ class JobExampleController extends BaseController {
               "thumbnail_" + picture
             );
 
-            // Eliminar la imagen
             try {
               await fs.remove(imgFilePath);
               console.log("Image deleted successfully:", imgFilePath);
@@ -212,7 +230,6 @@ class JobExampleController extends BaseController {
               console.error("Error deleting image:", err);
             }
 
-            // Eliminar la miniatura
             try {
               await fs.remove(thumbFilepath);
               console.log("Thumbnail deleted successfully:", thumbFilepath);

@@ -7,6 +7,7 @@ import isAuthorized from "../middlewares/isAuthorized.js";
 const router = express.Router();
 
 router.get("/", JobExampleController.get);
+router.get("/:id", JobExampleController.getOneJobExample);
 router.delete(
   "/:id",
   isAuthenticated,
