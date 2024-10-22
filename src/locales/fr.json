@@ -5,5 +5,6 @@
 	"required_fields_for_job": "required_fields_for_job",
 	"job_example_created_successfully": "job_example_created_successfully",
 	"job_example_deleted_successfully": "job_example_deleted_successfully",
-	"job_example_list_loaded": "job_example_list_loaded"
+	"job_example_list_loaded": "job_example_list_loaded",
+	"file_type_not_valid": "file_type_not_valid"
 }

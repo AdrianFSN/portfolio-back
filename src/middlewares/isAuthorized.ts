@@ -13,25 +13,27 @@ const isAuthorized = async (
 ): Promise<void> => {
   try {
     if (!req.user) {
-      throw createForbiddenError("Forbidden: Insufficient permissions");
+      throw createForbiddenError(res.__("forbidden_insufficient_permissions"));
     }
 
     const { userId } = req.user!;
 
     if (!userId) {
-      throw createValidationError("Validation error", [
-        "No user ID found in token",
+      throw createValidationError(res.__("validation_error"), [
+        res.__("no_id_in_token"),
       ]);
     }
 
     const user = await User.findById(userId);
 
     if (!user) {
-      throw createDocumentNotFoundError(`User with ID ${userId} not found`);
+      throw createDocumentNotFoundError(
+        res.__("user_not_found_by_id", { userId })
+      );
     }
 
     if (user.role !== "admin") {
-      throw createForbiddenError("Access denied: Insufficient permissions");
+      throw createForbiddenError(res.__("forbidden_insufficient_permissions"));
     }
 
     next();

@@ -57,9 +57,7 @@ const upload = multer({
     if (isImage || isVideo || isAudio) {
       cb(null, true);
     } else {
-      const error: FileUploadError = new Error(
-        "Error: File not valid. Only use jpg, gif or png for pictures, mp4 for video, and mp3 for audio."
-      );
+      const error: FileUploadError = new Error(req.__("file_type_not_valid"));
       error.statusCode = 400;
       error.state = "error";
       error.fileName = file.originalname;

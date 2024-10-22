@@ -17,22 +17,22 @@ class AuthController extends BaseController {
       const { email, password } = req.body;
 
       if (!email || !password) {
-        throw createValidationError("Validation error", [
-          "Email and password are required",
+        throw createValidationError(res.__("validation_error"), [
+          res.__("email_password_required"),
         ]);
       }
 
       const user = await User.findOne({ email }).select("+password");
 
       if (!user) {
-        throw createDocumentNotFoundError(`Invalid credentials`);
+        throw createDocumentNotFoundError(res.__("invalid_credentials"));
       }
 
       const isMatch = await user.comparePassword(password);
 
       if (!isMatch) {
-        throw createValidationError("Validation error", [
-          "Invalid credentials",
+        throw createValidationError(res.__("validation_error"), [
+          res.__("invalid_credentials"),
         ]);
       }
 
@@ -46,7 +46,7 @@ class AuthController extends BaseController {
 
       user.password = "******";
 
-      this.handleSuccess(res, { user, token }, "Login successful!");
+      this.handleSuccess(res, { user, token }, res.__("login_successful"));
     } catch (error) {
       this.handleError(error as CustomError, res);
     }

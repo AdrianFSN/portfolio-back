@@ -14,5 +14,15 @@
   "document_not_found": "Document not found",
   "unauthorized": "Unauthorized",
   "internal_server_error": "Internal server error",
-  "fileupload_error": "File upload error: {{errorFileName}} ({{errorMimeType}})"
+  "fileupload_error": "File upload error: {{errorFileName}} ({{errorMimeType}})",
+  "file_type_not_valid": "Error: File not valid. Only use jpg, gif or png for pictures, mp4 for video, and mp3 for audio.",
+  "no_token_provided": "No token provided",
+  "invalid_token": "Invalid token",
+  "expired_token": "Token has expired",
+  "forbidden_insufficient_permissions": "Forbidden: Insufficient permissions",
+  "no_id_in_token": "No user ID found in token",
+  "user_not_found_by_id": "User with ID {{userId}} not found",
+  "email_password_required": "Email and password are required",
+  "invalid_credentials": "Invalid credentials",
+  "login_successful": "Login successful!"
 }
