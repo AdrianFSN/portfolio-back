@@ -9,5 +9,10 @@
   "job_example_created_successfully": "Job example created successfully!",
   "job_example_not_found": "Job example with ID {{jobExampleId}} not found",
   "job_example_deleted_successfully": "Job {{jobTitle}} deleted successfully!",
-  "job_updated_successfully": "Job updated successfully!"
+  "job_updated_successfully": "Job updated successfully!",
+  "database_error": "Database error",
+  "document_not_found": "Document not found",
+  "unauthorized": "Unauthorized",
+  "internal_server_error": "Internal server error",
+  "fileupload_error": "File upload error: {{errorFileName}} ({{errorMimeType}})"
 }

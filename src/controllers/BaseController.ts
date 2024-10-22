@@ -20,20 +20,23 @@ class BaseController {
     if (this.isValidationError(error)) {
       return res.status(error.statusCode || 400).json({
         state: "error",
-        message: "Validation error",
+        message: res.__("validation_error"),
         validationErrors: error.validationErrors,
         code: error.statusCode || 400,
       });
     } else if (this.isFileUploadError(error)) {
+      const errorFilename = error.fileName || "unknown file";
+      const errorMimeType = error.mimeType || "unknown mime type";
+
       return res.status(error.statusCode || 400).json({
         state: "error",
-        message: `File upload error: ${error.fileName} (${error.mimeType})`,
+        message: res.__("fileupload_error", { errorFilename, errorMimeType }),
         code: error.statusCode || 400,
       });
     } else if (this.isDatabaseError(error)) {
       return res.status(error.statusCode || 500).json({
         state: "error",
-        message: "Database error",
+        message: res.__("database_error"),
         query: error.query,
         parameters: error.parameters,
         code: error.statusCode || 500,
@@ -41,21 +44,21 @@ class BaseController {
     } else if (this.isDocumentNotFound(error)) {
       return res.status(error.statusCode || 404).json({
         state: "error",
-        message: "Document not found",
+        message: res.__("document_not_found"),
         error: error.message,
         code: error.statusCode || 404,
       });
     } else if (this.isNotAuthorized(error)) {
       return res.status(error.statusCode || 404).json({
         state: "error",
-        message: "Unauthorized",
+        message: res.__("unauthorized"),
         error: error.message,
         code: error.statusCode || 401,
       });
     } else {
       return res.status(500).json({
         state: "error",
-        message: "Internal server error",
+        message: res.__("internal_server_error"),
         error: error.message,
         code: 500,
       });
