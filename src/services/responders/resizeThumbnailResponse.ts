@@ -10,6 +10,8 @@ interface ResizeRequest {
   filePath: string;
 }
 
+sharp.cache(false);
+
 responder.on<ResizeRequest>("resize-to-thumbnail", async (req, done) => {
   let { filePath } = req;
 
@@ -35,12 +37,6 @@ responder.on<ResizeRequest>("resize-to-thumbnail", async (req, done) => {
 
     const image = sharp(filePath);
 
-    image.on("error", (err) => {
-      console.error("Error procesando la imagen:", err);
-      done(err, null);
-      image.destroy();
-    });
-
     const metadata = await image.metadata();
 
     if (metadata && metadata.width && metadata.height) {
@@ -53,12 +49,6 @@ responder.on<ResizeRequest>("resize-to-thumbnail", async (req, done) => {
       }
 
       await image.resize(newWidth, newHeight).toFile(outputFilePath);
-
-      image.on("close", () => {
-        console.log(
-          "El stream de la imagen ha sido cerrado y los recursos han sido liberados."
-        );
-      });
 
       image.destroy();
       filePath = "";
