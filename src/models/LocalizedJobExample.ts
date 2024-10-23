@@ -1,5 +1,4 @@
-import mongoose, { Document, Schema } from "mongoose";
-import JobCategories from "../types/JobCategories.js";
+import mongoose, { Document, Schema, Types } from "mongoose";
 
 interface interfaceLocalizedJobExample extends Document {
   language: string;
@@ -8,7 +7,7 @@ interface interfaceLocalizedJobExample extends Document {
   info: string;
   customer: string;
   linkToUrl?: string;
-  linkedJobExample: mongoose.Schema.Types.ObjectId;
+  linkedJobExample: mongoose.Types.ObjectId;
 }
 
 const LocalizedJobExampleSchema: Schema<interfaceLocalizedJobExample> =

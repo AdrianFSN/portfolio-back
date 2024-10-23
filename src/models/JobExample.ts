@@ -1,8 +1,8 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema, Types } from "mongoose";
 import JobCategories from "../types/JobCategories.js";
 
 interface interfaceJobExample extends Document {
-  versions: mongoose.Schema.Types.ObjectId[];
+  versions: mongoose.Types.ObjectId[];
   pictures?: string[];
   videos?: string[];
   audios?: string[];
@@ -16,7 +16,7 @@ const jobExampleSchema: Schema<interfaceJobExample> = new Schema(
     versions: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Version",
+        ref: "LocalizedJobExample",
       },
     ],
     pictures: {

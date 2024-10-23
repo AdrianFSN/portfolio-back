@@ -3,6 +3,7 @@ import fs from "fs-extra";
 import path from "path";
 import { fileURLToPath } from "url";
 import JobExample from "../models/JobExample.js";
+import LocalizedJobExample from "../models/LocalizedJobExample.js";
 import CustomError, { DocumentNotFound } from "../types/CustomErrors.js";
 import BaseController from "./BaseController.js";
 import isValidUrl from "../utils/validUrlChecker.js";
@@ -10,6 +11,7 @@ import { AuthenticatedRequest } from "../types/AuthenticatedRequest.js";
 import createValidationError from "../utils/createValidationError.js";
 import createDocumentNotFoundError from "../utils/createDocumentNotFoundError.js";
 import resizeImage from "../services/requesters/resizeThumbnailRequest.js";
+import mongoose from "mongoose";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -63,8 +65,16 @@ class JobExampleController extends BaseController {
         ]);
       }
 
-      const newJob = new JobExample(req.body);
-      newJob.owner = userId;
+      const newJobExampleData = {
+        pictures: req.body.pictures,
+        videos: req.body.videos,
+        audios: req.body.audios,
+        launchPeriod: req.body.launchPeriod,
+        category: req.body.category,
+        owner: userId,
+      };
+
+      const newJob = new JobExample(newJobExampleData);
 
       if (req.files) {
         const files = Object.assign({}, req.files) as {
@@ -82,6 +92,45 @@ class JobExampleController extends BaseController {
         if (files.audios) {
           newJob.audios = files.audios.map((file) => file.filename);
         }
+      }
+
+      const versionsData = [
+        {
+          language: "en",
+          title: req.body.title,
+          technologies: req.body.technologies,
+          info: req.body.info,
+          customer: req.body.customer,
+          linkToUrl: req.body.linkToUrl,
+          linkedJobExample: newJob._id,
+        },
+        {
+          language: "es",
+          title: req.body.title,
+          technologies: req.body.technologies,
+          info: req.body.info,
+          customer: req.body.customer,
+          linkToUrl: req.body.linkToUrl,
+          linkedJobExample: newJob._id,
+        },
+        {
+          language: "fr",
+          title: req.body.title,
+          technologies: req.body.technologies,
+          info: req.body.info,
+          customer: req.body.customer,
+          linkToUrl: req.body.linkToUrl,
+          linkedJobExample: newJob._id,
+        },
+      ];
+
+      const versions = await LocalizedJobExample.create(versionsData);
+      const versionsIds = versions.map(
+        (version) => version._id as mongoose.Types.ObjectId
+      );
+
+      if (newJob) {
+        newJob.versions = versionsIds;
       }
 
       const savedJob = await newJob.save();
