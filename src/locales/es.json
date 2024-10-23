@@ -10,5 +10,9 @@
 	"email_password_required": "email_password_required",
 	"Validation error": "Validation error",
 	"invalid_credentials": "invalid_credentials",
-	"login_successful": "login_successful"
+	"login_successful": "login_successful",
+	"invalid_token": "invalid_token",
+	"job_example_not_found": "job_example_not_found",
+	"document_not_found": "document_not_found",
+	"job_updated_successfully": "job_updated_successfully"
 }

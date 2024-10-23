@@ -163,8 +163,7 @@ class JobExampleController extends BaseController {
   async get(req: Request, res: Response): Promise<void> {
     try {
       let filters: any = {};
-      const userLanguage = req.cookies["accept-language"] || "en";
-      filters.language = userLanguage;
+      const userLanguage = req.headers["accept-language"] || "en";
 
       if (req.query.hasOwnProperty("category")) {
         if (Array.isArray(req.query.category)) {
@@ -216,7 +215,6 @@ class JobExampleController extends BaseController {
           path: "versions",
           match: {
             language: userLanguage,
-            category: { $in: filters.category },
           },
           select:
             "language title info technologies customer category linkToUrl",
@@ -248,7 +246,7 @@ class JobExampleController extends BaseController {
 
   async getOneJobExample(req: Request, res: Response): Promise<void> {
     const jobExampleId = req.params.id;
-    const userLanguage = req.cookies["accept-language"] || "en";
+    const userLanguage = req.headers["accept-language"] || "en";
 
     try {
       const obtainedJobExample = (await JobExample.findById(
@@ -368,7 +366,7 @@ class JobExampleController extends BaseController {
   async update(req: Request, res: Response): Promise<void> {
     try {
       const jobExampleId = req.params.id;
-      const userLanguage = req.cookies["accept-language"] || "en";
+      const userLanguage = req.headers["accept-language"] || "en";
       const { launchPeriod } = req.body;
 
       if (!launchPeriod) {
@@ -389,7 +387,13 @@ class JobExampleController extends BaseController {
         ]);
       } */
 
-      const obtainedJobExample = await JobExample.findById(jobExampleId);
+      const obtainedJobExample = await JobExample.findById(
+        jobExampleId
+      ).populate({
+        path: "versions",
+        match: { language: userLanguage },
+        select: "language title info technologies customer category linkToUrl",
+      });
 
       if (!obtainedJobExample) {
         throw createDocumentNotFoundError(

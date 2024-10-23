@@ -147,10 +147,10 @@ async function initJobExamples() {
         ...jobData,
         owner: jobOwner._id,
       };
-      await JobExample.create(newJobExample);
-      console.log(
+      //await JobExample.create(newJobExample);
+      /* console.log(
         `Job example created successfully for owner: ${jobOwner._id}`
-      );
+      ); */
     } else {
       console.log(
         `No user found for email: ${ownerEmail}. Job example not created.`
