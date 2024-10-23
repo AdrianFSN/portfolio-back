@@ -28,3 +28,8 @@ export interface DatabaseError extends CustomError {
 export interface ForbiddenError extends CustomError {
   parameters?: unknown;
 }
+
+export interface ModelError extends CustomError {
+  modelName?: string;
+  operation?: string;
+}

@@ -6,5 +6,9 @@
 	"job_example_created_successfully": "job_example_created_successfully",
 	"job_example_deleted_successfully": "job_example_deleted_successfully",
 	"job_example_list_loaded": "job_example_list_loaded",
-	"file_type_not_valid": "file_type_not_valid"
+	"file_type_not_valid": "file_type_not_valid",
+	"email_password_required": "email_password_required",
+	"Validation error": "Validation error",
+	"invalid_credentials": "invalid_credentials",
+	"login_successful": "login_successful"
 }

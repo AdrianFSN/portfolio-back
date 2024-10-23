@@ -58,7 +58,7 @@ userSchema.pre("save", async function (next) {
     next();
   } catch (error) {
     const dbError: DatabaseError = new Error(
-      "Error while encrypting the password"
+      "error_encrypting_password"
     ) as DatabaseError;
 
     dbError.statusCode = 500;
@@ -77,11 +77,11 @@ userSchema.methods.comparePassword = async function (
     return await bcrypt.compare(candidatePassword, user.password);
   } catch (error) {
     const validationError: ValidationError = new Error(
-      "Error while comparing passwords"
+      "error_comparing_passwords"
     ) as ValidationError;
     validationError.statusCode = 400;
     validationError.state = "error";
-    validationError.validationErrors = ["Password comparison failed"];
+    validationError.validationErrors = ["password_comparison_failed"];
     throw validationError;
   }
 };

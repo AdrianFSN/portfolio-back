@@ -20,7 +20,7 @@ class BaseController {
     if (this.isValidationError(error)) {
       return res.status(error.statusCode || 400).json({
         state: "error",
-        message: res.__("validation_error"),
+        message: res.__(error.message || "validation_error"),
         validationErrors: error.validationErrors,
         code: error.statusCode || 400,
       });
@@ -36,7 +36,7 @@ class BaseController {
     } else if (this.isDatabaseError(error)) {
       return res.status(error.statusCode || 500).json({
         state: "error",
-        message: res.__("database_error"),
+        message: res.__(error.message || "database_error"),
         query: error.query,
         parameters: error.parameters,
         code: error.statusCode || 500,
