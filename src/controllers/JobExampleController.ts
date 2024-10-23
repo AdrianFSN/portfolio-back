@@ -369,26 +369,11 @@ class JobExampleController extends BaseController {
     try {
       const jobExampleId = req.params.id;
       const userLanguage = req.cookies["accept-language"] || "en";
-      const {
-        title,
-        technologies,
-        launchPeriod,
-        info,
-        customer,
-        category,
-        linkToUrl,
-      } = req.body;
+      const { launchPeriod } = req.body;
 
-      if (
-        !title ||
-        !technologies ||
-        !launchPeriod ||
-        !info ||
-        !customer ||
-        !category
-      ) {
+      if (!launchPeriod) {
         throw createValidationError(res.__("validation_error"), [
-          res.__("required_fields_for_job"),
+          res.__("launchPeriod_required"),
         ]);
       }
 
@@ -398,15 +383,13 @@ class JobExampleController extends BaseController {
         ]);
       }
 
-      if (linkToUrl && !isValidUrl(linkToUrl)) {
+      /*  if (linkToUrl && !isValidUrl(linkToUrl)) {
         throw createValidationError(res.__("validation_error"), [
           res.__("invalid_url_format", { linkToUrl }),
         ]);
-      }
+      } */
 
-      const obtainedJobExample = await JobExample.findById({
-        _id: jobExampleId,
-      });
+      const obtainedJobExample = await JobExample.findById(jobExampleId);
 
       if (!obtainedJobExample) {
         throw createDocumentNotFoundError(
@@ -414,13 +397,7 @@ class JobExampleController extends BaseController {
         );
       }
 
-      obtainedJobExample.title = title;
-      obtainedJobExample.technologies = technologies;
       obtainedJobExample.launchPeriod = launchPeriod;
-      obtainedJobExample.info = info;
-      obtainedJobExample.customer = customer;
-      obtainedJobExample.category = category;
-      obtainedJobExample.linkToUrl = linkToUrl;
 
       if (req.files) {
         const files = Object.assign({}, req.files) as {

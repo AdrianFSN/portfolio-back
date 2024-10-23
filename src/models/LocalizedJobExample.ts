@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema, Types } from "mongoose";
-import JobCategories from "../types/JobCategories";
+import JobCategories from "../types/JobCategories.js";
 
 interface interfaceLocalizedJobExample extends Document {
   language: string;
