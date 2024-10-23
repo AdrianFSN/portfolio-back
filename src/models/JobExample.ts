@@ -2,14 +2,10 @@ import mongoose, { Document, Schema } from "mongoose";
 import JobCategories from "../types/JobCategories.js";
 
 interface interfaceJobExample extends Document {
-  title: string;
-  technologies: string[];
+  versions: mongoose.Schema.Types.ObjectId[];
   pictures?: string[];
   videos?: string[];
   audios?: string[];
-  info: string;
-  customer: string;
-  linkToUrl?: string;
   launchPeriod: string;
   category: JobCategories[];
   owner: string;
@@ -17,16 +13,12 @@ interface interfaceJobExample extends Document {
 
 const jobExampleSchema: Schema<interfaceJobExample> = new Schema(
   {
-    title: {
-      type: String,
-      required: true,
-      index: true,
-    },
-    technologies: {
-      type: [String],
-      required: true,
-      index: true,
-    },
+    versions: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Version",
+      },
+    ],
     pictures: {
       type: [String],
     },
@@ -35,17 +27,6 @@ const jobExampleSchema: Schema<interfaceJobExample> = new Schema(
     },
     audios: {
       type: [String],
-    },
-    info: {
-      type: String,
-      required: true,
-    },
-    customer: {
-      type: String,
-      required: true,
-    },
-    linkToUrl: {
-      type: String,
     },
     launchPeriod: {
       type: String,
