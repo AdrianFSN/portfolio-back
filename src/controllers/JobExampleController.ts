@@ -12,6 +12,7 @@ import createValidationError from "../utils/createValidationError.js";
 import createDocumentNotFoundError from "../utils/createDocumentNotFoundError.js";
 import resizeImage from "../services/requesters/resizeThumbnailRequest.js";
 import mongoose from "mongoose";
+import interfaceJobExample from "../types/InterfaceJobExample.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -70,7 +71,6 @@ class JobExampleController extends BaseController {
         videos: req.body.videos,
         audios: req.body.audios,
         launchPeriod: req.body.launchPeriod,
-        category: req.body.category,
         owner: userId,
       };
 
@@ -103,6 +103,7 @@ class JobExampleController extends BaseController {
           customer: req.body.customer,
           linkToUrl: req.body.linkToUrl,
           linkedJobExample: newJob._id,
+          category: req.body.category,
         },
         {
           language: "es",
@@ -112,6 +113,7 @@ class JobExampleController extends BaseController {
           customer: req.body.customer,
           linkToUrl: req.body.linkToUrl,
           linkedJobExample: newJob._id,
+          category: req.body.category,
         },
         {
           language: "fr",
@@ -121,6 +123,7 @@ class JobExampleController extends BaseController {
           customer: req.body.customer,
           linkToUrl: req.body.linkToUrl,
           linkedJobExample: newJob._id,
+          category: req.body.category,
         },
       ];
 
@@ -209,15 +212,18 @@ class JobExampleController extends BaseController {
       const sortOrder = req.query.order === "desc" ? -1 : 1;
 
       const jobExamplesList = await JobExample.find(filters)
-        .skip(skip)
-        .limit(limit)
-        .sort({ [sortField]: sortOrder })
         .populate({
           path: "versions",
-          match: { language: userLanguage },
-          select: "language, title, info, technologies, customer, linkToUrl",
-        });
-
+          match: {
+            language: userLanguage,
+            category: { $in: filters.category },
+          },
+          select:
+            "language title info technologies customer category linkToUrl",
+        })
+        .skip(skip)
+        .limit(limit)
+        .sort({ [sortField]: sortOrder });
       const totalJobs = await JobExample.countDocuments(filters);
       const totalPages = Math.ceil(totalJobs / limit);
 
@@ -242,16 +248,24 @@ class JobExampleController extends BaseController {
 
   async getOneJobExample(req: Request, res: Response): Promise<void> {
     const jobExampleId = req.params.id;
+    const userLanguage = req.cookies["accept-language"] || "en";
 
     try {
-      const obtainedJobExample = await JobExample.findById(jobExampleId);
+      const obtainedJobExample = (await JobExample.findById(
+        jobExampleId
+      ).populate({
+        path: "versions",
+        match: { language: userLanguage },
+        select: "language title info technologies customer category linkToUrl",
+      })) as interfaceJobExample;
 
       if (obtainedJobExample) {
-        const jobTitle = obtainedJobExample.title;
+        //const version = obtainedJobExample.versions[0];
+        //const jobTitle = version ? version.title : "title not found";
         this.handleSuccess(
           res,
           obtainedJobExample,
-          res.__("job_example_loaded_successfully", { jobTitle })
+          res.__("job_example_loaded_successfully")
         );
       }
     } catch (error) {
@@ -262,9 +276,7 @@ class JobExampleController extends BaseController {
   async delete(req: Request, res: Response): Promise<void> {
     try {
       const jobExampleId = req.params.id;
-      const obtainedJobExample = await JobExample.findById({
-        _id: jobExampleId,
-      });
+      const obtainedJobExample = await JobExample.findById(jobExampleId);
 
       if (!obtainedJobExample) {
         throw createDocumentNotFoundError(
@@ -272,7 +284,14 @@ class JobExampleController extends BaseController {
         );
       }
 
-      const jobTitle = obtainedJobExample.title;
+      if (
+        obtainedJobExample.versions &&
+        obtainedJobExample.versions.length > 0
+      ) {
+        await LocalizedJobExample.deleteMany({
+          linkedJobExample: jobExampleId,
+        });
+      }
 
       const imagesFilePath = path.join(__dirname, "../../uploads/image");
       const thumbnailFilepath = path.join(imagesFilePath, "thumbnails");
@@ -338,7 +357,7 @@ class JobExampleController extends BaseController {
         this.handleSuccess(
           res,
           deletedJobExample,
-          res.__("job_example_deleted_successfully", { jobTitle })
+          res.__("job_example_deleted_successfully")
         );
       }
     } catch (error) {
@@ -349,6 +368,7 @@ class JobExampleController extends BaseController {
   async update(req: Request, res: Response): Promise<void> {
     try {
       const jobExampleId = req.params.id;
+      const userLanguage = req.cookies["accept-language"] || "en";
       const {
         title,
         technologies,

@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema, Types } from "mongoose";
+import JobCategories from "../types/JobCategories";
 
 interface interfaceLocalizedJobExample extends Document {
   language: string;
@@ -8,6 +9,7 @@ interface interfaceLocalizedJobExample extends Document {
   customer: string;
   linkToUrl?: string;
   linkedJobExample: mongoose.Types.ObjectId;
+  category: JobCategories[];
 }
 
 const LocalizedJobExampleSchema: Schema<interfaceLocalizedJobExample> =
@@ -43,6 +45,12 @@ const LocalizedJobExampleSchema: Schema<interfaceLocalizedJobExample> =
       linkedJobExample: {
         type: Schema.Types.ObjectId,
         ref: "JobExample",
+        required: true,
+        index: true,
+      },
+      category: {
+        type: [String],
+        enum: Object.values(JobCategories),
         required: true,
         index: true,
       },

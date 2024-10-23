@@ -1,5 +1,4 @@
 import mongoose, { Document, Schema, Types } from "mongoose";
-import JobCategories from "../types/JobCategories.js";
 
 interface interfaceJobExample extends Document {
   versions: mongoose.Types.ObjectId[];
@@ -7,7 +6,6 @@ interface interfaceJobExample extends Document {
   videos?: string[];
   audios?: string[];
   launchPeriod: string;
-  category: JobCategories[];
   owner: string;
 }
 
@@ -30,12 +28,6 @@ const jobExampleSchema: Schema<interfaceJobExample> = new Schema(
     },
     launchPeriod: {
       type: String,
-      required: true,
-      index: true,
-    },
-    category: {
-      type: [String],
-      enum: Object.values(JobCategories),
       required: true,
       index: true,
     },
