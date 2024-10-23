@@ -160,6 +160,8 @@ class JobExampleController extends BaseController {
   async get(req: Request, res: Response): Promise<void> {
     try {
       let filters: any = {};
+      const userLanguage = req.cookies["accept-language"] || "en";
+      filters.language = userLanguage;
 
       if (req.query.hasOwnProperty("category")) {
         if (Array.isArray(req.query.category)) {
@@ -209,7 +211,12 @@ class JobExampleController extends BaseController {
       const jobExamplesList = await JobExample.find(filters)
         .skip(skip)
         .limit(limit)
-        .sort({ [sortField]: sortOrder });
+        .sort({ [sortField]: sortOrder })
+        .populate({
+          path: "versions",
+          match: { language: userLanguage },
+          select: "language, title, info, technologies, customer, linkToUrl",
+        });
 
       const totalJobs = await JobExample.countDocuments(filters);
       const totalPages = Math.ceil(totalJobs / limit);
