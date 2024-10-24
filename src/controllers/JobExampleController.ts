@@ -13,6 +13,7 @@ import createDocumentNotFoundError from "../utils/createDocumentNotFoundError.js
 import resizeImage from "../services/requesters/resizeThumbnailRequest.js";
 import mongoose from "mongoose";
 import interfaceJobExample from "../types/InterfaceJobExample.js";
+import interfaceLocalizedJobExample from "../types/InterfaceLocalizedJobExample.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -255,7 +256,8 @@ class JobExampleController extends BaseController {
       })) as interfaceJobExample;
 
       if (obtainedJobExample) {
-        const version = obtainedJobExample.versions[0] as any;
+        const version = obtainedJobExample
+          .versions[0] as unknown as interfaceLocalizedJobExample;
         //const flattenedVersion = Object.assign({}, version) as any;
         //jobTitle = flattenedVersion._doc.title;
         const jobTitle = version.title;
@@ -295,7 +297,8 @@ class JobExampleController extends BaseController {
         obtainedJobExample.versions &&
         obtainedJobExample.versions.length > 0
       ) {
-        const version = obtainedJobExample.versions[0] as any;
+        const version = obtainedJobExample
+          .versions[0] as unknown as interfaceLocalizedJobExample;
         jobTitle = version.title;
 
         await LocalizedJobExample.deleteMany({
