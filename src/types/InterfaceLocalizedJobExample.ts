@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
 import JobCategories from "./JobCategories";
 
 interface interfaceLocalizedJobExample extends Document {
