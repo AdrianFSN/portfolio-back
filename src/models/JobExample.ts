@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import interfaceJobExample from "../types/InterfaceJobExample.js";
 /* interface interfaceJobExample extends Document {
   versions: mongoose.Types.ObjectId[];
@@ -19,7 +19,8 @@ const jobExampleSchema: Schema<interfaceJobExample> = new Schema(
       },
     ],
     pictures: {
-      type: [String],
+      type: Schema.Types.ObjectId,
+      ref: "PicturesCollection",
     },
     videos: {
       type: [String],

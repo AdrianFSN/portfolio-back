@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import JobExample from "../models/JobExample.js";
 import LocalizedJobExample from "../models/LocalizedJobExample.js";
+import PicturesCollection from "../models/PicturesCollection.js";
 import CustomError, { DocumentNotFound } from "../types/CustomErrors.js";
 import BaseController from "./BaseController.js";
 import isValidUrl from "../utils/validUrlChecker.js";
@@ -14,6 +15,7 @@ import resizeImage from "../services/requesters/resizeThumbnailRequest.js";
 import mongoose from "mongoose";
 import interfaceJobExample from "../types/InterfaceJobExample.js";
 import interfaceLocalizedJobExample from "../types/InterfaceLocalizedJobExample.js";
+import createDatabaseError from "../utils/createDatabaseError.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -78,13 +80,75 @@ class JobExampleController extends BaseController {
 
       const newJob = new JobExample(newJobExampleData);
 
+      const picturesCollection = await PicturesCollection.create({
+        linkedJobExample: newJob.id,
+      });
+      console.log("Pictures collection created succesfully");
+
+      if (!picturesCollection) {
+        console.log("No pictures collection created for this asset");
+      }
+
       if (req.files) {
         const files = Object.assign({}, req.files) as {
-          [key: string]: Express.Multer.File[];
+          [fieldname: string]: Express.Multer.File[];
         };
+        const pictureFields = [
+          "mainPicture",
+          "picture2",
+          "picture3",
+          "picture4",
+          "picture5",
+        ];
 
-        if (files.pictures) {
-          newJob.pictures = files.pictures.map((file) => file.filename);
+        pictureFields.forEach((field) => {
+          if (files[field] && files[field].length > 0) {
+            picturesCollection[field as keyof typeof picturesCollection] =
+              files[field][0].filename;
+          }
+        });
+
+        /*         if (files.mainPicture && files.mainPicture.length > 0) {
+          picturesCollection.mainPicture = files.mainPicture[0].filename;
+        }
+        if (files.picture2 && files.picture2.length > 0) {
+          picturesCollection.picture2 = files.picture2[0].filename;
+        }
+        if (files.picture3 && files.picture3.length > 0) {
+          picturesCollection.picture3 = files.picture3[0].filename;
+        }
+        if (files.picture4 && files.picture4.length > 0) {
+          picturesCollection.picture4 = files.picture4[0].filename;
+        }
+        if (files.picture5 && files.picture5.length > 0) {
+          picturesCollection.picture5 = files.picture5[0].filename;
+        } */
+
+        await picturesCollection.save();
+        if (picturesCollection && newJob) {
+          newJob.pictures = picturesCollection._id as mongoose.Types.ObjectId;
+        }
+
+        if (picturesCollection) {
+          pictureFields.forEach(async (field: string) => {
+            const picture =
+              picturesCollection[field as keyof typeof picturesCollection];
+
+            if (picture) {
+              const filePath = path.join(
+                __dirname,
+                "../../uploads/image",
+                picture
+              );
+
+              try {
+                const result = await resizeImage(filePath);
+                console.log("Saved job example gets: ", result);
+              } catch (error) {
+                console.log("Error resizing image: ", error);
+              }
+            }
+          });
         }
 
         if (files.videos) {
@@ -131,23 +195,9 @@ class JobExampleController extends BaseController {
         (version) => version._id as mongoose.Types.ObjectId
       );
 
-      if (newJob) {
-        newJob.versions = versionsIds;
-      }
+      newJob.versions = versionsIds;
 
       const savedJob = await newJob.save();
-
-      if (savedJob && savedJob.pictures && savedJob.pictures.length > 0) {
-        savedJob.pictures.forEach(async (item: string) => {
-          const filePath = path.join(__dirname, "../../uploads/image", item);
-          try {
-            const result = await resizeImage(filePath);
-            console.log("Saved job example gets: ", result);
-          } catch (error) {
-            console.log("Error resizing image: ", error);
-          }
-        });
-      }
 
       this.handleSuccess(
         res,
@@ -217,6 +267,10 @@ class JobExampleController extends BaseController {
           },
           select: "language title info technologies customer category",
         })
+        .populate({
+          path: "pictures",
+          select: "mainPicture picture2 picture3 picture4 picture5", // Los campos que deseas seleccionar
+        })
         .skip(skip)
         .limit(limit)
         .sort({ [sortField]: sortOrder });
@@ -247,13 +301,16 @@ class JobExampleController extends BaseController {
     const userLanguage = req.headers["accept-language"] || "en";
 
     try {
-      const obtainedJobExample = (await JobExample.findById(
-        jobExampleId
-      ).populate({
-        path: "versions",
-        match: { language: userLanguage },
-        select: "language title info technologies customer category",
-      })) as interfaceJobExample;
+      const obtainedJobExample = await JobExample.findById(jobExampleId)
+        .populate({
+          path: "versions",
+          match: { language: userLanguage },
+          select: "language title info technologies customer category",
+        })
+        .populate({
+          path: "pictures",
+          select: "mainPicture picture2 picture3 picture4 picture5", // Los campos que deseas seleccionar
+        });
 
       if (obtainedJobExample) {
         const version = obtainedJobExample
