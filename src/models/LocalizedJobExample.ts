@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema, Types } from "mongoose";
 import JobCategories from "../types/JobCategories.js";
-
-interface interfaceLocalizedJobExample extends Document {
+import interfaceLocalizedJobExample from "../types/InterfaceLocalizedJobExample.js";
+/* interface interfaceLocalizedJobExample extends Document {
   language: string;
   title: string;
   technologies: string[];
@@ -10,7 +10,7 @@ interface interfaceLocalizedJobExample extends Document {
   linkToUrl?: string;
   linkedJobExample: mongoose.Types.ObjectId;
   category: JobCategories[];
-}
+} */
 
 const LocalizedJobExampleSchema: Schema<interfaceLocalizedJobExample> =
   new Schema(
@@ -38,9 +38,6 @@ const LocalizedJobExampleSchema: Schema<interfaceLocalizedJobExample> =
       customer: {
         type: String,
         required: true,
-      },
-      linkToUrl: {
-        type: String,
       },
       linkedJobExample: {
         type: Schema.Types.ObjectId,

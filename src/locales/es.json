@@ -14,5 +14,6 @@
 	"invalid_token": "invalid_token",
 	"job_example_not_found": "job_example_not_found",
 	"document_not_found": "document_not_found",
-	"job_updated_successfully": "job_updated_successfully"
+	"job_updated_successfully": "job_updated_successfully",
+	"invalid_url_format": "invalid_url_format"
 }

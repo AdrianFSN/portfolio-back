@@ -5,6 +5,7 @@ interface interfaceJobExample extends Document {
   pictures?: string[];
   videos?: string[];
   audios?: string[];
+  linkToUrl?: string;
   launchPeriod: string;
   owner: string;
 }

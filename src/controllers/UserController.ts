@@ -19,37 +19,37 @@ class UserController extends BaseController {
       const { username, email, password, confirmPassword } = req.body;
 
       if (!username || !email || !password || !confirmPassword) {
-        throw createValidationError("Validation error", [
-          "Username, email, password and confirm password are required",
+        throw createValidationError(res.__("validation_error"), [
+          res.__("user_fields_required"),
         ]);
       }
 
       const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
       if (!emailRegex.test(email)) {
-        throw createValidationError("Validation error", [
-          "Please enter a valid email address",
+        throw createValidationError(res.__("validation_error"), [
+          res.__("email_not_valid"),
         ]);
       }
 
       const checkUsernameExists = await User.findOne({ username });
 
       if (checkUsernameExists) {
-        throw createValidationError("Validation error", [
-          `${username} is already in use`,
+        throw createValidationError("validation_error", [
+          res.__("username_already_exists", { username }),
         ]);
       }
 
       const checkUserEmailExists = await User.findOne({ email });
 
       if (checkUserEmailExists) {
-        throw createValidationError("Validation error", [
-          `${email} is already in use`,
+        throw createValidationError(res.__("validation_error"), [
+          res.__("email_already_exists", { email }),
         ]);
       }
 
       if (password !== confirmPassword) {
-        throw createValidationError("Validation error", [
-          "Password and confirm password don't match",
+        throw createValidationError(res.__("validation_error"), [
+          res.__("password_confirm_dont_match"),
         ]);
       }
       const newUser = new User({
@@ -61,7 +61,7 @@ class UserController extends BaseController {
       const savedUser = await newUser.save();
       if (savedUser) {
         savedUser.password = "******";
-        this.handleSuccess(res, savedUser, "User created successfully!");
+        this.handleSuccess(res, savedUser, res.__("user_created_successfully"));
       }
     } catch (error) {
       this.handleError(error as CustomError, res);
@@ -100,8 +100,8 @@ class UserController extends BaseController {
           res,
           usersList,
           usersList.length > 0
-            ? "Users list loaded successfully!"
-            : "Resource loaded successfully, but the user's list is empty"
+            ? res.__("users_list_loaded")
+            : res.__("users_list_loaded_empty")
         );
       }
     } catch (error) {
@@ -117,21 +117,23 @@ class UserController extends BaseController {
       const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
       if (email && !emailRegex.test(email)) {
-        throw createValidationError("Validation error", [
-          "Please enter a valid email address",
+        throw createValidationError(res.__("validation_error"), [
+          res.__("email_not_valid"),
         ]);
       }
 
       const existingUser = await User.findById(userId);
       if (!existingUser) {
-        throw createDocumentNotFoundError(`User with ID ${userId} not found`);
+        throw createDocumentNotFoundError(
+          res.__("user_not_found_id", { userId })
+        );
       }
 
       if (username && username !== existingUser.username) {
         const checkUsernameExists = await User.findOne({ username });
         if (checkUsernameExists) {
-          throw createValidationError("Validation error", [
-            `${username} is already in use`,
+          throw createValidationError(res.__("validation_error"), [
+            res.__("username_already_exists", { username }),
           ]);
         }
         existingUser.username = username;
@@ -140,8 +142,8 @@ class UserController extends BaseController {
       if (email && email !== existingUser.email) {
         const checkUserEmailExists = await User.findOne({ email });
         if (checkUserEmailExists) {
-          throw createValidationError("Validation error", [
-            `${email} is already in use`,
+          throw createValidationError(res.__("validation_error"), [
+            res.__("email_already_exists", { email }),
           ]);
         }
         existingUser.email = email;
@@ -150,7 +152,7 @@ class UserController extends BaseController {
       const savedUser = await existingUser.save();
       savedUser.password = "******";
 
-      this.handleSuccess(res, savedUser, "User updated successfully!");
+      this.handleSuccess(res, savedUser, res.__("user_updated"));
     } catch (error) {
       this.handleError(error as CustomError, res);
     }
@@ -162,9 +164,16 @@ class UserController extends BaseController {
       const obtainedUser = await User.findById({
         _id: userId,
       });
+      let obtainedUserName = "";
+
+      if (obtainedUser) {
+        obtainedUserName = obtainedUser.username;
+      }
 
       if (!obtainedUser) {
-        throw createDocumentNotFoundError(`User with ID ${userId} not found`);
+        throw createDocumentNotFoundError(
+          res.__("user_not_found_by_id", { userId })
+        );
       }
 
       const deletedUser = await User.deleteOne({
@@ -174,7 +183,7 @@ class UserController extends BaseController {
         this.handleSuccess(
           res,
           deletedUser,
-          `User ${obtainedUser.username} deleted succesfully!`
+          res.__("user_deleted", { obtainedUserName })
         );
       }
     } catch (error) {

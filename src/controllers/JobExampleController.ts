@@ -71,6 +71,7 @@ class JobExampleController extends BaseController {
         videos: req.body.videos,
         audios: req.body.audios,
         launchPeriod: req.body.launchPeriod,
+        linkToUrl: req.body.linkToUrl,
         owner: userId,
       };
 
@@ -101,7 +102,6 @@ class JobExampleController extends BaseController {
           technologies: req.body.technologies,
           info: req.body.info,
           customer: req.body.customer,
-          linkToUrl: req.body.linkToUrl,
           linkedJobExample: newJob._id,
           category: req.body.category,
         },
@@ -111,7 +111,6 @@ class JobExampleController extends BaseController {
           technologies: req.body.technologies,
           info: req.body.info,
           customer: req.body.customer,
-          linkToUrl: req.body.linkToUrl,
           linkedJobExample: newJob._id,
           category: req.body.category,
         },
@@ -121,7 +120,6 @@ class JobExampleController extends BaseController {
           technologies: req.body.technologies,
           info: req.body.info,
           customer: req.body.customer,
-          linkToUrl: req.body.linkToUrl,
           linkedJobExample: newJob._id,
           category: req.body.category,
         },
@@ -216,8 +214,7 @@ class JobExampleController extends BaseController {
           match: {
             language: userLanguage,
           },
-          select:
-            "language title info technologies customer category linkToUrl",
+          select: "language title info technologies customer category",
         })
         .skip(skip)
         .limit(limit)
@@ -254,17 +251,22 @@ class JobExampleController extends BaseController {
       ).populate({
         path: "versions",
         match: { language: userLanguage },
-        select: "language title info technologies customer category linkToUrl",
+        select: "language title info technologies customer category",
       })) as interfaceJobExample;
 
       if (obtainedJobExample) {
-        //const version = obtainedJobExample.versions[0];
-        //const jobTitle = version ? version.title : "title not found";
+        const version = obtainedJobExample.versions[0] as any;
+        //const flattenedVersion = Object.assign({}, version) as any;
+        //jobTitle = flattenedVersion._doc.title;
+        const jobTitle = version.title;
+
         this.handleSuccess(
           res,
           obtainedJobExample,
-          res.__("job_example_loaded_successfully")
+          res.__("job_example_loaded_successfully", { jobTitle })
         );
+      } else {
+        throw createDocumentNotFoundError(res.__("document_not_found"));
       }
     } catch (error) {
       this.handleError(error as DocumentNotFound, res);
@@ -274,7 +276,12 @@ class JobExampleController extends BaseController {
   async delete(req: Request, res: Response): Promise<void> {
     try {
       const jobExampleId = req.params.id;
-      const obtainedJobExample = await JobExample.findById(jobExampleId);
+      const obtainedJobExample = await JobExample.findById(
+        jobExampleId
+      ).populate({
+        path: "versions",
+        select: "title",
+      });
 
       if (!obtainedJobExample) {
         throw createDocumentNotFoundError(
@@ -282,10 +289,15 @@ class JobExampleController extends BaseController {
         );
       }
 
+      let jobTitle = "";
+
       if (
         obtainedJobExample.versions &&
         obtainedJobExample.versions.length > 0
       ) {
+        const version = obtainedJobExample.versions[0] as any;
+        jobTitle = version.title;
+
         await LocalizedJobExample.deleteMany({
           linkedJobExample: jobExampleId,
         });
@@ -355,7 +367,7 @@ class JobExampleController extends BaseController {
         this.handleSuccess(
           res,
           deletedJobExample,
-          res.__("job_example_deleted_successfully")
+          res.__("job_example_deleted_successfully", { jobTitle })
         );
       }
     } catch (error) {
@@ -367,7 +379,7 @@ class JobExampleController extends BaseController {
     try {
       const jobExampleId = req.params.id;
       const userLanguage = req.headers["accept-language"] || "en";
-      const { launchPeriod } = req.body;
+      const { launchPeriod, linkToUrl } = req.body;
 
       if (!launchPeriod) {
         throw createValidationError(res.__("validation_error"), [
@@ -381,18 +393,18 @@ class JobExampleController extends BaseController {
         ]);
       }
 
-      /*  if (linkToUrl && !isValidUrl(linkToUrl)) {
+      if (linkToUrl && !isValidUrl(linkToUrl)) {
         throw createValidationError(res.__("validation_error"), [
           res.__("invalid_url_format", { linkToUrl }),
         ]);
-      } */
+      }
 
       const obtainedJobExample = await JobExample.findById(
         jobExampleId
       ).populate({
         path: "versions",
         match: { language: userLanguage },
-        select: "language title info technologies customer category linkToUrl",
+        select: "language title info technologies customer category",
       });
 
       if (!obtainedJobExample) {
@@ -402,6 +414,7 @@ class JobExampleController extends BaseController {
       }
 
       obtainedJobExample.launchPeriod = launchPeriod;
+      obtainedJobExample.linkToUrl = linkToUrl;
 
       if (req.files) {
         const files = Object.assign({}, req.files) as {

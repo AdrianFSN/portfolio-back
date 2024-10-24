@@ -28,5 +28,15 @@
   "error_encrypting_password": "Error while encrypting the password",
   "error_comparing_passwords": "Error while comparing passwords",
   "password_comparison_failed": "Password comparison failed",
-  "launchPeriod_required": "Launch period is required"
+  "launchPeriod_required": "Launch period is required",
+  "user_fields_required": "Username, email, password and confirm password are required",
+  "email_not_valid": "Please enter a valid email address",
+  "username_already_exists": "{{username}} is already in use",
+  "email_already_exists": "{{email}} is already in use",
+  "password_confirm_dont_match": "Password and confirm password don't match",
+  "user_created_successfully": "User created successfully!",
+  "users_list_loaded": "Users list loaded successfully!",
+  "users_list_loaded_empty": "Resource loaded successfully, but the user's list is empty",
+  "user_updated": "User updated successfully!",
+  "user_deleted": "User {{obtainedUserName}} deleted succesfully!"
 }

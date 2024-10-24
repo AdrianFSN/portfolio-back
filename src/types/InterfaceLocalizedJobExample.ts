@@ -7,7 +7,6 @@ interface interfaceLocalizedJobExample extends Document {
   technologies: string[];
   info: string;
   customer: string;
-  linkToUrl?: string;
   linkedJobExample: mongoose.Types.ObjectId;
   category: JobCategories[];
 }
