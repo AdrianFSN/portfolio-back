@@ -71,7 +71,6 @@ class JobExampleController extends BaseController {
       }
 
       const newJobExampleData = {
-        pictures: req.body.pictures,
         videos: req.body.videos,
         audios: req.body.audios,
         launchPeriod: req.body.launchPeriod,
@@ -109,7 +108,7 @@ class JobExampleController extends BaseController {
           }
         });
 
-        /*         if (files.mainPicture && files.mainPicture.length > 0) {
+        /* if (files.mainPicture && files.mainPicture.length > 0) {
           picturesCollection.mainPicture = files.mainPicture[0].filename;
         }
         if (files.picture2 && files.picture2.length > 0) {
