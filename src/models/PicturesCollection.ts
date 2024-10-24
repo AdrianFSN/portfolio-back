@@ -1,13 +1,5 @@
-import mongoose, { Document, Schema } from "mongoose";
-
-interface interfacePicturesCollection extends Document {
-  mainPicture?: string;
-  picture2?: string;
-  picture3?: string;
-  picture4?: string;
-  picture5?: string;
-  linkedJobExample: mongoose.Types.ObjectId;
-}
+import mongoose, { Schema } from "mongoose";
+import interfacePicturesCollection from "../types/InterfacePicturesCollection.js";
 
 const PicturesCollectionSchema: Schema<interfacePicturesCollection> =
   new Schema(

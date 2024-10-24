@@ -13,6 +13,7 @@ import createValidationError from "../utils/createValidationError.js";
 import createDocumentNotFoundError from "../utils/createDocumentNotFoundError.js";
 import resizeImage from "../services/requesters/resizeThumbnailRequest.js";
 import mongoose from "mongoose";
+import interfacePicturesCollection from "../types/InterfacePicturesCollection.js";
 import interfaceJobExample from "../types/InterfaceJobExample.js";
 import interfaceLocalizedJobExample from "../types/InterfaceLocalizedJobExample.js";
 import createDatabaseError from "../utils/createDatabaseError.js";
@@ -269,7 +270,7 @@ class JobExampleController extends BaseController {
         })
         .populate({
           path: "pictures",
-          select: "mainPicture picture2 picture3 picture4 picture5", // Los campos que deseas seleccionar
+          select: "mainPicture picture2 picture3 picture4 picture5",
         })
         .skip(skip)
         .limit(limit)
@@ -309,7 +310,7 @@ class JobExampleController extends BaseController {
         })
         .populate({
           path: "pictures",
-          select: "mainPicture picture2 picture3 picture4 picture5", // Los campos que deseas seleccionar
+          select: "mainPicture picture2 picture3 picture4 picture5",
         });
 
       if (obtainedJobExample) {
@@ -363,32 +364,38 @@ class JobExampleController extends BaseController {
         });
       }
 
+      const linkedPicturesCollection = await PicturesCollection.findOne({
+        linkedJobExample: jobExampleId,
+      });
+
       const imagesFilePath = path.join(__dirname, "../../uploads/image");
       const thumbnailFilepath = path.join(imagesFilePath, "thumbnails");
 
-      if (obtainedJobExample.pictures) {
+      if (linkedPicturesCollection) {
         await Promise.all(
-          obtainedJobExample.pictures.map(async (picture: string) => {
-            const imgFilePath = path.join(imagesFilePath, picture);
-            const thumbFilepath = path.join(
-              thumbnailFilepath,
-              "thumbnail_" + picture
-            );
+          Object.values(linkedPicturesCollection).map(
+            async (picture: string) => {
+              const imgFilePath = path.join(imagesFilePath, picture);
+              const thumbFilepath = path.join(
+                thumbnailFilepath,
+                "thumbnail_" + picture
+              );
 
-            try {
-              await fs.remove(imgFilePath);
-              console.log("Image deleted successfully:", imgFilePath);
-            } catch (err) {
-              console.error("Error deleting image:", err);
-            }
+              try {
+                await fs.remove(imgFilePath);
+                console.log("Image deleted successfully:", imgFilePath);
+              } catch (err) {
+                console.error("Error deleting image:", err);
+              }
 
-            try {
-              await fs.remove(thumbFilepath);
-              console.log("Thumbnail deleted successfully:", thumbFilepath);
-            } catch (err) {
-              console.error("Error deleting thumbnail:", err);
+              try {
+                await fs.remove(thumbFilepath);
+                console.log("Thumbnail deleted successfully:", thumbFilepath);
+              } catch (err) {
+                console.error("Error deleting thumbnail:", err);
+              }
             }
-          })
+          )
         );
       }
 
@@ -481,7 +488,7 @@ class JobExampleController extends BaseController {
           [key: string]: Express.Multer.File[];
         };
 
-        if (files.pictures && obtainedJobExample.pictures) {
+        /*         if (files.pictures && obtainedJobExample.pictures) {
           const imagesFilePath = path.join(__dirname, "../../uploads/image");
           const thumbnailsFilePath = path.join(imagesFilePath, "thumbnails");
 
@@ -522,7 +529,7 @@ class JobExampleController extends BaseController {
               console.log("Error resizing images: ", error);
             }
           });
-        }
+        } */
 
         if (files.videos) {
           await Promise.all(
