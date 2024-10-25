@@ -38,5 +38,6 @@
   "users_list_loaded": "Users list loaded successfully!",
   "users_list_loaded_empty": "Resource loaded successfully, but the user's list is empty",
   "user_updated": "User updated successfully!",
-  "user_deleted": "User {{obtainedUserName}} deleted succesfully!"
+  "user_deleted": "User {{obtainedUserName}} deleted succesfully!",
+  "pictures_collection_updated": "Pictures collection updated successfully!"
 }

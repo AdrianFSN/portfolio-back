@@ -32,22 +32,6 @@ router.post(
   ]),
   JobExampleController.create
 );
-router.put(
-  "/:id",
-  isAuthenticated,
-  isAuthorized,
-  upload.fields([
-    { name: "mainPicture", maxCount: 1 },
-    { name: "picture2", maxCount: 1 },
-    { name: "picture3", maxCount: 1 },
-    { name: "picture4", maxCount: 1 },
-    { name: "picture5", maxCount: 1 },
-    { name: "mainVideo", maxCount: 1 },
-    { name: "video2", maxCount: 1 },
-    { name: "mainAudio", maxCount: 1 },
-    { name: "audio2", maxCount: 1 },
-  ]),
-  JobExampleController.update
-);
+router.put("/:id", isAuthenticated, isAuthorized, JobExampleController.update);
 
 export default router;

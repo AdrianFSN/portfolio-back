@@ -15,5 +15,6 @@
 	"job_example_not_found": "job_example_not_found",
 	"document_not_found": "document_not_found",
 	"job_updated_successfully": "job_updated_successfully",
-	"invalid_url_format": "invalid_url_format"
+	"invalid_url_format": "invalid_url_format",
+	"pictures_collection_updated": "pictures_collection_updated"
 }
