@@ -1,14 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 import interfaceJobExample from "../types/InterfaceJobExample.js";
-/* interface interfaceJobExample extends Document {
-  versions: mongoose.Types.ObjectId[];
-  pictures?: string[];
-  videos?: string[];
-  audios?: string[];
-  launchPeriod: string;
-  linkToUrl?: string;
-  owner: string;
-} */
 
 const jobExampleSchema: Schema<interfaceJobExample> = new Schema(
   {
@@ -23,7 +14,8 @@ const jobExampleSchema: Schema<interfaceJobExample> = new Schema(
       ref: "PicturesCollection",
     },
     videos: {
-      type: [String],
+      type: Schema.Types.ObjectId,
+      ref: "VideosCollection",
     },
     audios: {
       type: [String],

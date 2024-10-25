@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 import JobExample from "../models/JobExample.js";
 import LocalizedJobExample from "../models/LocalizedJobExample.js";
 import PicturesCollection from "../models/PicturesCollection.js";
+import VideosCollection from "../models/VideosCollection.js";
 import CustomError, { DocumentNotFound } from "../types/CustomErrors.js";
 import BaseController from "./BaseController.js";
 import isValidUrl from "../utils/validUrlChecker.js";
@@ -13,10 +14,7 @@ import createValidationError from "../utils/createValidationError.js";
 import createDocumentNotFoundError from "../utils/createDocumentNotFoundError.js";
 import resizeImage from "../services/requesters/resizeThumbnailRequest.js";
 import mongoose from "mongoose";
-import interfacePicturesCollection from "../types/InterfacePicturesCollection.js";
-import interfaceJobExample from "../types/InterfaceJobExample.js";
 import interfaceLocalizedJobExample from "../types/InterfaceLocalizedJobExample.js";
-import createDatabaseError from "../utils/createDatabaseError.js";
 import assignFilesToFields from "../utils/asignFilesToFields.js";
 import deleteFilesFromCollection from "../utils/removeCollectionOfFiles.js";
 
@@ -73,7 +71,6 @@ class JobExampleController extends BaseController {
       }
 
       const newJobExampleData = {
-        videos: req.body.videos,
         audios: req.body.audios,
         launchPeriod: req.body.launchPeriod,
         linkToUrl: req.body.linkToUrl,
@@ -85,10 +82,21 @@ class JobExampleController extends BaseController {
       const picturesCollection = await PicturesCollection.create({
         linkedJobExample: newJob.id,
       });
-      console.log("Pictures collection created succesfully");
 
       if (!picturesCollection) {
         console.log("No pictures collection created for this asset");
+      } else {
+        console.log("Pictures collection created succesfully");
+      }
+
+      const videosCollection = await VideosCollection.create({
+        linkedJobExample: newJob.id,
+      });
+
+      if (!videosCollection) {
+        console.log("No videos collection created for this asset");
+      } else {
+        console.log("Videos collection created succesfully");
       }
 
       if (req.files) {
@@ -104,10 +112,6 @@ class JobExampleController extends BaseController {
         ];
 
         await assignFilesToFields(pictureFields, files, picturesCollection);
-
-        if (picturesCollection && newJob) {
-          newJob.pictures = picturesCollection._id as mongoose.Types.ObjectId;
-        }
 
         if (picturesCollection) {
           pictureFields.forEach(async (field: string) => {
@@ -131,10 +135,15 @@ class JobExampleController extends BaseController {
           });
         }
 
-        if (files.videos) {
-          newJob.videos = files.videos.map((file) => file.filename);
+        const videosFields = ["mainVideo", "video2"];
+        await assignFilesToFields(videosFields, files, videosCollection);
+
+        if (picturesCollection && videosCollection && newJob) {
+          newJob.pictures = picturesCollection._id as mongoose.Types.ObjectId;
+          newJob.videos = videosCollection._id as mongoose.Types.ObjectId;
         }
 
+        const audiosFields = ["mainAudio", "audio2"];
         if (files.audios) {
           newJob.audios = files.audios.map((file) => file.filename);
         }
@@ -251,6 +260,10 @@ class JobExampleController extends BaseController {
           path: "pictures",
           select: "mainPicture picture2 picture3 picture4 picture5",
         })
+        .populate({
+          path: "videos",
+          select: "mainVideo video2",
+        })
         .skip(skip)
         .limit(limit)
         .sort({ [sortField]: sortOrder });
@@ -290,6 +303,10 @@ class JobExampleController extends BaseController {
         .populate({
           path: "pictures",
           select: "mainPicture picture2 picture3 picture4 picture5",
+        })
+        .populate({
+          path: "videos",
+          select: "mainVideo video2",
         });
 
       if (obtainedJobExample) {
@@ -365,18 +382,18 @@ class JobExampleController extends BaseController {
           thumbnailFilepath
         );
       }
+      const linkedVideosCollection = await VideosCollection.findOne({
+        linkedJobExample: jobExampleId,
+      });
+      const videosFilePath = path.join(__dirname, "../../uploads/video");
 
-      if (obtainedJobExample.videos) {
-        await Promise.all(
-          obtainedJobExample.videos.map(async (video: string) => {
-            const filePath = path.join(__dirname, "../../uploads/video", video);
-            try {
-              await fs.remove(filePath);
-              console.log("Video deleted successfully:", filePath);
-            } catch (err) {
-              console.error("Error deleting video:", err);
-            }
-          })
+      const videosFields = ["mainVideo", "video2"];
+
+      if (linkedVideosCollection) {
+        await deleteFilesFromCollection(
+          videosFields,
+          linkedVideosCollection,
+          videosFilePath
         );
       }
 
@@ -500,7 +517,7 @@ class JobExampleController extends BaseController {
           });
         } */
 
-        if (files.videos) {
+        /* if (files.videos) {
           await Promise.all(
             (obtainedJobExample as any).videos.map(async (video: string) => {
               const filePath = path.join(
@@ -516,8 +533,8 @@ class JobExampleController extends BaseController {
               }
             })
           );
-          obtainedJobExample.videos = files.videos.map((file) => file.filename);
-        }
+          //obtainedJobExample.videos = files.videos.map((file) => file.filename);
+        } */
 
         if (files.audios) {
           await Promise.all(

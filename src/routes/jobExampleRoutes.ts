@@ -25,7 +25,8 @@ router.post(
     { name: "picture3", maxCount: 1 },
     { name: "picture4", maxCount: 1 },
     { name: "picture5", maxCount: 1 },
-    { name: "videos", maxCount: 2 },
+    { name: "mainVideo", maxCount: 1 },
+    { name: "video2", maxCount: 1 },
     { name: "audios", maxCount: 2 },
   ]),
   JobExampleController.create
