@@ -350,30 +350,44 @@ class JobExampleController extends BaseController {
       const thumbnailFilepath = path.join(imagesFilePath, "thumbnails");
 
       if (linkedPicturesCollection) {
-        await Promise.all(
-          Object.values(linkedPicturesCollection).map(
-            async (picture: string) => {
-              const imgFilePath = path.join(imagesFilePath, picture);
-              const thumbFilepath = path.join(
-                thumbnailFilepath,
-                "thumbnail_" + picture
-              );
-
-              try {
-                await fs.remove(imgFilePath);
-                console.log("Image deleted successfully:", imgFilePath);
-              } catch (err) {
-                console.error("Error deleting image:", err);
-              }
-
-              try {
-                await fs.remove(thumbFilepath);
-                console.log("Thumbnail deleted successfully:", thumbFilepath);
-              } catch (err) {
-                console.error("Error deleting thumbnail:", err);
-              }
-            }
+        const pictureFields = [
+          "mainPicture",
+          "picture2",
+          "picture3",
+          "picture4",
+          "picture5",
+        ];
+        const picturesToDelete = pictureFields
+          .map(
+            (field) =>
+              linkedPicturesCollection[
+                field as keyof typeof linkedPicturesCollection
+              ]
           )
+          .filter((value) => typeof value === "string") as string[];
+
+        await Promise.all(
+          picturesToDelete.map(async (picture: string) => {
+            const imgFilePath = path.join(imagesFilePath, picture);
+            const thumbFilepath = path.join(
+              thumbnailFilepath,
+              "thumbnail_" + picture
+            );
+
+            try {
+              await fs.remove(imgFilePath);
+              console.log("Image deleted successfully:", imgFilePath);
+            } catch (err) {
+              console.error("Error deleting image:", err);
+            }
+
+            try {
+              await fs.remove(thumbFilepath);
+              console.log("Thumbnail deleted successfully:", thumbFilepath);
+            } catch (err) {
+              console.error("Error deleting thumbnail:", err);
+            }
+          })
         );
       }
 
@@ -404,6 +418,8 @@ class JobExampleController extends BaseController {
           })
         );
       }
+
+      await PicturesCollection.deleteOne({ linkedJobExample: jobExampleId });
 
       const deletedJobExample = await JobExample.deleteOne({
         _id: jobExampleId,
