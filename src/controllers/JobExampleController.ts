@@ -17,6 +17,7 @@ import interfacePicturesCollection from "../types/InterfacePicturesCollection.js
 import interfaceJobExample from "../types/InterfaceJobExample.js";
 import interfaceLocalizedJobExample from "../types/InterfaceLocalizedJobExample.js";
 import createDatabaseError from "../utils/createDatabaseError.js";
+import assignFilesToFields from "../utils/asignFilesToFields.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -101,30 +102,8 @@ class JobExampleController extends BaseController {
           "picture5",
         ];
 
-        pictureFields.forEach((field) => {
-          if (files[field] && files[field].length > 0) {
-            picturesCollection[field as keyof typeof picturesCollection] =
-              files[field][0].filename;
-          }
-        });
+        await assignFilesToFields(pictureFields, files, picturesCollection);
 
-        /* if (files.mainPicture && files.mainPicture.length > 0) {
-          picturesCollection.mainPicture = files.mainPicture[0].filename;
-        }
-        if (files.picture2 && files.picture2.length > 0) {
-          picturesCollection.picture2 = files.picture2[0].filename;
-        }
-        if (files.picture3 && files.picture3.length > 0) {
-          picturesCollection.picture3 = files.picture3[0].filename;
-        }
-        if (files.picture4 && files.picture4.length > 0) {
-          picturesCollection.picture4 = files.picture4[0].filename;
-        }
-        if (files.picture5 && files.picture5.length > 0) {
-          picturesCollection.picture5 = files.picture5[0].filename;
-        } */
-
-        await picturesCollection.save();
         if (picturesCollection && newJob) {
           newJob.pictures = picturesCollection._id as mongoose.Types.ObjectId;
         }
