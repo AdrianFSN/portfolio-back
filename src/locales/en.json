@@ -40,5 +40,6 @@
   "user_updated": "User updated successfully!",
   "user_deleted": "User {{obtainedUserName}} deleted succesfully!",
   "pictures_collection_updated": "Pictures collection updated successfully!",
-  "videos_collection_updated": "Videos collection updated successfully!"
+  "videos_collection_updated": "Videos collection updated successfully!",
+  "audios_collection_updated": "Audios collection updated successfully!"
 }
