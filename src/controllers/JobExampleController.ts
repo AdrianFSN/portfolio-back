@@ -18,6 +18,11 @@ import mongoose from "mongoose";
 import interfaceLocalizedJobExample from "../types/InterfaceLocalizedJobExample.js";
 import assignFilesToFields from "../utils/asignFilesToFields.js";
 import deleteFilesFromCollection from "../utils/removeCollectionOfFiles.js";
+import {
+  AUDIOS_COLLECTION_FIELDS,
+  PICTURES_COLLECTION_FIELDS,
+  VIDEOS_COLLECTION_FIELDS,
+} from "../utils/collectionsRelatedLists.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -113,13 +118,7 @@ class JobExampleController extends BaseController {
         const files = Object.assign({}, req.files) as {
           [fieldname: string]: Express.Multer.File[];
         };
-        const pictureFields = [
-          "mainPicture",
-          "picture2",
-          "picture3",
-          "picture4",
-          "picture5",
-        ];
+        const pictureFields = PICTURES_COLLECTION_FIELDS;
 
         await assignFilesToFields(pictureFields, files, picturesCollection);
 
@@ -147,13 +146,13 @@ class JobExampleController extends BaseController {
           });
         }
 
-        const videosFields = ["mainVideo", "video2"];
+        const videosFields = VIDEOS_COLLECTION_FIELDS;
         await assignFilesToFields(videosFields, files, videosCollection);
         if (videosCollection) {
           newJob.videos = videosCollection._id as mongoose.Types.ObjectId;
         }
 
-        const audiosFields = ["mainAudio", "audio2"];
+        const audiosFields = AUDIOS_COLLECTION_FIELDS;
         await assignFilesToFields(audiosFields, files, audiosCollection);
         if (audiosCollection) {
           newJob.audios = audiosCollection._id as mongoose.Types.ObjectId;
@@ -385,13 +384,7 @@ class JobExampleController extends BaseController {
 
       const imagesFilePath = path.join(__dirname, "../../uploads/image");
       const thumbnailFilepath = path.join(imagesFilePath, "thumbnails");
-      const pictureFields = [
-        "mainPicture",
-        "picture2",
-        "picture3",
-        "picture4",
-        "picture5",
-      ];
+      const pictureFields = PICTURES_COLLECTION_FIELDS;
 
       if (linkedPicturesCollection) {
         await deleteFilesFromCollection(
@@ -406,7 +399,7 @@ class JobExampleController extends BaseController {
       });
       const videosFilePath = path.join(__dirname, "../../uploads/video");
 
-      const videosFields = ["mainVideo", "video2"];
+      const videosFields = VIDEOS_COLLECTION_FIELDS;
 
       if (linkedVideosCollection) {
         await deleteFilesFromCollection(
@@ -420,7 +413,7 @@ class JobExampleController extends BaseController {
         linkedJobExample: jobExampleId,
       });
       const audiosFilePath = path.join(__dirname, "../../uploads/audio");
-      const audiossFields = ["mainAudio", "audio2"];
+      const audiossFields = AUDIOS_COLLECTION_FIELDS;
 
       if (linkedAudiosCollection) {
         await deleteFilesFromCollection(
