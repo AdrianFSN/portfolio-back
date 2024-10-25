@@ -18,6 +18,7 @@ import interfaceJobExample from "../types/InterfaceJobExample.js";
 import interfaceLocalizedJobExample from "../types/InterfaceLocalizedJobExample.js";
 import createDatabaseError from "../utils/createDatabaseError.js";
 import assignFilesToFields from "../utils/asignFilesToFields.js";
+import deleteFilesFromCollection from "../utils/removeCollectionOfFiles.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -348,46 +349,20 @@ class JobExampleController extends BaseController {
 
       const imagesFilePath = path.join(__dirname, "../../uploads/image");
       const thumbnailFilepath = path.join(imagesFilePath, "thumbnails");
+      const pictureFields = [
+        "mainPicture",
+        "picture2",
+        "picture3",
+        "picture4",
+        "picture5",
+      ];
 
       if (linkedPicturesCollection) {
-        const pictureFields = [
-          "mainPicture",
-          "picture2",
-          "picture3",
-          "picture4",
-          "picture5",
-        ];
-        const picturesToDelete = pictureFields
-          .map(
-            (field) =>
-              linkedPicturesCollection[
-                field as keyof typeof linkedPicturesCollection
-              ]
-          )
-          .filter((value) => typeof value === "string") as string[];
-
-        await Promise.all(
-          picturesToDelete.map(async (picture: string) => {
-            const imgFilePath = path.join(imagesFilePath, picture);
-            const thumbFilepath = path.join(
-              thumbnailFilepath,
-              "thumbnail_" + picture
-            );
-
-            try {
-              await fs.remove(imgFilePath);
-              console.log("Image deleted successfully:", imgFilePath);
-            } catch (err) {
-              console.error("Error deleting image:", err);
-            }
-
-            try {
-              await fs.remove(thumbFilepath);
-              console.log("Thumbnail deleted successfully:", thumbFilepath);
-            } catch (err) {
-              console.error("Error deleting thumbnail:", err);
-            }
-          })
+        await deleteFilesFromCollection(
+          pictureFields,
+          linkedPicturesCollection,
+          imagesFilePath,
+          thumbnailFilepath
         );
       }
 
