@@ -4,7 +4,7 @@ interface interfaceJobExample extends Document {
   versions: mongoose.Types.ObjectId[];
   pictures: mongoose.Types.ObjectId;
   videos: mongoose.Types.ObjectId;
-  audios?: string[];
+  audios: mongoose.Types.ObjectId;
   linkToUrl?: string;
   launchPeriod: string;
   owner: string;

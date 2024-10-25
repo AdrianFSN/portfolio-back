@@ -18,7 +18,8 @@ const jobExampleSchema: Schema<interfaceJobExample> = new Schema(
       ref: "VideosCollection",
     },
     audios: {
-      type: [String],
+      type: Schema.Types.ObjectId,
+      ref: "AudiosCollection",
     },
     launchPeriod: {
       type: String,

@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 import JobExample from "../models/JobExample.js";
 import LocalizedJobExample from "../models/LocalizedJobExample.js";
 import PicturesCollection from "../models/PicturesCollection.js";
+import AudiosCollection from "../models/AudiosCollection.js";
 import VideosCollection from "../models/VideosCollection.js";
 import CustomError, { DocumentNotFound } from "../types/CustomErrors.js";
 import BaseController from "./BaseController.js";
@@ -71,7 +72,6 @@ class JobExampleController extends BaseController {
       }
 
       const newJobExampleData = {
-        audios: req.body.audios,
         launchPeriod: req.body.launchPeriod,
         linkToUrl: req.body.linkToUrl,
         owner: userId,
@@ -99,6 +99,16 @@ class JobExampleController extends BaseController {
         console.log("Videos collection created succesfully");
       }
 
+      const audiosCollection = await AudiosCollection.create({
+        linkedJobExample: newJob.id,
+      });
+
+      if (!audiosCollection) {
+        console.log("No audios collection created for this asset");
+      } else {
+        console.log("Audios collection created succesfully");
+      }
+
       if (req.files) {
         const files = Object.assign({}, req.files) as {
           [fieldname: string]: Express.Multer.File[];
@@ -114,6 +124,8 @@ class JobExampleController extends BaseController {
         await assignFilesToFields(pictureFields, files, picturesCollection);
 
         if (picturesCollection) {
+          newJob.pictures = picturesCollection._id as mongoose.Types.ObjectId;
+
           pictureFields.forEach(async (field: string) => {
             const picture =
               picturesCollection[field as keyof typeof picturesCollection];
@@ -137,15 +149,14 @@ class JobExampleController extends BaseController {
 
         const videosFields = ["mainVideo", "video2"];
         await assignFilesToFields(videosFields, files, videosCollection);
-
-        if (picturesCollection && videosCollection && newJob) {
-          newJob.pictures = picturesCollection._id as mongoose.Types.ObjectId;
+        if (videosCollection) {
           newJob.videos = videosCollection._id as mongoose.Types.ObjectId;
         }
 
         const audiosFields = ["mainAudio", "audio2"];
-        if (files.audios) {
-          newJob.audios = files.audios.map((file) => file.filename);
+        await assignFilesToFields(audiosFields, files, audiosCollection);
+        if (audiosCollection) {
+          newJob.audios = audiosCollection._id as mongoose.Types.ObjectId;
         }
       }
 
@@ -264,6 +275,10 @@ class JobExampleController extends BaseController {
           path: "videos",
           select: "mainVideo video2",
         })
+        .populate({
+          path: "audios",
+          select: "mainAudio audio2",
+        })
         .skip(skip)
         .limit(limit)
         .sort({ [sortField]: sortOrder });
@@ -307,6 +322,10 @@ class JobExampleController extends BaseController {
         .populate({
           path: "videos",
           select: "mainVideo video2",
+        })
+        .populate({
+          path: "audios",
+          select: "mainAudio audio2",
         });
 
       if (obtainedJobExample) {
@@ -397,21 +416,23 @@ class JobExampleController extends BaseController {
         );
       }
 
-      if (obtainedJobExample.audios) {
-        await Promise.all(
-          obtainedJobExample.audios.map(async (audio: string) => {
-            const filePath = path.join(__dirname, "../../uploads/audio", audio);
-            try {
-              await fs.remove(filePath);
-              console.log("Audio deleted successfully:", filePath);
-            } catch (err) {
-              console.error("Error deleting audio:", err);
-            }
-          })
+      const linkedAudiosCollection = await AudiosCollection.findOne({
+        linkedJobExample: jobExampleId,
+      });
+      const audiosFilePath = path.join(__dirname, "../../uploads/audio");
+      const audiossFields = ["mainAudio", "audio2"];
+
+      if (linkedAudiosCollection) {
+        await deleteFilesFromCollection(
+          audiossFields,
+          linkedAudiosCollection,
+          audiosFilePath
         );
       }
 
       await PicturesCollection.deleteOne({ linkedJobExample: jobExampleId });
+      await VideosCollection.deleteOne({ linkedJobExample: jobExampleId });
+      await AudiosCollection.deleteOne({ linkedJobExample: jobExampleId });
 
       const deletedJobExample = await JobExample.deleteOne({
         _id: jobExampleId,
@@ -536,7 +557,7 @@ class JobExampleController extends BaseController {
           //obtainedJobExample.videos = files.videos.map((file) => file.filename);
         } */
 
-        if (files.audios) {
+        /* if (files.audios) {
           await Promise.all(
             (obtainedJobExample as any).audios.map(async (audio: string) => {
               const filePath = path.join(
@@ -553,7 +574,7 @@ class JobExampleController extends BaseController {
             })
           );
           obtainedJobExample.audios = files.audios.map((file) => file.filename);
-        }
+        } */
       }
 
       const updatedJobExample = await obtainedJobExample.save();

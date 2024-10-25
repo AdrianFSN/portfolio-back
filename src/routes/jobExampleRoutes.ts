@@ -27,7 +27,8 @@ router.post(
     { name: "picture5", maxCount: 1 },
     { name: "mainVideo", maxCount: 1 },
     { name: "video2", maxCount: 1 },
-    { name: "audios", maxCount: 2 },
+    { name: "mainAudio", maxCount: 1 },
+    { name: "audio2", maxCount: 1 },
   ]),
   JobExampleController.create
 );
@@ -41,8 +42,10 @@ router.put(
     { name: "picture3", maxCount: 1 },
     { name: "picture4", maxCount: 1 },
     { name: "picture5", maxCount: 1 },
-    { name: "videos", maxCount: 2 },
-    { name: "audios", maxCount: 2 },
+    { name: "mainVideo", maxCount: 1 },
+    { name: "video2", maxCount: 1 },
+    { name: "mainAudio", maxCount: 1 },
+    { name: "audio2", maxCount: 1 },
   ]),
   JobExampleController.update
 );
