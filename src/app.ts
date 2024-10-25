@@ -17,6 +17,7 @@ import authRouter from "./routes/authRoutes.js";
 import usersRouter from "./routes/userRoutes.js";
 import jobExamplesRouter from "./routes/jobExampleRoutes.js";
 import picturesCollectionRouter from "./routes/picturesCollectionRoutes.js";
+import videosCollectionRouter from "./routes/VideosCollectionRoutes.js";
 
 // Load env variables from .env
 dotenv.config();
@@ -69,6 +70,7 @@ app.use("/api/session", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/job-examples", jobExamplesRouter);
 app.use("/api/pictures-collection", picturesCollectionRouter);
+app.use("/api/videos-collection", videosCollectionRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req: Request, res: Response, next: NextFunction) {
