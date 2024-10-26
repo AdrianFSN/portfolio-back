@@ -18,5 +18,8 @@
 	"invalid_url_format": "invalid_url_format",
 	"pictures_collection_updated": "pictures_collection_updated",
 	"videos_collection_updated": "videos_collection_updated",
-	"audios_collection_updated": "audios_collection_updated"
+	"audios_collection_updated": "audios_collection_updated",
+	"job_example_version_updated": "job_example_version_updated",
+	"language_not_valid": "language_not_valid",
+	"wrong_language_for_version": "wrong_language_for_version"
 }

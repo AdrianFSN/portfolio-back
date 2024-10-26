@@ -41,5 +41,9 @@
   "user_deleted": "User {{obtainedUserName}} deleted succesfully!",
   "pictures_collection_updated": "Pictures collection updated successfully!",
   "videos_collection_updated": "Videos collection updated successfully!",
-  "audios_collection_updated": "Audios collection updated successfully!"
+  "audios_collection_updated": "Audios collection updated successfully!",
+  "language_not_valid": "{{language}} is not a valid language",
+  "job_example_version_updated": "Document updated to {{language}}",
+  "Validation error": "Validation error",
+  "wrong_language_for_version": "Selected language doesn't match the version's language"
 }

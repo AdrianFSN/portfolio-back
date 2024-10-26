@@ -8,3 +8,4 @@ export const PICTURES_COLLECTION_FIELDS = [
 
 export const VIDEOS_COLLECTION_FIELDS = ["mainVideo", "video2"];
 export const AUDIOS_COLLECTION_FIELDS = ["mainAudio", "audio2"];
+export const LOCALIZABLE_LANGUAGES = ["en", "es", "fr"];
