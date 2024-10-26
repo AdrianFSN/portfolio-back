@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import fs from "fs-extra";
 import path from "path";
 import { fileURLToPath } from "url";
 import JobExample from "../models/JobExample.js";
@@ -413,11 +412,11 @@ class JobExampleController extends BaseController {
         linkedJobExample: jobExampleId,
       });
       const audiosFilePath = path.join(__dirname, "../../uploads/audio");
-      const audiossFields = AUDIOS_COLLECTION_FIELDS;
+      const audiosFields = AUDIOS_COLLECTION_FIELDS;
 
       if (linkedAudiosCollection) {
         await deleteFilesFromCollection(
-          audiossFields,
+          audiosFields,
           linkedAudiosCollection,
           audiosFilePath
         );
@@ -482,93 +481,6 @@ class JobExampleController extends BaseController {
 
       obtainedJobExample.launchPeriod = launchPeriod;
       obtainedJobExample.linkToUrl = linkToUrl;
-
-      if (req.files) {
-        const files = Object.assign({}, req.files) as {
-          [key: string]: Express.Multer.File[];
-        };
-
-        /*         if (files.pictures && obtainedJobExample.pictures) {
-          const imagesFilePath = path.join(__dirname, "../../uploads/image");
-          const thumbnailsFilePath = path.join(imagesFilePath, "thumbnails");
-
-          await Promise.all(
-            obtainedJobExample.pictures.map(async (picture: string) => {
-              const imgFilePath = path.join(imagesFilePath, picture);
-              const thumbFilePath = path.join(
-                thumbnailsFilePath,
-                "thumbnail_" + picture
-              );
-
-              try {
-                await fs.remove(imgFilePath);
-                console.log("Image deleted successfully:", imgFilePath);
-              } catch (err) {
-                console.error("Error deleting image:", err);
-              }
-
-              try {
-                await fs.remove(thumbFilePath);
-                console.log("Thumbnail deleted successfully:", thumbFilePath);
-              } catch (err) {
-                console.error("Error deleting thumbnail:", err);
-              }
-            })
-          );
-
-          obtainedJobExample.pictures = files.pictures.map(
-            (file) => file.filename
-          );
-
-          obtainedJobExample.pictures.forEach(async (picture: string) => {
-            const filePath = path.join(imagesFilePath, picture);
-            try {
-              const result = await resizeImage(filePath);
-              console.log("Job example gets: ", result);
-            } catch (error) {
-              console.log("Error resizing images: ", error);
-            }
-          });
-        } */
-
-        /* if (files.videos) {
-          await Promise.all(
-            (obtainedJobExample as any).videos.map(async (video: string) => {
-              const filePath = path.join(
-                __dirname,
-                "../../uploads/video",
-                video
-              );
-              try {
-                await fs.remove(filePath);
-                console.log("Video deleted successfully:", filePath);
-              } catch (err) {
-                console.error("Error deleting video:", err);
-              }
-            })
-          );
-          //obtainedJobExample.videos = files.videos.map((file) => file.filename);
-        } */
-
-        /* if (files.audios) {
-          await Promise.all(
-            (obtainedJobExample as any).audios.map(async (audio: string) => {
-              const filePath = path.join(
-                __dirname,
-                "../../uploads/audio",
-                audio
-              );
-              try {
-                await fs.remove(filePath);
-                console.log("Audio deleted successfully:", filePath);
-              } catch (err) {
-                console.error("Error deleting audio:", err);
-              }
-            })
-          );
-          obtainedJobExample.audios = files.audios.map((file) => file.filename);
-        } */
-      }
 
       const updatedJobExample = await obtainedJobExample.save();
       this.handleSuccess(

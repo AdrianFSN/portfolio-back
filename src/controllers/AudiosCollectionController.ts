@@ -12,7 +12,7 @@ import { selectDeletionFlags } from "../utils/deletionFilesMethods.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const audiosFilePath = path.join(__dirname, "../../uploads/video");
+const audiosFilePath = path.join(__dirname, "../../uploads/audio");
 const audioFields = AUDIOS_COLLECTION_FIELDS;
 
 class AudioCollectionController extends BaseController {
@@ -31,7 +31,7 @@ class AudioCollectionController extends BaseController {
         throw createDocumentNotFoundError(res.__("document_not_found"));
       }
 
-      const { deleteMainAudio, deleteVideo2: deleteAudio2 } = req.body;
+      const { deleteMainAudio, deleteAudio2 } = req.body;
 
       const deletionFlagsList = {
         mainAudio: deleteMainAudio,
@@ -41,11 +41,16 @@ class AudioCollectionController extends BaseController {
       const selectedDeletionFlagsList = selectDeletionFlags(deletionFlagsList);
 
       if (selectedDeletionFlagsList.length > 0) {
-        await deleteFilesFromCollection(
-          selectedDeletionFlagsList,
-          requestedAudioCollection,
-          audiosFilePath
-        );
+        try {
+          await deleteFilesFromCollection(
+            selectedDeletionFlagsList,
+            requestedAudioCollection,
+            audiosFilePath
+          );
+          console.log("Audio file deleted successfully!");
+        } catch (error) {
+          console.log("Error deleting audio file: ", error);
+        }
       }
 
       if (req.files) {

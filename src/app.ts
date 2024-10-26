@@ -1,7 +1,6 @@
 import express, { Request, Response, NextFunction } from "express";
 import CustomError, { FileUploadError } from "./types/CustomErrors";
 import createError from "http-errors";
-//import express from "express";
 import path from "path";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
