@@ -50,6 +50,7 @@ class JobExampleController extends BaseController {
         customer,
         category,
         linkToUrl,
+        linkToGitHub,
       } = req.body;
 
       if (
@@ -77,6 +78,12 @@ class JobExampleController extends BaseController {
         ]);
       }
 
+      if (linkToGitHub && !isValidUrl(linkToGitHub)) {
+        throw createValidationError(res.__("validation_error"), [
+          res.__("invalid_url_format", { linkToGitHub }),
+        ]);
+      }
+
       if (category && !isValidCategory(category, VALID_CATEGORIES)) {
         throw createValidationError(res.__("validation_error"), [
           res.__("invalid_category", { category }),
@@ -86,6 +93,7 @@ class JobExampleController extends BaseController {
       const newJobExampleData = {
         launchPeriod: req.body.launchPeriod,
         linkToUrl: req.body.linkToUrl,
+        linkToGitHub: req.body.linkToGitHub,
         category: req.body.category,
         owner: userId,
       };
@@ -451,7 +459,7 @@ class JobExampleController extends BaseController {
     try {
       const jobExampleId = req.params.id;
       const userLanguage = req.headers["accept-language"] || "en";
-      const { launchPeriod, linkToUrl, category } = req.body;
+      const { launchPeriod, linkToUrl, category, linkToGitHub } = req.body;
 
       if (!/^\d{4}\/(0[1-9]|1[0-2])$/.test(launchPeriod)) {
         throw createValidationError(res.__("validation_error"), [
@@ -462,6 +470,12 @@ class JobExampleController extends BaseController {
       if (linkToUrl && !isValidUrl(linkToUrl)) {
         throw createValidationError(res.__("validation_error"), [
           res.__("invalid_url_format", { linkToUrl }),
+        ]);
+      }
+
+      if (linkToGitHub && !isValidUrl(linkToGitHub)) {
+        throw createValidationError(res.__("validation_error"), [
+          res.__("invalid_url_format", { linkToGitHub }),
         ]);
       }
 

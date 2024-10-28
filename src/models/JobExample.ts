@@ -31,6 +31,10 @@ const jobExampleSchema: Schema<interfaceJobExample> = new Schema(
       type: String,
       index: true,
     },
+    linkToGitHub: {
+      type: String,
+      index: true,
+    },
     category: {
       type: [String],
       enum: VALID_CATEGORIES,
