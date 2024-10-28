@@ -37,7 +37,6 @@ class LanguageversionController extends BaseController {
         technologies,
         info,
         customer,
-        category,
       } as InterfaceVersionData;
 
       if (language === version.language) {

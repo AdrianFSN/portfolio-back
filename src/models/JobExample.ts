@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import interfaceJobExample from "../types/InterfaceJobExample.js";
-import JobCategories from "../types/JobCategories.js";
+import { VALID_CATEGORIES } from "../utils/constants.js";
 
 const jobExampleSchema: Schema<interfaceJobExample> = new Schema(
   {
@@ -33,7 +33,7 @@ const jobExampleSchema: Schema<interfaceJobExample> = new Schema(
     },
     category: {
       type: [String],
-      enum: Object.values(JobCategories),
+      enum: VALID_CATEGORIES,
       required: true,
       index: true,
     },

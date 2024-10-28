@@ -1,16 +1,5 @@
-import mongoose, { Document, Schema, Types } from "mongoose";
-import JobCategories from "../types/JobCategories.js";
+import mongoose, { Schema } from "mongoose";
 import interfaceLocalizedJobExample from "../types/InterfaceLocalizedJobExample.js";
-/* interface interfaceLocalizedJobExample extends Document {
-  language: string;
-  title: string;
-  technologies: string[];
-  info: string;
-  customer: string;
-  linkToUrl?: string;
-  linkedJobExample: mongoose.Types.ObjectId;
-  category: JobCategories[];
-} */
 
 const LocalizedJobExampleSchema: Schema<interfaceLocalizedJobExample> =
   new Schema(
