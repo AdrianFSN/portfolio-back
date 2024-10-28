@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import BaseController from "./BaseController.js";
 import path from "path";
 import { fileURLToPath } from "url";
-import { AUDIOS_COLLECTION_FIELDS } from "../utils/collectionsRelatedLists.js";
+import { AUDIOS_COLLECTION_FIELDS } from "../utils/constants.js";
 import AudiosCollection from "../models/AudiosCollection.js";
 import createDocumentNotFoundError from "../utils/createDocumentNotFoundError.js";
 import assignFilesToFields from "../utils/asignFilesToFields.js";

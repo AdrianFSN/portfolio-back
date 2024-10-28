@@ -20,8 +20,10 @@ import deleteFilesFromCollection from "../utils/removeCollectionOfFiles.js";
 import {
   AUDIOS_COLLECTION_FIELDS,
   PICTURES_COLLECTION_FIELDS,
+  VALID_CATEGORIES,
   VIDEOS_COLLECTION_FIELDS,
-} from "../utils/collectionsRelatedLists.js";
+} from "../utils/constants.js";
+import isValidCategory from "../utils/validCategory.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -72,6 +74,12 @@ class JobExampleController extends BaseController {
       if (linkToUrl && !isValidUrl(linkToUrl)) {
         throw createValidationError(res.__("validation_error"), [
           res.__("invalid_url_format", { linkToUrl }),
+        ]);
+      }
+
+      if (category && !isValidCategory(category, VALID_CATEGORIES)) {
+        throw createValidationError(res.__("validation_error"), [
+          res.__("invalid_category", { category }),
         ]);
       }
 
@@ -445,12 +453,6 @@ class JobExampleController extends BaseController {
       const userLanguage = req.headers["accept-language"] || "en";
       const { launchPeriod, linkToUrl, category } = req.body;
 
-      if (!launchPeriod) {
-        throw createValidationError(res.__("validation_error"), [
-          res.__("launchPeriod_required"),
-        ]);
-      }
-
       if (!/^\d{4}\/(0[1-9]|1[0-2])$/.test(launchPeriod)) {
         throw createValidationError(res.__("validation_error"), [
           res.__("invalid_format_launch_period", { launchPeriod }),
@@ -460,6 +462,12 @@ class JobExampleController extends BaseController {
       if (linkToUrl && !isValidUrl(linkToUrl)) {
         throw createValidationError(res.__("validation_error"), [
           res.__("invalid_url_format", { linkToUrl }),
+        ]);
+      }
+
+      if (category && !isValidCategory(category, VALID_CATEGORIES)) {
+        throw createValidationError(res.__("validation_error"), [
+          res.__("invalid_category", { category }),
         ]);
       }
 
@@ -479,6 +487,7 @@ class JobExampleController extends BaseController {
 
       obtainedJobExample.launchPeriod = launchPeriod;
       obtainedJobExample.linkToUrl = linkToUrl;
+      obtainedJobExample.category = category;
 
       const updatedJobExample = await obtainedJobExample.save();
       this.handleSuccess(

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import BaseController from "./BaseController.js";
 import path from "path";
 import { fileURLToPath } from "url";
-import { PICTURES_COLLECTION_FIELDS } from "../utils/collectionsRelatedLists.js";
+import { PICTURES_COLLECTION_FIELDS } from "../utils/constants.js";
 import PicturesCollection from "../models/PicturesCollection.js";
 import createDocumentNotFoundError from "../utils/createDocumentNotFoundError.js";
 import assignFilesToFields from "../utils/asignFilesToFields.js";

@@ -1,3 +1,4 @@
+// Collections related lists
 export const PICTURES_COLLECTION_FIELDS = [
   "mainPicture",
   "picture2",
@@ -9,3 +10,13 @@ export const PICTURES_COLLECTION_FIELDS = [
 export const VIDEOS_COLLECTION_FIELDS = ["mainVideo", "video2"];
 export const AUDIOS_COLLECTION_FIELDS = ["mainAudio", "audio2"];
 export const LOCALIZABLE_LANGUAGES = ["en", "es", "fr"];
+
+// Valdiation lists
+export const VALID_CATEGORIES = [
+  "development",
+  "audio",
+  "liveOps",
+  "design",
+  "photography",
+  "video",
+];

@@ -44,5 +44,8 @@
   "audios_collection_updated": "Audios collection updated successfully!",
   "language_not_valid": "{{language}} is not a valid language",
   "job_example_version_updated": "Document updated to {{language}}",
-  "wrong_language_for_version": "Selected language doesn't match the version's language"
+  "wrong_language_for_version": "Selected language doesn't match the version's language",
+  "category_required": "At least one category is required",
+  "invalid_category": "The category you choosed is not valid",
+  "Validation error": "Validation error"
 }

@@ -3,7 +3,7 @@ import LocalizedJobExample from "../models/LocalizedJobExample.js";
 import CustomError from "../types/CustomErrors.js";
 import BaseController from "./BaseController.js";
 import createDocumentNotFoundError from "../utils/createDocumentNotFoundError.js";
-import { LOCALIZABLE_LANGUAGES } from "../utils/collectionsRelatedLists.js";
+import { LOCALIZABLE_LANGUAGES } from "../utils/constants.js";
 import createValidationError from "../utils/createValidationError.js";
 import { InterfaceVersionData } from "../types/InterfaceVersionData.js";
 
