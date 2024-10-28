@@ -8,6 +8,10 @@ import path, { dirname } from "path";
 import fs from "fs";
 import User from "../models/User.js";
 import JobExample from "../models/JobExample.js";
+import PicturesCollection from "../models/PicturesCollection.js";
+import VideosCollection from "../models/VideosCollection.js";
+import AudiosCollection from "../models/AudiosCollection.js";
+import Versions from "../models/LocalizedJobExample.js";
 
 dotenv.config();
 
@@ -62,104 +66,47 @@ async function initUsers() {
 }
 
 async function initJobExamples() {
-  const existingJobExamples = await JobExample.find();
+  const delJobExamples = await JobExample.deleteMany();
+  console.log(`${delJobExamples.deletedCount} job examples have been deleted`);
 
-  for (const jobExample of existingJobExamples) {
-    if (jobExample.pictures) {
-      jobExample.pictures.forEach((picture: string) => {
-        const filePath = path.join(__dirname, "../../uploads/image", picture);
-        if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
-          fs.unlink(filePath, (err) => {
-            if (err) {
-              console.error("Error deleting file: ", err);
-            } else {
-              console.log("File deleted successfully");
-            }
-          });
-        }
-        const thumbnailFilePath = path.join(
-          __dirname,
-          "../../uploads/image/thumbnails",
-          "thumbnail_" + picture
-        );
-        if (
-          fs.existsSync(thumbnailFilePath) &&
-          fs.lstatSync(thumbnailFilePath).isFile()
-        ) {
-          fs.unlink(thumbnailFilePath, (err) => {
-            if (err) {
-              console.error("Error deleting file: ", err);
-            } else {
-              console.log("File deleted successfully");
-            }
-          });
-        }
-      });
-    }
-
-    if (jobExample.videos) {
-      jobExample.videos.forEach((video: string) => {
-        const filePath = path.join(__dirname, "../../uploads/video", video);
-        if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
-          fs.unlink(filePath, (err) => {
-            if (err) {
-              console.error("Error deleting file: ", err);
-            } else {
-              console.log("File deleted successfully");
-            }
-          });
-        }
-      });
-    }
-
-    if (jobExample.audios) {
-      jobExample.audios.forEach((audio: string) => {
-        const filePath = path.join(__dirname, "../../uploads/audio", audio);
-        if (fs.existsSync(filePath) && fs.lstatSync(filePath).isFile()) {
-          fs.unlink(filePath, (err) => {
-            if (err) {
-              console.error("Error deleting file: ", err);
-            } else {
-              console.log("File deleted successfully");
-            }
-          });
-        }
-      });
-    }
-  }
-
-  const deleteJobExamples = await JobExample.deleteMany();
+  const delVersions = await Versions.deleteMany();
   console.log(
-    `${deleteJobExamples.deletedCount} job examples have been deleted`
+    `${delVersions.deletedCount} versions collections have been deleted`
   );
 
-  const jobExamplesJson = fs.readFileSync(
-    "./src/initDB/initJobExamples.json",
-    "utf-8"
-  );
-  const jobExamplesData = JSON.parse(replaceEnvVariables(jobExamplesJson));
+  const existingPicturesCollection = await PicturesCollection.find();
+  const existingVideosCollection = await VideosCollection.find();
+  const existingAudiosCollection = await AudiosCollection.find();
 
-  for (const jobData of jobExamplesData) {
-    const ownerEmail = jobData.owner;
-    const jobOwner = await User.findOne({ email: ownerEmail });
-    if (jobOwner) {
-      const newJobExample = {
-        ...jobData,
-        owner: jobOwner._id,
-      };
-      //await JobExample.create(newJobExample);
-      /* console.log(
-        `Job example created successfully for owner: ${jobOwner._id}`
-      ); */
-    } else {
-      console.log(
-        `No user found for email: ${ownerEmail}. Job example not created.`
-      );
-    }
+  if (existingPicturesCollection) {
+    const picturesToClean = path.join(__dirname, "../../uploads/image");
+    deleteFilesInDirectory(picturesToClean);
+    const thumbnailsToClean = path.join(
+      __dirname,
+      "../../uploads/image/thumbnails"
+    );
+    deleteFilesInDirectory(thumbnailsToClean);
+    const delPicturesCollection = await PicturesCollection.deleteMany();
+    console.log(
+      `${delPicturesCollection.deletedCount} pictures collections have been deleted`
+    );
   }
-
-  const insertedJobExamples = await JobExample.find();
-  console.log(`${insertedJobExamples.length} job examples created`);
+  if (existingVideosCollection) {
+    const videosToClean = path.join(__dirname, "../../uploads/video");
+    deleteFilesInDirectory(videosToClean);
+    const delVideosCollection = await VideosCollection.deleteMany();
+    console.log(
+      `${delVideosCollection.deletedCount} videos collections have been deleted`
+    );
+  }
+  if (existingAudiosCollection) {
+    const audiosToClean = path.join(__dirname, "../../uploads/audio");
+    deleteFilesInDirectory(audiosToClean);
+    const delAudiosCollection = await AudiosCollection.deleteMany();
+    console.log(
+      `${delAudiosCollection.deletedCount} audios collections have been deleted`
+    );
+  }
 }
 
 async function main() {
@@ -180,3 +127,101 @@ main().catch((err) => {
   console.log(`There was an error initializing the DB: ${err}`);
   process.exit(1);
 });
+
+async function deletePictures(existingPicturesCollection: Record<string, any>) {
+  const deletePromises = Object.values(existingPicturesCollection).map(
+    async (picture) => {
+      const filePath = path.join(__dirname, "../../uploads/image", picture);
+      const thumbnailFilePath = path.join(
+        __dirname,
+        "../../uploads/image/thumbnails",
+        "thumbnail_" + picture
+      );
+
+      try {
+        // Eliminar archivo de imagen
+        if (
+          await fs.promises
+            .access(filePath)
+            .then(() => true)
+            .catch(() => false)
+        ) {
+          await fs.promises.unlink(filePath);
+          console.log(`File deleted successfully: ${filePath}`);
+        }
+
+        // Eliminar archivo de miniatura
+        if (
+          await fs.promises
+            .access(thumbnailFilePath)
+            .then(() => true)
+            .catch(() => false)
+        ) {
+          await fs.promises.unlink(thumbnailFilePath);
+          console.log(`Thumbnail deleted successfully: ${thumbnailFilePath}`);
+        }
+      } catch (err) {
+        console.error("Error deleting file: ", err);
+      }
+    }
+  );
+  await Promise.all(deletePromises);
+}
+
+async function deleteAudios(existingAudiosCollection: Record<string, any>) {
+  const deletePromises = Object.values(existingAudiosCollection).map(
+    async (audio) => {
+      const filePath = path.join(__dirname, "../../uploads/audio", audio);
+      try {
+        // Verificar si el archivo existe
+        await fs.promises.access(filePath);
+        await fs.promises.unlink(filePath);
+        console.log(`File deleted successfully: ${filePath}`);
+      } catch (err) {
+        console.error("Error deleting file: ", err);
+      }
+    }
+  );
+
+  await Promise.all(deletePromises);
+}
+
+async function deleteVideos(existingVideosCollection: Record<string, any>) {
+  const deletePromises = Object.values(existingVideosCollection).map(
+    async (video) => {
+      const filePath = path.join(__dirname, "../../uploads/video", video);
+      try {
+        // Verificar si el archivo existe
+        await fs.promises.access(filePath);
+        await fs.promises.unlink(filePath);
+        console.log(`File deleted successfully: ${filePath}`);
+      } catch (err) {
+        console.error("Error deleting file: ", err);
+      }
+    }
+  );
+
+  await Promise.all(deletePromises);
+}
+
+async function deleteFilesInDirectory(directoryPath: string) {
+  try {
+    const files = await fs.promises.readdir(directoryPath);
+    const deletePromises = files.map(async (file) => {
+      const filePath = path.join(directoryPath, file);
+      try {
+        const stats = await fs.promises.stat(filePath);
+        if (stats.isFile()) {
+          await fs.promises.unlink(filePath);
+          console.log(`File deleted successfully: ${filePath}`);
+        }
+      } catch (err) {
+        console.error("Error deleting file: ", err);
+      }
+    });
+
+    await Promise.all(deletePromises);
+  } catch (err) {
+    console.error("Error reading directory: ", err);
+  }
+}
