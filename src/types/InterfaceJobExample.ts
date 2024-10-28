@@ -1,4 +1,5 @@
 import mongoose, { Document } from "mongoose";
+import JobCategories from "./JobCategories.js";
 
 interface interfaceJobExample extends Document {
   versions: mongoose.Types.ObjectId[];
@@ -8,6 +9,7 @@ interface interfaceJobExample extends Document {
   linkToUrl?: string;
   launchPeriod: string;
   owner: string;
+  category: JobCategories[];
 }
 
 export default interfaceJobExample;

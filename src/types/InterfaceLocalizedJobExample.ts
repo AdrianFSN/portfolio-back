@@ -1,5 +1,4 @@
 import mongoose, { Document } from "mongoose";
-import JobCategories from "./JobCategories";
 
 interface interfaceLocalizedJobExample extends Document {
   language: string;
@@ -8,7 +7,6 @@ interface interfaceLocalizedJobExample extends Document {
   info: string;
   customer: string;
   linkedJobExample: mongoose.Types.ObjectId;
-  category: JobCategories[];
 }
 
 export default interfaceLocalizedJobExample;

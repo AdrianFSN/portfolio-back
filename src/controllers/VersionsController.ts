@@ -45,7 +45,6 @@ class LanguageversionController extends BaseController {
         version.technologies = newJobExampleData.technologies;
         version.info = newJobExampleData.info;
         version.customer = newJobExampleData.customer;
-        version.category = newJobExampleData.category;
 
         await version.save();
 

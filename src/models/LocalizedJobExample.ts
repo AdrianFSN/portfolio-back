@@ -45,12 +45,6 @@ const LocalizedJobExampleSchema: Schema<interfaceLocalizedJobExample> =
         required: true,
         index: true,
       },
-      category: {
-        type: [String],
-        enum: Object.values(JobCategories),
-        required: true,
-        index: true,
-      },
     },
     { timestamps: true }
   );

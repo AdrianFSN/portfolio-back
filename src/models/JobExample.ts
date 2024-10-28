@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import interfaceJobExample from "../types/InterfaceJobExample.js";
+import JobCategories from "../types/JobCategories.js";
 
 const jobExampleSchema: Schema<interfaceJobExample> = new Schema(
   {
@@ -28,6 +29,12 @@ const jobExampleSchema: Schema<interfaceJobExample> = new Schema(
     },
     linkToUrl: {
       type: String,
+      index: true,
+    },
+    category: {
+      type: [String],
+      enum: Object.values(JobCategories),
+      required: true,
       index: true,
     },
     owner: {

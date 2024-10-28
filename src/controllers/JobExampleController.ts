@@ -78,6 +78,7 @@ class JobExampleController extends BaseController {
       const newJobExampleData = {
         launchPeriod: req.body.launchPeriod,
         linkToUrl: req.body.linkToUrl,
+        category: req.body.category,
         owner: userId,
       };
 
@@ -166,7 +167,6 @@ class JobExampleController extends BaseController {
           info: req.body.info,
           customer: req.body.customer,
           linkedJobExample: newJob._id,
-          category: req.body.category,
         },
         {
           language: "es",
@@ -175,7 +175,6 @@ class JobExampleController extends BaseController {
           info: req.body.info,
           customer: req.body.customer,
           linkedJobExample: newJob._id,
-          category: req.body.category,
         },
         {
           language: "fr",
@@ -184,7 +183,6 @@ class JobExampleController extends BaseController {
           info: req.body.info,
           customer: req.body.customer,
           linkedJobExample: newJob._id,
-          category: req.body.category,
         },
       ];
 
@@ -263,7 +261,7 @@ class JobExampleController extends BaseController {
           match: {
             language: userLanguage,
           },
-          select: "language title info technologies customer category",
+          select: "language title info technologies customer",
         })
         .populate({
           path: "pictures",
@@ -311,7 +309,7 @@ class JobExampleController extends BaseController {
         .populate({
           path: "versions",
           match: { language: userLanguage },
-          select: "language title info technologies customer category",
+          select: "language title info technologies customer",
         })
         .populate({
           path: "pictures",
@@ -445,7 +443,7 @@ class JobExampleController extends BaseController {
     try {
       const jobExampleId = req.params.id;
       const userLanguage = req.headers["accept-language"] || "en";
-      const { launchPeriod, linkToUrl } = req.body;
+      const { launchPeriod, linkToUrl, category } = req.body;
 
       if (!launchPeriod) {
         throw createValidationError(res.__("validation_error"), [
@@ -470,7 +468,7 @@ class JobExampleController extends BaseController {
       ).populate({
         path: "versions",
         match: { language: userLanguage },
-        select: "language title info technologies customer category",
+        select: "language title info technologies customer",
       });
 
       if (!obtainedJobExample) {
