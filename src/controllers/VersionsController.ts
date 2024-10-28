@@ -16,8 +16,7 @@ class LanguageversionController extends BaseController {
   async update(req: Request, res: Response): Promise<void> {
     try {
       const versionId = req.params.id;
-      const { language, title, technologies, info, customer, category } =
-        req.body;
+      const { language, title, technologies, info, customer } = req.body;
       const validLanguages = LOCALIZABLE_LANGUAGES;
 
       if (!validLanguages.includes(language)) {
