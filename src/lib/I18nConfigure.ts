@@ -11,7 +11,7 @@ i18n.configure({
   defaultLocale: "en",
   autoReload: true,
   syncFiles: true,
-  cookie: "portfolio-AS-locale",
+  cookie: "X-portfolio-AS-locale",
 });
 
 i18n.setLocale("en");

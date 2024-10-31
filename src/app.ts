@@ -1,4 +1,5 @@
 import express, { Request, Response, NextFunction } from "express";
+import cors from "cors";
 import CustomError, { FileUploadError } from "./types/CustomErrors";
 import createError from "http-errors";
 import path from "path";
@@ -55,6 +56,7 @@ app.set("views", viewsPath);
 app.set("view engine", "ejs");
 
 // Middlewares
+app.use(cors());
 app.use(helmet());
 app.use(logger("dev"));
 app.use(express.json());
