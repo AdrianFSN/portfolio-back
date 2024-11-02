@@ -1,6 +1,6 @@
 import mongoose, { Document } from "mongoose";
 
-interface interfaceLocalizedJobExample extends Document {
+interface InterfaceLocalizedJobExample extends Document {
   language: string;
   title: string;
   technologies: string[];
@@ -9,4 +9,4 @@ interface interfaceLocalizedJobExample extends Document {
   linkedJobExample: mongoose.Types.ObjectId;
 }
 
-export default interfaceLocalizedJobExample;
+export default InterfaceLocalizedJobExample;

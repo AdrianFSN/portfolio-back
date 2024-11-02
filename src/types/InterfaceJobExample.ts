@@ -1,6 +1,6 @@
 import mongoose, { Document } from "mongoose";
 
-interface interfaceJobExample extends Document {
+interface InterfaceJobExample extends Document {
   versions: mongoose.Types.ObjectId[];
   pictures: mongoose.Types.ObjectId;
   videos: mongoose.Types.ObjectId;
@@ -12,4 +12,4 @@ interface interfaceJobExample extends Document {
   category: string[];
 }
 
-export default interfaceJobExample;
+export default InterfaceJobExample;

@@ -1,8 +1,8 @@
 import mongoose, { Schema } from "mongoose";
-import interfaceJobExample from "../types/InterfaceJobExample.js";
+import InterfaceJobExample from "../types/InterfaceJobExample.js";
 import { VALID_CATEGORIES } from "../utils/constants.js";
 
-const jobExampleSchema: Schema<interfaceJobExample> = new Schema(
+const jobExampleSchema: Schema<InterfaceJobExample> = new Schema(
   {
     versions: [
       {
@@ -50,7 +50,7 @@ const jobExampleSchema: Schema<interfaceJobExample> = new Schema(
   { timestamps: true }
 );
 
-const jobExample = mongoose.model<interfaceJobExample>(
+const jobExample = mongoose.model<InterfaceJobExample>(
   "JobExample",
   jobExampleSchema
 );

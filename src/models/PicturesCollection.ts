@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
-import interfacePicturesCollection from "../types/InterfacePicturesCollection.js";
+import InterfacePicturesCollection from "../types/InterfacePicturesCollection.js";
 
-const PicturesCollectionSchema: Schema<interfacePicturesCollection> =
+const PicturesCollectionSchema: Schema<InterfacePicturesCollection> =
   new Schema(
     {
       mainPicture: {
@@ -29,7 +29,7 @@ const PicturesCollectionSchema: Schema<interfacePicturesCollection> =
     { timestamps: true }
   );
 
-const picturesCollection = mongoose.model<interfacePicturesCollection>(
+const picturesCollection = mongoose.model<InterfacePicturesCollection>(
   "PicturesCollection",
   PicturesCollectionSchema
 );

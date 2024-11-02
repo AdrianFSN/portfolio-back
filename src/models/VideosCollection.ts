@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
-import interfaceVideosCollection from "../types/InterfaceVideosCollection.js";
+import InterfaceVideosCollection from "../types/InterfaceVideosCollection.js";
 
-const VideosCollectionSchema: Schema<interfaceVideosCollection> = new Schema(
+const VideosCollectionSchema: Schema<InterfaceVideosCollection> = new Schema(
   {
     mainVideo: {
       type: String,
@@ -19,7 +19,7 @@ const VideosCollectionSchema: Schema<interfaceVideosCollection> = new Schema(
   { timestamps: true }
 );
 
-const videosCollection = mongoose.model<interfaceVideosCollection>(
+const videosCollection = mongoose.model<InterfaceVideosCollection>(
   "VideosCollection",
   VideosCollectionSchema
 );

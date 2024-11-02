@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
-import interfaceLocalizedJobExample from "../types/InterfaceLocalizedJobExample.js";
+import InterfaceLocalizedJobExample from "../types/InterfaceLocalizedJobExample.js";
 
-const LocalizedJobExampleSchema: Schema<interfaceLocalizedJobExample> =
+const LocalizedJobExampleSchema: Schema<InterfaceLocalizedJobExample> =
   new Schema(
     {
       language: {
@@ -38,7 +38,7 @@ const LocalizedJobExampleSchema: Schema<interfaceLocalizedJobExample> =
     { timestamps: true }
   );
 
-const localizedJobExample = mongoose.model<interfaceLocalizedJobExample>(
+const localizedJobExample = mongoose.model<InterfaceLocalizedJobExample>(
   "LocalizedJobExample",
   LocalizedJobExampleSchema
 );

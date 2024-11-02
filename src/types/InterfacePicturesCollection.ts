@@ -1,6 +1,6 @@
 import mongoose, { Document } from "mongoose";
 
-interface interfacePicturesCollection extends Document {
+interface InterfacePicturesCollection extends Document {
   mainPicture?: string;
   picture2?: string;
   picture3?: string;
@@ -9,4 +9,4 @@ interface interfacePicturesCollection extends Document {
   linkedJobExample: mongoose.Types.ObjectId;
 }
 
-export default interfacePicturesCollection;
+export default InterfacePicturesCollection;

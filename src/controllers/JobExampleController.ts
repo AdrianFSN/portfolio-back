@@ -14,7 +14,7 @@ import createValidationError from "../utils/createValidationError.js";
 import createDocumentNotFoundError from "../utils/createDocumentNotFoundError.js";
 import resizeImage from "../services/requesters/resizeThumbnailRequest.js";
 import mongoose from "mongoose";
-import interfaceLocalizedJobExample from "../types/InterfaceLocalizedJobExample.js";
+import InterfaceLocalizedJobExample from "../types/InterfaceLocalizedJobExample.js";
 import assignFilesToFields from "../utils/asignFilesToFields.js";
 import deleteFilesFromCollection from "../utils/removeCollectionOfFiles.js";
 import {
@@ -343,7 +343,7 @@ class JobExampleController extends BaseController {
 
       if (obtainedJobExample) {
         const version = obtainedJobExample
-          .versions[0] as unknown as interfaceLocalizedJobExample;
+          .versions[0] as unknown as InterfaceLocalizedJobExample;
         //const flattenedVersion = Object.assign({}, version) as any;
         //jobTitle = flattenedVersion._doc.title;
         const jobTitle = version.title;
@@ -384,7 +384,7 @@ class JobExampleController extends BaseController {
         obtainedJobExample.versions.length > 0
       ) {
         const version = obtainedJobExample
-          .versions[0] as unknown as interfaceLocalizedJobExample;
+          .versions[0] as unknown as InterfaceLocalizedJobExample;
         jobTitle = version.title;
 
         await LocalizedJobExample.deleteMany({

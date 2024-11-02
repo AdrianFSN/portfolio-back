@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
-import interfaceAudiosCollection from "../types/InterfaceAudiosCollection.js";
+import InterfaceAudiosCollection from "../types/InterfaceAudiosCollection.js";
 
-const AudiosCollectionSchema: Schema<interfaceAudiosCollection> = new Schema(
+const AudiosCollectionSchema: Schema<InterfaceAudiosCollection> = new Schema(
   {
     mainAudio: {
       type: String,
@@ -19,7 +19,7 @@ const AudiosCollectionSchema: Schema<interfaceAudiosCollection> = new Schema(
   { timestamps: true }
 );
 
-const audiosCollection = mongoose.model<interfaceAudiosCollection>(
+const audiosCollection = mongoose.model<InterfaceAudiosCollection>(
   "AudiosCollection",
   AudiosCollectionSchema
 );

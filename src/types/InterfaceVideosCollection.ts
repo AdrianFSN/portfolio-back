@@ -1,9 +1,9 @@
 import mongoose, { Document } from "mongoose";
 
-interface interfaceVideosCollection extends Document {
+interface InterfaceVideosCollection extends Document {
   mainVideo?: string;
   video2?: string;
   linkedJobExample: mongoose.Types.ObjectId;
 }
 
-export default interfaceVideosCollection;
+export default InterfaceVideosCollection;
