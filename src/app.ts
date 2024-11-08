@@ -97,7 +97,7 @@ app.use(function (
   // send the error json
   res.status(err.statusCode || 500).json({
     state: err.state || "error",
-    message: err.message,
+    message: res.__(err.message),
     code: err.statusCode || 500,
     fileName: (err as FileUploadError).fileName || null,
     mimeType: (err as FileUploadError).mimeType || null,

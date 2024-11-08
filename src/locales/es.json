@@ -47,5 +47,6 @@
   "wrong_language_for_version": "El idioma seleccionado no coincide con el idioma de la versión",
   "Erreur de validation": "Erreur de validation",
   "Validation error": "Error de validación",
-  "invalid_category": "La categoría que has elegido no es válida"
+  "invalid_category": "La categoría que has elegido no es válida",
+  "File too large": "Los archivos que subas no pueden pesar más de 10 M"
 }

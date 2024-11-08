@@ -47,5 +47,6 @@
   "wrong_language_for_version": "Selected language doesn't match the version's language",
   "category_required": "At least one category is required",
   "invalid_category": "The category you choosed is not valid",
-  "Validation error": "Validation error"
+  "Validation error": "Validation error",
+  "File too large": "The files you upload must be no larger than 10 M"
 }
