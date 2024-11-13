@@ -20,7 +20,7 @@ class BaseController {
     if (this.isValidationError(error)) {
       return res.status(error.statusCode || 400).json({
         state: "error",
-        message: res.__(error.message || "validation_error"),
+        message: error.message || res.__("validation_error"),
         validationErrors: error.validationErrors,
         code: error.statusCode || 400,
       });
@@ -36,7 +36,7 @@ class BaseController {
     } else if (this.isDatabaseError(error)) {
       return res.status(error.statusCode || 500).json({
         state: "error",
-        message: res.__(error.message || "database_error"),
+        message: error.message || res.__("database_error"),
         query: error.query,
         parameters: error.parameters,
         code: error.statusCode || 500,
@@ -44,15 +44,15 @@ class BaseController {
     } else if (this.isDocumentNotFound(error)) {
       return res.status(error.statusCode || 404).json({
         state: "error",
-        message: res.__("document_not_found"),
-        error: error.message,
+        message: error.message || res.__("document_not_found"),
+        error: error,
         code: error.statusCode || 404,
       });
     } else if (this.isNotAuthorized(error)) {
       return res.status(error.statusCode || 404).json({
         state: "error",
-        message: res.__("unauthorized"),
-        error: error.message,
+        message: error.message || res.__("unauthorized"),
+        error: error,
         code: error.statusCode || 401,
       });
     } else {
