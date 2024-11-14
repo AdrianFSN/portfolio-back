@@ -19,4 +19,5 @@ export const VALID_CATEGORIES = [
   "design",
   "photography",
   "video",
+  "writing",
 ];
