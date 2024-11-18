@@ -23,15 +23,13 @@ class AudioCollectionController extends BaseController {
 
   async update(req: Request, res: Response): Promise<void> {
     try {
-      const collectionId = req.params.id;
+      const { collectionId, deleteMainAudio, deleteAudio2 } = req.body;
       const requestedAudioCollection = await AudiosCollection.findById(
         collectionId
       );
       if (!requestedAudioCollection) {
         throw createDocumentNotFoundError(res.__("document_not_found"));
       }
-
-      const { deleteMainAudio, deleteAudio2 } = req.body;
 
       const deletionFlagsList = {
         mainAudio: deleteMainAudio,

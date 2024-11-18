@@ -23,15 +23,13 @@ class VideoCollectionController extends BaseController {
 
   async update(req: Request, res: Response): Promise<void> {
     try {
-      const collectionId = req.params.id;
+      const { collectionId, deleteMainVideo, deleteVideo2 } = req.body;
       const requestedVideoCollection = await VideosCollection.findById(
         collectionId
       );
       if (!requestedVideoCollection) {
         throw createDocumentNotFoundError(res.__("document_not_found"));
       }
-
-      const { deleteMainVideo, deleteVideo2 } = req.body;
 
       const deletionFlagsList = {
         mainVideo: deleteMainVideo,

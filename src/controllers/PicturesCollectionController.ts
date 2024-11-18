@@ -25,21 +25,20 @@ class PictureCollectionController extends BaseController {
 
   async update(req: Request, res: Response): Promise<void> {
     try {
-      const collectionId = req.params.id;
-      const requestedPicturesCollection = await PicturesCollection.findById(
-        collectionId
-      );
-      if (!requestedPicturesCollection) {
-        throw createDocumentNotFoundError(res.__("document_not_found"));
-      }
-
       const {
+        collectionId,
         deleteMainPicture,
         deletePicture2,
         deletePicture3,
         deletePicture4,
         deletePicture5,
       } = req.body;
+      const requestedPicturesCollection = await PicturesCollection.findById(
+        collectionId
+      );
+      if (!requestedPicturesCollection) {
+        throw createDocumentNotFoundError(res.__("document_not_found"));
+      }
 
       const deletionFlagsList = {
         mainPicture: deleteMainPicture,
