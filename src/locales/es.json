@@ -49,5 +49,7 @@
 	"Validation error": "Error de validación",
 	"invalid_category": "La categoría que has elegido no es válida",
 	"File too large": "Los archivos que subas no pueden pesar más de 10 M",
-	"Not Found": "Not Found"
+	"Not Found": "Not Found",
+	"category_required": "category_required",
+	"empty_launch_period": "empty_launch_period"
 }

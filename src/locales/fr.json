@@ -49,5 +49,7 @@
 	"Validation error": "Erreur de validation",
 	"invalid_category": "La catégorie que tu as choisie n'est pas valide",
 	"File too large": "Les fichiers que vous téléchargez ne doivent pas dépasser 10 Mo",
-	"Not Found": "Not Found"
+	"Not Found": "Not Found",
+	"category_required": "category_required",
+	"empty_launch_period": "empty_launch_period"
 }

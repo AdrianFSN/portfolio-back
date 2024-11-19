@@ -24,6 +24,7 @@ import {
   VIDEOS_COLLECTION_FIELDS,
 } from "../utils/constants.js";
 import isValidCategory from "../utils/validCategory.js";
+import createCustomError from "../utils/createCustomError.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -463,27 +464,27 @@ class JobExampleController extends BaseController {
       const { launchPeriod, linkToUrl, category, linkToGitHub } = req.body;
 
       if (!/^\d{4}\/(0[1-9]|1[0-2])$/.test(launchPeriod)) {
-        throw createValidationError(res.__("validation_error"), [
-          res.__("invalid_format_launch_period", { launchPeriod }),
-        ]);
+        throw createCustomError(
+          launchPeriod
+            ? res.__("invalid_format_launch_period", { launchPeriod })
+            : res.__("empty_launch_period")
+        );
       }
 
       if (linkToUrl && !isValidUrl(linkToUrl)) {
-        throw createValidationError(res.__("validation_error"), [
-          res.__("invalid_url_format", { linkToUrl }),
-        ]);
+        throw createCustomError(res.__("invalid_url_format", { linkToUrl }));
       }
 
       if (linkToGitHub && !isValidUrl(linkToGitHub)) {
-        throw createValidationError(res.__("validation_error"), [
-          res.__("invalid_url_format", { linkToGitHub }),
-        ]);
+        throw createCustomError(res.__("invalid_url_format", { linkToGitHub }));
       }
 
       if (category && !isValidCategory(category, VALID_CATEGORIES)) {
-        throw createValidationError(res.__("validation_error"), [
-          res.__("invalid_category", { category }),
-        ]);
+        throw createCustomError(res.__("invalid_category", { category }));
+      }
+
+      if (category && category.length === 0) {
+        throw createCustomError(res.__("category_required"));
       }
 
       const obtainedJobExample = await JobExample.findById(
@@ -502,6 +503,7 @@ class JobExampleController extends BaseController {
 
       obtainedJobExample.launchPeriod = launchPeriod;
       obtainedJobExample.linkToUrl = linkToUrl;
+      obtainedJobExample.linkToGitHub = linkToGitHub;
       obtainedJobExample.category = category;
 
       const updatedJobExample = await obtainedJobExample.save();
