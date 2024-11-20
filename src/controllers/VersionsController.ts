@@ -15,8 +15,15 @@ class LanguageversionController extends BaseController {
 
   async update(req: Request, res: Response): Promise<void> {
     try {
-      const { language, title, technologies, info, customer, versionId } =
-        req.body;
+      const {
+        language,
+        title,
+        technologies,
+        info,
+        description,
+        customer,
+        versionId,
+      } = req.body;
       const validLanguages = LOCALIZABLE_LANGUAGES;
 
       if (!validLanguages.includes(language)) {
@@ -33,6 +40,7 @@ class LanguageversionController extends BaseController {
         title,
         technologies,
         info,
+        description,
         customer,
       } as InterfaceVersionData;
 
@@ -40,6 +48,7 @@ class LanguageversionController extends BaseController {
         version.title = newJobExampleData.title;
         version.technologies = newJobExampleData.technologies;
         version.info = newJobExampleData.info;
+        version.description = newJobExampleData.description;
         version.customer = newJobExampleData.customer;
 
         await version.save();

@@ -24,6 +24,10 @@ const LocalizedJobExampleSchema: Schema<InterfaceLocalizedJobExample> =
         type: String,
         required: true,
       },
+      description: {
+        type: String,
+        required: true,
+      },
       customer: {
         type: String,
         required: true,
