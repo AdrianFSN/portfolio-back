@@ -31,7 +31,7 @@ class VideoCollectionController extends BaseController {
         throw createDocumentNotFoundError(res.__("document_not_found"));
       }
 
-      const deletionFlagsList = {
+      const deletionFlagsList: Record<"mainVideo" | "video2", any> = {
         mainVideo: deleteMainVideo,
         video2: deleteVideo2,
       };
@@ -39,11 +39,16 @@ class VideoCollectionController extends BaseController {
       const selectedDeletionFlagsList = selectDeletionFlags(deletionFlagsList);
 
       if (selectedDeletionFlagsList.length > 0) {
-        await deleteFilesFromCollection(
-          selectedDeletionFlagsList,
-          requestedVideoCollection,
-          videosFilePath
-        );
+        try {
+          await deleteFilesFromCollection(
+            selectedDeletionFlagsList,
+            requestedVideoCollection,
+            videosFilePath
+          );
+          console.log("Video file deleted successfully!");
+        } catch (error) {
+          console.log("Error deleting video file: ", error);
+        }
       }
 
       if (req.files) {
@@ -53,6 +58,20 @@ class VideoCollectionController extends BaseController {
 
         await assignFilesToFields(videoFields, files, requestedVideoCollection);
       }
+
+      const fieldsToDelete = Object.keys(deletionFlagsList).filter(
+        (key) =>
+          deletionFlagsList[key as keyof typeof deletionFlagsList] === "true"
+      );
+
+      fieldsToDelete.forEach(async (field) => {
+        const fileUploaded = req.files && field in req.files;
+
+        if (!fileUploaded) {
+          (requestedVideoCollection as any)[field] = "";
+          await requestedVideoCollection.save();
+        }
+      });
 
       this.handleSuccess(
         res,
