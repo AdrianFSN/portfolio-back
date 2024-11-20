@@ -4,8 +4,8 @@ import CustomError from "../types/CustomErrors.js";
 import BaseController from "./BaseController.js";
 import createDocumentNotFoundError from "../utils/createDocumentNotFoundError.js";
 import { LOCALIZABLE_LANGUAGES } from "../utils/constants.js";
-import createValidationError from "../utils/createValidationError.js";
 import { InterfaceVersionData } from "../types/InterfaceVersionData.js";
+import createCustomError from "../utils/createCustomError.js";
 
 class LanguageversionController extends BaseController {
   constructor() {
@@ -20,9 +20,7 @@ class LanguageversionController extends BaseController {
       const validLanguages = LOCALIZABLE_LANGUAGES;
 
       if (!validLanguages.includes(language)) {
-        throw createValidationError(res.__("validation_error"), [
-          res.__("language_not_valid", { language }),
-        ]);
+        throw createCustomError(res.__("language_not_valid"));
       }
 
       const version = await LocalizedJobExample.findById(versionId);
@@ -52,9 +50,7 @@ class LanguageversionController extends BaseController {
           res.__("job_example_version_updated", { language })
         );
       } else {
-        throw createValidationError(res.__("validation_error"), [
-          res.__("wrong_language_for_version"),
-        ]);
+        throw createCustomError(res.__("wrong_language_for_version"));
       }
     } catch (error) {
       this.handleError(error as CustomError, res);
