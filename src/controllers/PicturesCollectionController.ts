@@ -40,7 +40,10 @@ class PictureCollectionController extends BaseController {
         throw createDocumentNotFoundError(res.__("document_not_found"));
       }
 
-      const deletionFlagsList = {
+      const deletionFlagsList: Record<
+        "mainPicture" | "picture2" | "picture3" | "picture4" | "picture5",
+        any
+      > = {
         mainPicture: deleteMainPicture,
         picture2: deletePicture2,
         picture3: deletePicture3,
@@ -95,6 +98,20 @@ class PictureCollectionController extends BaseController {
           }
         });
       }
+
+      const fieldsToDelete = Object.keys(deletionFlagsList).filter(
+        (key) =>
+          deletionFlagsList[key as keyof typeof deletionFlagsList] === "true"
+      );
+
+      fieldsToDelete.forEach(async (field) => {
+        const fileUploaded = req.files && field in req.files;
+
+        if (!fileUploaded) {
+          (requestedPicturesCollection as any)[field] = "";
+          await requestedPicturesCollection.save();
+        }
+      });
 
       this.handleSuccess(
         res,
