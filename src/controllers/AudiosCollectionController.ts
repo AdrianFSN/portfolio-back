@@ -31,7 +31,7 @@ class AudioCollectionController extends BaseController {
         throw createDocumentNotFoundError(res.__("document_not_found"));
       }
 
-      const deletionFlagsList = {
+      const deletionFlagsList: Record<"mainAudio" | "audio2", any> = {
         mainAudio: deleteMainAudio,
         audio2: deleteAudio2,
       };
@@ -58,6 +58,20 @@ class AudioCollectionController extends BaseController {
 
         await assignFilesToFields(audioFields, files, requestedAudioCollection);
       }
+
+      const fieldsToDelete = Object.keys(deletionFlagsList).filter(
+        (key) =>
+          deletionFlagsList[key as keyof typeof deletionFlagsList] === "true"
+      );
+
+      fieldsToDelete.forEach(async (field) => {
+        const fileUploaded = req.files && field in req.files;
+
+        if (!fileUploaded) {
+          (requestedAudioCollection as any)[field] = "";
+          await requestedAudioCollection.save();
+        }
+      });
 
       this.handleSuccess(
         res,
