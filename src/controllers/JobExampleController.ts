@@ -48,6 +48,7 @@ class JobExampleController extends BaseController {
         technologies,
         launchPeriod,
         info,
+        description,
         customer,
         category,
         linkToUrl,
@@ -59,6 +60,7 @@ class JobExampleController extends BaseController {
         !technologies ||
         !launchPeriod ||
         !info ||
+        !description ||
         !customer ||
         !category
       ) {

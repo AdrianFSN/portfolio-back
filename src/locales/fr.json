@@ -3,7 +3,7 @@
   "job_list_empty": "Ressource chargée correctement, mais ta liste d'exemples de travail est vide !",
   "job_example_loaded_successfully": "Exemple de travail {{jobTitle}} chargé avec succès !",
   "validation_error": "Erreur de validation",
-  "required_fields_for_job": "Titre, technologies, période de lancement, client, catégorie et informations sont obligatoires",
+  "required_fields_for_job": "Titre, technologies, période de lancement, client, catégorie, informations et description sont obligatoires",
   "invalid_format_launch_period": "{{launchPeriod}} n'est pas un format valide. Utilise AAAA/MM.",
   "invalid_url_format": "{{linkToUrl}} n'est pas une URL valide. Fournis une URL correcte.",
   "job_example_created_successfully": "Exemple de travail créé avec succès !",
