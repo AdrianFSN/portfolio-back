@@ -6,6 +6,7 @@
   "required_fields_for_job": "Título, tecnologías, periodo de lanzamiento, cliente, categoría, información y descripción son obligatorios",
   "invalid_format_launch_period": "{{launchPeriod}} no tiene un formato válido. Usa YYYY/MM.",
   "invalid_url_format": "{{linkToUrl}} no es una URL válida. Proporciona una URL válida.",
+  "invalid_git_url_format": "{{linkToGitHub}} no es una URL de GitHub válida. Proporciona una URL válida.",
   "job_example_created_successfully": "¡Ejemplo de trabajo creado con éxito!",
   "job_example_not_found": "Ejemplo de trabajo con ID {{jobExampleId}} no encontrado",
   "job_example_deleted_successfully": "¡Trabajo {{jobTitle}} eliminado con éxito!",
