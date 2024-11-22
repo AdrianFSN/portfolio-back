@@ -224,8 +224,7 @@ class JobExampleController extends BaseController {
   async get(req: Request, res: Response): Promise<void> {
     try {
       let filters: any = {};
-      const userLanguage = req.headers["Accept-Language"] || "en";
-      console.log("Esto es userLanguage: ", userLanguage);
+      const userLanguage = req.headers["accept-language"] || "en";
 
       if (req.query.hasOwnProperty("category")) {
         if (Array.isArray(req.query.category)) {
