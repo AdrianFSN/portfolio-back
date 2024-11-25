@@ -2,13 +2,17 @@ import { Request, Response } from "express";
 import BaseController from "./BaseController.js";
 import path from "path";
 import { fileURLToPath } from "url";
-import { AUDIOS_COLLECTION_FIELDS } from "../utils/constants.js";
+import {
+  AUDIOS_COLLECTION_FIELDS,
+  VALID_AUDIOS_FILES,
+} from "../utils/constants.js";
 import AudiosCollection from "../models/AudiosCollection.js";
 import createDocumentNotFoundError from "../utils/createDocumentNotFoundError.js";
 import assignFilesToFields from "../utils/asignFilesToFields.js";
 import deleteFilesFromCollection from "../utils/removeCollectionOfFiles.js";
 import CustomError from "../types/CustomErrors.js";
 import { selectDeletionFlags } from "../utils/deletionFilesMethods.js";
+import createValidationError from "../utils/createValidationError.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -52,6 +56,18 @@ class AudioCollectionController extends BaseController {
       }
 
       if (req.files) {
+        const allFiles = Object.values(req.files) as Express.Multer.File[][];
+
+        for (const fileArray of allFiles) {
+          for (const file of fileArray) {
+            if (!VALID_AUDIOS_FILES.includes(file.mimetype)) {
+              throw createValidationError(res.__("validation_error"), [
+                res.__("file_type_not_valid"),
+              ]);
+            }
+          }
+        }
+
         const files = Object.assign({}, req.files) as {
           [key: string]: Express.Multer.File[];
         };

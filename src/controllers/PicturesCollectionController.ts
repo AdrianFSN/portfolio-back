@@ -2,7 +2,10 @@ import { Request, Response } from "express";
 import BaseController from "./BaseController.js";
 import path from "path";
 import { fileURLToPath } from "url";
-import { PICTURES_COLLECTION_FIELDS } from "../utils/constants.js";
+import {
+  PICTURES_COLLECTION_FIELDS,
+  VALID_PICTURES_FILES,
+} from "../utils/constants.js";
 import PicturesCollection from "../models/PicturesCollection.js";
 import createDocumentNotFoundError from "../utils/createDocumentNotFoundError.js";
 import assignFilesToFields from "../utils/asignFilesToFields.js";
@@ -10,6 +13,7 @@ import deleteFilesFromCollection from "../utils/removeCollectionOfFiles.js";
 import CustomError from "../types/CustomErrors.js";
 import resizeImage from "../services/requesters/resizeThumbnailRequest.js";
 import { selectDeletionFlags } from "../utils/deletionFilesMethods.js";
+import createValidationError from "../utils/createValidationError.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -66,6 +70,18 @@ class PictureCollectionController extends BaseController {
       }
 
       if (req.files) {
+        const allFiles = Object.values(req.files) as Express.Multer.File[][];
+
+        for (const fileArray of allFiles) {
+          for (const file of fileArray) {
+            if (!VALID_PICTURES_FILES.includes(file.mimetype)) {
+              throw createValidationError(res.__("validation_error"), [
+                res.__("file_type_not_valid"),
+              ]);
+            }
+          }
+        }
+
         const files = Object.assign({}, req.files) as {
           [key: string]: Express.Multer.File[];
         };
