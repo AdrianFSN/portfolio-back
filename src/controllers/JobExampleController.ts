@@ -70,34 +70,24 @@ class JobExampleController extends BaseController {
       }
 
       if (!/^\d{4}\/(0[1-9]|1[0-2])$/.test(launchPeriod)) {
-        /* throw createCustomError(
-          res.__("invalid_format_launch_period", { launchPeriod })
-        ); */
-
         throw createValidationError(res.__("validation_error"), [
           res.__("invalid_format_launch_period", { launchPeriod }),
         ]);
       }
 
       if (linkToUrl && !isValidUrl(linkToUrl)) {
-        //throw createCustomError(res.__("invalid_url_format", { linkToUrl }));
         throw createValidationError(res.__("validation_error"), [
           res.__("invalid_url_format", { linkToUrl }),
         ]);
       }
 
       if (linkToGitHub && !isValidUrl(linkToGitHub)) {
-        /* throw createCustomError(
-          res.__("invalid_git_url_format", { linkToGitHub })
-        ); */
-
         throw createValidationError(res.__("validation_error"), [
           res.__("invalid_git_url_format", { linkToGitHub }),
         ]);
       }
 
       if (category && !isValidCategory(category, VALID_CATEGORIES)) {
-        //throw createCustomError(res.__("invalid_category", { category }));
         throw createValidationError(res.__("validation_error"), [
           res.__("invalid_category", { category }),
         ]);
