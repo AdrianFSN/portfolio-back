@@ -5,7 +5,6 @@ import BaseController from "./BaseController.js";
 import createDocumentNotFoundError from "../utils/createDocumentNotFoundError.js";
 import { LOCALIZABLE_LANGUAGES } from "../utils/constants.js";
 import { InterfaceVersionData } from "../types/InterfaceVersionData.js";
-import createCustomError from "../utils/createCustomError.js";
 import createValidationError from "../utils/createValidationError.js";
 
 class LanguageversionController extends BaseController {
