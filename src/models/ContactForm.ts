@@ -6,6 +6,7 @@ interface ContactFormParams {
   content: string;
   subject?: string[];
   opt_in: boolean;
+  owner: string;
 }
 const receivedMessageSchema: Schema<ContactFormParams> = new Schema(
   {
@@ -29,6 +30,11 @@ const receivedMessageSchema: Schema<ContactFormParams> = new Schema(
     },
     subject: {
       type: [String],
+      index: true,
+    },
+    owner: {
+      type: String,
+      required: true,
       index: true,
     },
   },

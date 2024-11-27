@@ -1,6 +1,4 @@
 import { Request, Response } from "express";
-import path from "path";
-import { fileURLToPath } from "url";
 import CustomError, { DocumentNotFound } from "../types/CustomErrors.js";
 import BaseController from "./BaseController.js";
 import createValidationError from "../utils/createValidationError.js";
@@ -9,11 +7,11 @@ import { VALID_CATEGORIES } from "../utils/constants.js";
 import isValidCategory from "../utils/validCategory.js";
 import isValidEmail from "../utils/validEmailChecker.js";
 import receivedMessage from "../models/ContactForm.js";
+import user from "../models/User.js";
+import createCustomError from "../utils/createCustomError.js";
+import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-class JobExampleController extends BaseController {
+class ReceivedMessageController extends BaseController {
   constructor() {
     super();
     this.create = this.create.bind(this);
@@ -25,7 +23,11 @@ class JobExampleController extends BaseController {
   async create(req: Request, res: Response): Promise<void> {
     try {
       const { name, email, content, opt_in, subject } = req.body;
-
+      const owner = await user.findOne({ role: "admin" });
+      console.log("Esto es owner: ", owner);
+      if (!owner) {
+        throw createCustomError(res.__("owner_not_found"), 404);
+      }
       if (!name || !email || !content) {
         throw createValidationError(res.__("validation_error"), [
           res.__("required_fields_for_contact_form"),
@@ -56,13 +58,17 @@ class JobExampleController extends BaseController {
         content: req.body.content,
         subject: req.body.subject,
         opt_in: req.body.opt_in,
+        owner: owner._id,
       };
 
-      const newMessage = new receivedMessage(newMessageData).save();
+      const newMessage = new receivedMessage(newMessageData);
+      console.log("Esto es newMessage: ", newMessage);
+
+      const savedMessage = await newMessage.save();
 
       this.handleSuccess(
         res,
-        newMessage,
+        savedMessage,
         res.__("message_received_successfully")
       );
     } catch (error) {
@@ -70,7 +76,7 @@ class JobExampleController extends BaseController {
     }
   }
 
-  async get(req: Request, res: Response): Promise<void> {
+  async get(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
       let filters: any = {};
 
@@ -130,7 +136,7 @@ class JobExampleController extends BaseController {
     }
   }
 
-  async getOneMessage(req: Request, res: Response): Promise<void> {
+  async getOneMessage(req: AuthenticatedRequest, res: Response): Promise<void> {
     const messageId = req.params.id;
     try {
       const obtainedMessage = await receivedMessage.findById(messageId);
@@ -149,7 +155,7 @@ class JobExampleController extends BaseController {
     }
   }
 
-  async delete(req: Request, res: Response): Promise<void> {
+  async delete(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
       const messageId = req.params.id;
       const obtainedMessage = await receivedMessage.findById(messageId);
@@ -176,4 +182,4 @@ class JobExampleController extends BaseController {
   }
 }
 
-export default new JobExampleController();
+export default new ReceivedMessageController();

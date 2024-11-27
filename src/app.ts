@@ -20,6 +20,7 @@ import picturesCollectionRouter from "./routes/picturesCollectionRoutes.js";
 import videosCollectionRouter from "./routes/VideosCollectionRoutes.js";
 import audiosCollectionRouter from "./routes/AudiosCollectionRoutes.js";
 import versionRouter from "./routes/versionsRoutes.js";
+import receivedMessagesRouter from "./routes/receivedMessagesRoutes.js";
 
 // Load env variables from .env
 dotenv.config();
@@ -77,6 +78,7 @@ app.use("/api/pictures-collection", picturesCollectionRouter);
 app.use("/api/videos-collection", videosCollectionRouter);
 app.use("/api/audios-collection", audiosCollectionRouter);
 app.use("/api/version", versionRouter);
+app.use("/api/contact", receivedMessagesRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req: Request, res: Response, next: NextFunction) {
