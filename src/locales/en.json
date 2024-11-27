@@ -51,5 +51,14 @@
   "Validation error": "Validation error",
   "File too large": "The files you upload must be no larger than 10 M",
   "Not Found": "Not Found",
-  "empty_launch_period": "Launch period can not be empty"
+  "empty_launch_period": "Launch period can not be empty",
+  "required_fields_for_contact_form": "Name, email and content are mandatory fields",
+  "invalid_email_format": "{{email}} is not a valid email. Please provide a valid email.",
+  "accept_saving_data": "Please accept saving your contact info",
+  "message_received_successfully": "Message received successfully!",
+  "received_messages_list_loaded": "List of received messages loaded!",
+  "received_messages_list_empty": "List of received messages is empty",
+  "received_message_loaded_successfully": "Message loaded successfully!",
+  "received_message_not_found": "Message with id: {{messageId}} not found",
+  "received_message_deleted_successfully": "Message deleted successfully!"
 }
