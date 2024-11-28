@@ -9,7 +9,7 @@ import isValidEmail from "../utils/validEmailChecker.js";
 import receivedMessage from "../models/ContactForm.js";
 import user from "../models/User.js";
 import createCustomError from "../utils/createCustomError.js";
-import { AuthenticatedRequest } from "types/AuthenticatedRequest.js";
+import { AuthenticatedRequest } from "../types/AuthenticatedRequest.js";
 
 class ReceivedMessageController extends BaseController {
   constructor() {
@@ -18,6 +18,7 @@ class ReceivedMessageController extends BaseController {
     this.get = this.get.bind(this);
     this.getOneMessage = this.getOneMessage.bind(this);
     this.delete = this.delete.bind(this);
+    this.update = this.update.bind(this);
   }
 
   async create(req: Request, res: Response): Promise<void> {
@@ -59,6 +60,8 @@ class ReceivedMessageController extends BaseController {
         subject: req.body.subject,
         opt_in: req.body.opt_in,
         owner: owner._id,
+        read: false,
+        answered: false,
       };
 
       const newMessage = new receivedMessage(newMessageData);
@@ -78,6 +81,8 @@ class ReceivedMessageController extends BaseController {
 
   async get(req: AuthenticatedRequest, res: Response): Promise<void> {
     try {
+      const { userId } = req.user!;
+
       let filters: any = {};
 
       if (req.query.hasOwnProperty("subject")) {
@@ -100,6 +105,18 @@ class ReceivedMessageController extends BaseController {
         typeof req.query.email === "string"
       ) {
         filters.email = req.query.email;
+      }
+      if (
+        req.query.hasOwnProperty("read") &&
+        typeof req.query.read === "string"
+      ) {
+        filters.read = req.query.read;
+      }
+      if (
+        req.query.hasOwnProperty("answered") &&
+        typeof req.query.answered === "string"
+      ) {
+        filters.answered = req.query.answered;
       }
 
       const page = parseInt(req.query.page as string) || 1;
@@ -176,6 +193,33 @@ class ReceivedMessageController extends BaseController {
           res.__("received_message_deleted_successfully")
         );
       }
+    } catch (error) {
+      this.handleError(error as CustomError, res);
+    }
+  }
+
+  async update(req: Request, res: Response): Promise<void> {
+    try {
+      const messageId = req.params.id;
+      const { read, answered } = req.body;
+
+      const obtainedMessage = await receivedMessage.findById(messageId);
+
+      if (!obtainedMessage) {
+        throw createDocumentNotFoundError(
+          res.__("received_message_not_found", { messageId })
+        );
+      }
+
+      obtainedMessage.read = !!read;
+      obtainedMessage.answered = !!answered;
+
+      const updatedMessage = await obtainedMessage.save();
+      this.handleSuccess(
+        res,
+        updatedMessage,
+        res.__("message_updated_successfully")
+      );
     } catch (error) {
       this.handleError(error as CustomError, res);
     }

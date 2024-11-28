@@ -61,5 +61,6 @@
   "received_message_loaded_successfully": "Message loaded successfully!",
   "received_message_not_found": "Message with id: {{messageId}} not found",
   "received_message_deleted_successfully": "Message deleted successfully!",
-  "owner_not_found": "Sorry, could not assign this asset to anyone"
+  "owner_not_found": "Sorry, could not assign this asset to anyone",
+  "message_updated_successfully": "Message status updated successfully!"
 }
