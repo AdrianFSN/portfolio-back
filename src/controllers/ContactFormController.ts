@@ -10,6 +10,7 @@ import receivedMessage from "../models/ContactForm.js";
 import user from "../models/User.js";
 import createCustomError from "../utils/createCustomError.js";
 import { AuthenticatedRequest } from "../types/AuthenticatedRequest.js";
+import cleanHtml from "../utils/sanitizeHtml.js";
 
 class ReceivedMessageController extends BaseController {
   constructor() {
@@ -25,7 +26,6 @@ class ReceivedMessageController extends BaseController {
     try {
       const { name, email, content, opt_in, subject } = req.body;
       const owner = await user.findOne({ role: "admin" });
-      console.log("Esto es owner: ", owner);
       if (!owner) {
         throw createCustomError(res.__("owner_not_found"), 404);
       }
@@ -53,10 +53,12 @@ class ReceivedMessageController extends BaseController {
         ]);
       }
 
+      const cleanContent = cleanHtml(req.body.content);
+
       const newMessageData = {
         name: req.body.name,
         email: req.body.email,
-        content: req.body.content,
+        content: cleanContent,
         subject: req.body.subject,
         opt_in: req.body.opt_in,
         owner: owner._id,
@@ -65,7 +67,6 @@ class ReceivedMessageController extends BaseController {
       };
 
       const newMessage = new receivedMessage(newMessageData);
-      console.log("Esto es newMessage: ", newMessage);
 
       const savedMessage = await newMessage.save();
 
@@ -202,7 +203,6 @@ class ReceivedMessageController extends BaseController {
     try {
       const messageId = req.params.id;
       const { read, answered } = req.body;
-
       const obtainedMessage = await receivedMessage.findById(messageId);
 
       if (!obtainedMessage) {
@@ -210,9 +210,8 @@ class ReceivedMessageController extends BaseController {
           res.__("received_message_not_found", { messageId })
         );
       }
-
-      obtainedMessage.read = !!read;
-      obtainedMessage.answered = !!answered;
+      obtainedMessage.read = read;
+      obtainedMessage.answered = answered;
 
       const updatedMessage = await obtainedMessage.save();
       this.handleSuccess(
