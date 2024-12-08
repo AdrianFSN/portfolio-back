@@ -1,7 +1,13 @@
+import he from "he";
 import sanitizeHtml from "sanitize-html";
 
+const decodeHtmlEntities = (html: string): string => {
+  return he.decode(html);
+};
+
 const cleanHtml = (html: string): string => {
-  return sanitizeHtml(html, {
+  const decodedHtml = decodeHtmlEntities(html);
+  return sanitizeHtml(decodedHtml, {
     allowedTags: [
       "b",
       "i",

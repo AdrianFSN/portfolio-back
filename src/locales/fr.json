@@ -60,5 +60,6 @@
 	"received_message_deleted_successfully": "Message supprimé avec succès !",
 	"message_updated_successfully": "Message mis à jour avec succès !",
 	"accept_saving_data": "accept_saving_data",
-	"received_message_not_found": "received_message_not_found"
+	"received_message_not_found": "received_message_not_found",
+	"login.login_successful": "login.login_successful"
 }
