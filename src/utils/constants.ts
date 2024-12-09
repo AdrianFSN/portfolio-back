@@ -25,3 +25,6 @@ export const VALID_CATEGORIES = [
   "video",
   "writing",
 ];
+
+// Resizer
+export const THUMBNAIL_SIZE = 250;

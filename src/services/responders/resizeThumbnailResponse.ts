@@ -2,6 +2,7 @@ import cote from "cote";
 import path from "node:path";
 import sharp from "sharp";
 import fs from "fs-extra";
+import { THUMBNAIL_SIZE } from "../../utils/constants.js";
 
 const responder = new cote.Responder({ name: "thumbnailResizerResponder" });
 
@@ -41,10 +42,10 @@ responder.on<ResizeRequest>("resize-to-thumbnail", async (req, done) => {
 
     if (metadata && metadata.width && metadata.height) {
       const aspectRatio = metadata.width / metadata.height;
-      let newWidth = 120;
+      let newWidth = THUMBNAIL_SIZE;
       let newHeight = Math.round(newWidth / aspectRatio);
-      if (newHeight > 120) {
-        newHeight = 120;
+      if (newHeight > THUMBNAIL_SIZE) {
+        newHeight = THUMBNAIL_SIZE;
         newWidth = Math.round(newHeight * aspectRatio);
       }
 
