@@ -4,10 +4,5 @@
     "email": "${FIRST_USER_EMAIL}",
     "password": "${FIRST_USER_PASSWORD}",
     "role": "admin"
-  },
-  {
-    "username": "Blanquito",
-    "email": "blanquito@example.com",
-    "password": "123456"
   }
 ]
