@@ -32,8 +32,31 @@ console.log(
   typeof process.env.DATABASE_URI
 );
 
-// Connect Mongoose
-connectMongoose();
+console.log("ENV Variables:");
+console.log(
+  "DEV_HOST_URI:",
+  process.env.DEV_HOST_URI,
+  typeof process.env.DEV_HOST_URI
+);
+console.log("HOST_URI:", process.env.HOST_URI, typeof process.env.HOST_URI);
+console.log(
+  "HOST_WWW_URI:",
+  process.env.HOST_WWW_URI,
+  typeof process.env.HOST_WWW_URI
+);
+
+const corsOptions = {
+  origin:
+    process.env.NODE_ENV === "production"
+      ? [
+          process.env.HOST_URI ? process.env.HOST_URI : "",
+          process.env.HOST_WWW_URI ? process.env.HOST_WWW_URI : "",
+        ]
+      : [process.env.DEV_HOST_URI ? process.env.DEV_HOST_URI : ""],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+};
 
 const app = express();
 
@@ -57,12 +80,15 @@ app.set("views", viewsPath);
 app.set("view engine", "ejs");
 
 // Middlewares
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(helmet());
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+// Connect Mongoose
+connectMongoose();
 
 // Static paths
 app.use(express.static(path.join(__dirname, "public")));
