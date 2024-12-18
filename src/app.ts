@@ -57,23 +57,6 @@ const corsOptions = {
 
 const app = express();
 
-// i18n and language cookie
-/* app.use((req, res, next) => {
-  if (!req.cookies["X-portfolio-AS-locale"]) {
-    res.cookie("X-portfolio-AS-locale", "en", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 60 * 60 * 24 * 30 * 1000,
-    });
-  }
-
-  const userLang = req.cookies["X-portfolio-AS-locale"] || "en";
-  i18n.setLocale(userLang);
-
-  next();
-}); */
-
 // Get __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
