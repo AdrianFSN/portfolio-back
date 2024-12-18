@@ -58,7 +58,7 @@ const corsOptions = {
 const app = express();
 
 // i18n and language cookie
-app.use((req, res, next) => {
+/* app.use((req, res, next) => {
   if (!req.cookies["X-portfolio-AS-locale"]) {
     res.cookie("X-portfolio-AS-locale", "en", {
       httpOnly: true,
@@ -72,7 +72,7 @@ app.use((req, res, next) => {
   i18n.setLocale(userLang);
 
   next();
-});
+}); */
 
 // Get __dirname
 const __filename = fileURLToPath(import.meta.url);
