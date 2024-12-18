@@ -8,7 +8,7 @@ console.log("Path to locales: ", path.join(__dirname, "..", "locales"));
 
 i18n.configure({
   locales: ["en", "es", "fr"],
-  directory: path.join(__dirname, "..", "locales"),
+  directory: process.env.LOCALES_PATH || path.join(__dirname, "..", "locales"),
   defaultLocale: "en",
   autoReload: true,
   syncFiles: true,
