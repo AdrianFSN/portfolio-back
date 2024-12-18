@@ -7,7 +7,7 @@
     "start": "cross-env NODE_ENV=production node dist/bin/www",
     "dev": "cross-env NODE_ENV=development DEBUG=portfolio-back:* nodemon --config nodemon-server.json",
     "build": "tsc && cp -r src/views dist/views",
-    "prod": "npm run build && npm start",
+    "prod": "npm run build && npm start && npm run thumb-res",
     "initDB": "node --loader ts-node/esm src/initDB/initDB.ts",
     "thumb-req": "nodemon --config nodemon-requesters-responders.json src/services/requesters/resizeThumbnailRequest.ts",
     "thumb-res": "nodemon --config nodemon-requesters-responders.json src/services/responders/resizeThumbnailResponse.ts"
