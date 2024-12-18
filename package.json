@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "cross-env NODE_ENV=production node dist/bin/www && npm run thumb-res",
+    "start": "cross-env NODE_ENV=production node dist/bin/www",
     "dev": "cross-env NODE_ENV=development DEBUG=portfolio-back:* nodemon --config nodemon-server.json",
     "build": "tsc && cp -r src/views dist/views",
     "prod": "npm run build && npm start",
