@@ -48,11 +48,8 @@ console.log(
 const corsOptions = {
   origin:
     process.env.NODE_ENV === "production"
-      ? [
-          process.env.HOST_URI ? process.env.HOST_URI : "",
-          process.env.HOST_WWW_URI ? process.env.HOST_WWW_URI : "",
-        ]
-      : [process.env.DEV_HOST_URI ? process.env.DEV_HOST_URI : ""],
+      ? [process.env.HOST_URI!, process.env.HOST_WWW_URI!]
+      : [process.env.DEV_HOST_URI!],
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
