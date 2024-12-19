@@ -115,7 +115,8 @@
     "env.d.ts",
     "src/bin/www",
     "./types/**/*",
-    "src/register.ts"
+    "src/register.ts",
+    "src/locales/**/*.json"
   ],
   "exclude": ["node_modules"]
 }
