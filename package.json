@@ -9,8 +9,8 @@
     "build": "tsc && cp -r src/views dist/views",
     "prod": "npm run build && npm start",
     "initDB": "node --loader ts-node/esm src/initDB/initDB.ts",
-    "thumb-req": "cross-env NODE_ENV=production node -r ts-node/register src/services/requesters/resizeThumbnailRequest.ts",
-    "thumb-res": "cross-env NODE_ENV=production node -r ts-node/register src/services/responders/resizeThumbnailResponse.ts",
+    "thumb-req": "cross-env NODE_ENV=production node --loader ts-node/esm src/services/requesters/resizeThumbnailRequest.ts",
+    "thumb-res": "cross-env NODE_ENV=production node --loader ts-node/esm src/services/responders/resizeThumbnailResponse.ts",
     "dev-thumb-req": "cross-env NODE_ENV=development DEBUG=portfolio-back:* nodemon --config nodemon-requesters-responders.json src/services/requesters/resizeThumbnailRequest.ts",
     "dev-thumb-res": "cross-env NODE_ENV=development DEBUG=portfolio-back:* nodemon --config nodemon-requesters-responders.json src/services/responders/resizeThumbnailResponse.ts"
   },
