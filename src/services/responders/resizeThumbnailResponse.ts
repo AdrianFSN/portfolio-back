@@ -1,8 +1,13 @@
-import * as cote from "cote";
+import { createRequire } from "node:module";
 import path from "node:path";
 import sharp from "sharp";
 import fs from "fs-extra";
 import { THUMBNAIL_SIZE } from "../../utils/constants.js";
+
+const require = createRequire(import.meta.url);
+const cote = require("cote");
+
+type DoneFunction = (error: Error | null, result: any) => void;
 
 const responder = new cote.Responder({ name: "thumbnailResizerResponder" });
 
@@ -13,7 +18,10 @@ interface ResizeRequest {
 
 sharp.cache(false);
 
-responder.on<ResizeRequest>("resize-to-thumbnail", async (req, done) => {
+const resizeHandler = async (
+  req: ResizeRequest,
+  done: DoneFunction
+): Promise<void> => {
   let { filePath } = req;
 
   if (!filePath) {
@@ -56,14 +64,17 @@ responder.on<ResizeRequest>("resize-to-thumbnail", async (req, done) => {
     }
 
     done(null, {
-      message: "Resize successful! ",
+      message: "Resize successful!",
       outputFilePath: outputFilePath,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error resizing thumbnail: ", error);
-    done(error, null);
+    done(error instanceof Error ? error : new Error(String(error)), null);
   }
-});
+};
+
+// Asociamos el manejador al evento (sin genérico explícito)
+responder.on("resize-to-thumbnail", resizeHandler);
 
 console.log("Responder is running...");
 
