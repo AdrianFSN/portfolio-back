@@ -1,5 +1,10 @@
-import cote from "cote";
+import { createRequire } from "node:module";
 import fs from "fs-extra";
+
+const require = createRequire(import.meta.url);
+const cote = require("cote");
+
+type CallbackFunction = (error: Error | null, result: any) => void;
 
 const requester = new cote.Requester({ name: "imageResizerRequester" });
 
@@ -8,7 +13,7 @@ interface ResizeEvent {
   filePath: string;
 }
 
-const resizeImage = async (filePath: string) => {
+const resizeImage = async (filePath: string): Promise<any> => {
   return new Promise((resolve, reject) => {
     sendOrderToResizeEvent(filePath, (error, result) => {
       if (error) {
@@ -22,13 +27,16 @@ const resizeImage = async (filePath: string) => {
 
 const sendOrderToResizeEvent = async (
   filePath: string,
-  callback: (error: any, result: any) => void
-) => {
+  callback: CallbackFunction
+): Promise<void> => {
   try {
     await fs.access(filePath);
   } catch (error) {
-    console.error(`Img does not exist in the path: ${filePath}`);
-    return callback(error, null);
+    console.error(`Image does not exist at path: ${filePath}`);
+    return callback(
+      error instanceof Error ? error : new Error(String(error)),
+      null
+    );
   }
 
   const event: ResizeEvent = {
@@ -38,10 +46,13 @@ const sendOrderToResizeEvent = async (
 
   console.log("Sending resize event: ", event);
 
-  requester.send(event, (error, result) => {
+  requester.send(event, (error: any, result: any) => {
     if (error) {
       console.error("Error in resize event: ", error);
-      return callback(error, null);
+      return callback(
+        error instanceof Error ? error : new Error(String(error)),
+        null
+      );
     }
     filePath = "";
     callback(null, result);
