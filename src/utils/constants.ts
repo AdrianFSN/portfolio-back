@@ -27,4 +27,4 @@ export const VALID_CATEGORIES = [
 ];
 
 // Resizer
-export const THUMBNAIL_SIZE = 300;
+export const THUMBNAIL_SIZE = 250;
