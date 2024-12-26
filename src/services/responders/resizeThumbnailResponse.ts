@@ -1,4 +1,4 @@
-import cote from "cote";
+import * as cote from "cote";
 import path from "node:path";
 import sharp from "sharp";
 import fs from "fs-extra";
