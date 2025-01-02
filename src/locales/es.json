@@ -59,5 +59,6 @@
   "received_message_deleted_successfully": "¡Mensaje borrado con éxito!",
   "message_updated_successfully": "¡Mensaje actualizado con éxito!",
   "accept_saving_data": "Por favor, acepta el almacenamiento de tus datos de contacto",
-  "received_message_not_found": "No se ha encontrado el mensaje con ID {{messageId}}"
+  "received_message_not_found": "No se ha encontrado el mensaje con ID {{messageId}}",
+  "invalid_email_format": "{{email}} no es un email válido."
 }
