@@ -1,4 +1,4 @@
-# Today starts it all
+# Everything starts today
 
 ## Install TypeScript
 
